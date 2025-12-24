@@ -19,7 +19,7 @@
       "subtitle": "Tải 30",
       "image": "assets/images/banners/1766598388883-016-z7306826868878-4345d4db4dd8b0ecfdc09b80aa59c93f.webp",
       "link": "shop.html?id=1",
-      "active": false
+      "active": true
     },
     {
       "id": 2,
@@ -35,7 +35,7 @@
       "subtitle": "Tham gia 10,000+ thành viên",
       "image": "assets/images/banners/1766598394273-016-z7306826868878-4345d4db4dd8b0ecfdc09b80aa59c93f.webp",
       "link": "about.html",
-      "active": true
+      "active": false
     }
   ],
   "features": [
