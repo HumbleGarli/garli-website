@@ -34,7 +34,13 @@ const HomePage = {
                 <div class="swiper-wrapper">
                     ${activeBanners.map(b => `
                         <div class="swiper-slide">
-                            <a href="${b.link}" class="block relative h-64 md:h-96 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl overflow-hidden">
+                            <a href="${b.link}" class="block relative h-64 md:h-96 rounded-xl overflow-hidden">
+                                ${b.image ? `
+                                    <img src="${b.image}" alt="${b.title}" class="absolute inset-0 w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-black/40"></div>
+                                ` : `
+                                    <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600"></div>
+                                `}
                                 <div class="absolute inset-0 flex items-center justify-center text-center p-8">
                                     <div>
                                         <h2 class="text-3xl md:text-5xl font-bold text-white mb-4">${b.title}</h2>
