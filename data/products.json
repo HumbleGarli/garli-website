@@ -9,18 +9,18 @@
       "currency": "VND",
       "category": "course",
       "tags": [
-        "javascript",
-        "web",
-        "frontend"
+        "youtube",
+        "ytb",
+        "yt"
       ],
       "active": true,
       "featured": false,
+      "image": "assets/images/products/1766597441245-011-youtube-premium-music-1nam-65910.webp",
       "id": 1,
       "createdAt": "2025-01-15",
       "rating": 4.8,
       "reviewCount": 256,
-      "sold": 1520,
-      "image": "assets/images/products/js-course.jpg"
+      "sold": 1520
     },
     {
       "id": 2,
