@@ -1,0 +1,94 @@
+name: Process Issue Content
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  process-product:
+    if: contains(github.event.issue.labels.*.name, 'product') && contains(github.event.issue.labels.*.name, 'auto-process')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Parse issue and update products.json
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = context.payload.issue.body;
+            
+            // Parse form fields
+            const getValue = (label) => {
+              const regex = new RegExp(`### ${label}\\s*\\n\\s*([^\\n#]+)`, 'i');
+              const match = body.match(regex);
+              return match ? match[1].trim() : '';
+            };
+            
+            const name = getValue('Tên sản phẩm');
+            const price = parseInt(getValue('Giá \\(VND\\)')) || 0;
+            const originalPrice = parseInt(getValue('Giá gốc \\(VND\\)')) || price;
+            const category = getValue('Danh mục');
+            const description = getValue('Mô tả');
+            const tags = getValue('Tags \\(phân cách bằng dấu phẩy\\)').split(',').map(t => t.trim()).filter(Boolean);
+            const featured = getValue('Sản phẩm nổi bật\\?') === 'true';
+            
+            // Read current products
+            const data = JSON.parse(fs.readFileSync('data/products.json', 'utf8'));
+            
+            // Create new product
+            const newId = Math.max(0, ...data.products.map(p => p.id)) + 1;
+            const slug = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/[^a-z0-9]+/g, '-');
+            
+            const newProduct = {
+              id: newId,
+              name,
+              slug,
+              description,
+              price,
+              originalPrice,
+              currency: 'VND',
+              category,
+              tags,
+              image: 'assets/images/products/default.jpg',
+              rating: 0,
+              reviewCount: 0,
+              sold: 0,
+              featured,
+              active: true,
+              createdAt: new Date().toISOString().split('T')[0]
+            };
+            
+            data.products.push(newProduct);
+            fs.writeFileSync('data/products.json', JSON.stringify(data, null, 2));
+            
+            console.log('Added product:', newProduct.name);
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/products.json
+          git commit -m "feat: add product from issue #${{ github.event.issue.number }}"
+          git push
+
+      - name: Close issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              state: 'closed'
+            });
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: '✅ Sản phẩm đã được thêm thành công! Site sẽ cập nhật trong vài phút.'
+            });

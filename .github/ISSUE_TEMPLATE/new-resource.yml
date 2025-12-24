@@ -1,0 +1,69 @@
+name: "📦 Thêm tài nguyên mới"
+description: "Thêm tài nguyên download"
+title: "[Resource] "
+labels: ["resource", "auto-process"]
+body:
+  - type: input
+    id: title
+    attributes:
+      label: Tiêu đề
+      placeholder: "JavaScript Cheatsheet"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Mô tả
+      placeholder: "Mô tả tài nguyên..."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Loại tài nguyên
+      options:
+        - cheatsheet
+        - guide
+        - code
+        - ebook
+        - video
+    validations:
+      required: true
+
+  - type: dropdown
+    id: format
+    attributes:
+      label: Định dạng file
+      options:
+        - pdf
+        - zip
+        - md
+        - mp4
+    validations:
+      required: true
+
+  - type: input
+    id: url
+    attributes:
+      label: URL tải xuống
+      placeholder: "https://..."
+    validations:
+      required: true
+
+  - type: input
+    id: tags
+    attributes:
+      label: Tags (phân cách bằng dấu phẩy)
+      placeholder: "javascript, cheatsheet"
+
+  - type: dropdown
+    id: free
+    attributes:
+      label: Miễn phí?
+      options:
+        - "true"
+        - "false"
+    validations:
+      required: true

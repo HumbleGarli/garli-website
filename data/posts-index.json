@@ -1,0 +1,118 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "Vibe Coding là gì? Tại sao bạn nên thử",
+      "slug": "vibe-coding-la-gi",
+      "excerpt": "Khám phá phong cách lập trình mới giúp bạn code hiệu quả hơn và tận hưởng quá trình học",
+      "content": "content/posts/2025-12-19-template-web-vibe.md",
+      "image": "assets/images/posts/vibe-coding.jpg",
+      "author": {
+        "name": "Minh Dev",
+        "avatar": "assets/images/authors/minh.jpg"
+      },
+      "category": "lifestyle",
+      "tags": ["vibe-coding", "productivity", "mindset"],
+      "readTime": 5,
+      "views": 1250,
+      "featured": true,
+      "publishedAt": "2025-12-19"
+    },
+    {
+      "id": 2,
+      "title": "10 Tips JavaScript giúp code sạch hơn",
+      "slug": "10-tips-javascript-clean-code",
+      "excerpt": "Những mẹo nhỏ nhưng cực kỳ hữu ích để viết JavaScript code dễ đọc và maintain",
+      "content": "content/posts/2025-12-15-javascript-tips.md",
+      "image": "assets/images/posts/js-tips.jpg",
+      "author": {
+        "name": "Minh Dev",
+        "avatar": "assets/images/authors/minh.jpg"
+      },
+      "category": "tutorial",
+      "tags": ["javascript", "clean-code", "tips"],
+      "readTime": 8,
+      "views": 3420,
+      "featured": true,
+      "publishedAt": "2025-12-15"
+    },
+    {
+      "id": 3,
+      "title": "Tailwind CSS vs Bootstrap: Nên chọn cái nào?",
+      "slug": "tailwind-vs-bootstrap",
+      "excerpt": "So sánh chi tiết 2 CSS framework phổ biến nhất hiện nay để giúp bạn đưa ra lựa chọn phù hợp",
+      "content": "content/posts/2025-12-10-tailwind-vs-bootstrap.md",
+      "image": "assets/images/posts/tailwind-bootstrap.jpg",
+      "author": {
+        "name": "Lan Frontend",
+        "avatar": "assets/images/authors/lan.jpg"
+      },
+      "category": "comparison",
+      "tags": ["tailwind", "bootstrap", "css"],
+      "readTime": 10,
+      "views": 2890,
+      "featured": false,
+      "publishedAt": "2025-12-10"
+    },
+    {
+      "id": 4,
+      "title": "Hướng dẫn deploy website lên GitHub Pages",
+      "slug": "deploy-github-pages",
+      "excerpt": "Step-by-step hướng dẫn deploy website tĩnh lên GitHub Pages miễn phí",
+      "content": "content/posts/2025-12-05-github-pages.md",
+      "image": "assets/images/posts/github-pages.jpg",
+      "author": {
+        "name": "Minh Dev",
+        "avatar": "assets/images/authors/minh.jpg"
+      },
+      "category": "tutorial",
+      "tags": ["github", "deploy", "hosting"],
+      "readTime": 6,
+      "views": 4560,
+      "featured": false,
+      "publishedAt": "2025-12-05"
+    },
+    {
+      "id": 5,
+      "title": "React 19: Những tính năng mới đáng chú ý",
+      "slug": "react-19-new-features",
+      "excerpt": "Tổng hợp các tính năng mới trong React 19 và cách áp dụng vào dự án",
+      "content": "content/posts/2025-11-28-react-19.md",
+      "image": "assets/images/posts/react-19.jpg",
+      "author": {
+        "name": "Lan Frontend",
+        "avatar": "assets/images/authors/lan.jpg"
+      },
+      "category": "news",
+      "tags": ["react", "javascript", "update"],
+      "readTime": 12,
+      "views": 5230,
+      "featured": true,
+      "publishedAt": "2025-11-28"
+    },
+    {
+      "id": 6,
+      "title": "Tối ưu performance cho website",
+      "slug": "toi-uu-performance-website",
+      "excerpt": "Các kỹ thuật tối ưu tốc độ load trang và Core Web Vitals",
+      "content": "content/posts/2025-11-20-web-performance.md",
+      "image": "assets/images/posts/performance.jpg",
+      "author": {
+        "name": "Minh Dev",
+        "avatar": "assets/images/authors/minh.jpg"
+      },
+      "category": "tutorial",
+      "tags": ["performance", "optimization", "seo"],
+      "readTime": 15,
+      "views": 1890,
+      "featured": false,
+      "publishedAt": "2025-11-20"
+    }
+  ],
+  "categories": [
+    { "id": "tutorial", "name": "Hướng dẫn", "color": "blue" },
+    { "id": "news", "name": "Tin tức", "color": "green" },
+    { "id": "comparison", "name": "So sánh", "color": "purple" },
+    { "id": "lifestyle", "name": "Lifestyle", "color": "pink" }
+  ]
+}

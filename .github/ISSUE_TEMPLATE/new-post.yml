@@ -1,0 +1,76 @@
+name: "📝 Thêm bài viết mới"
+description: "Tạo bài viết blog mới"
+title: "[Post] "
+labels: ["post", "auto-process"]
+body:
+  - type: input
+    id: title
+    attributes:
+      label: Tiêu đề
+      placeholder: "10 Tips JavaScript hay ho"
+    validations:
+      required: true
+
+  - type: input
+    id: slug
+    attributes:
+      label: Slug (URL-friendly, không dấu)
+      placeholder: "10-tips-javascript"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Danh mục
+      options:
+        - tutorial
+        - news
+        - comparison
+        - lifestyle
+    validations:
+      required: true
+
+  - type: textarea
+    id: excerpt
+    attributes:
+      label: Mô tả ngắn
+      placeholder: "Tóm tắt nội dung bài viết..."
+    validations:
+      required: true
+
+  - type: input
+    id: author
+    attributes:
+      label: Tác giả
+      placeholder: "Admin"
+    validations:
+      required: true
+
+  - type: input
+    id: tags
+    attributes:
+      label: Tags (phân cách bằng dấu phẩy)
+      placeholder: "javascript, tips, coding"
+
+  - type: textarea
+    id: content
+    attributes:
+      label: Nội dung (Markdown)
+      placeholder: |
+        # Tiêu đề
+
+        Nội dung bài viết...
+
+        ## Phần 1
+        ...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: featured
+    attributes:
+      label: Bài viết nổi bật?
+      options:
+        - "false"
+        - "true"

@@ -1,0 +1,84 @@
+name: Process Resource Issue
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  process-resource:
+    if: contains(github.event.issue.labels.*.name, 'resource') && contains(github.event.issue.labels.*.name, 'auto-process')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Parse issue and update resources.json
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = context.payload.issue.body;
+            
+            const getValue = (label) => {
+              const regex = new RegExp(`### ${label}\\s*\\n\\s*([^\\n#]+)`, 'i');
+              const match = body.match(regex);
+              return match ? match[1].trim() : '';
+            };
+            
+            const title = getValue('Tiêu đề');
+            const description = getValue('Mô tả');
+            const type = getValue('Loại tài nguyên');
+            const format = getValue('Định dạng file');
+            const url = getValue('URL tải xuống');
+            const tags = getValue('Tags \\(phân cách bằng dấu phẩy\\)').split(',').map(t => t.trim()).filter(Boolean);
+            const free = getValue('Miễn phí\\?') === 'true';
+            
+            const data = JSON.parse(fs.readFileSync('data/resources.json', 'utf8'));
+            const newId = Math.max(0, ...data.resources.map(r => r.id)) + 1;
+            
+            const newResource = {
+              id: newId,
+              title,
+              description,
+              type,
+              format,
+              url,
+              image: 'assets/images/resources/default.jpg',
+              downloadCount: 0,
+              tags,
+              free,
+              createdAt: new Date().toISOString().split('T')[0]
+            };
+            
+            data.resources.push(newResource);
+            fs.writeFileSync('data/resources.json', JSON.stringify(data, null, 2));
+            
+            console.log('Added resource:', title);
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/resources.json
+          git commit -m "feat: add resource from issue #${{ github.event.issue.number }}"
+          git push
+
+      - name: Close issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              state: 'closed'
+            });
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: '✅ Tài nguyên đã được thêm thành công! Site sẽ cập nhật trong vài phút.'
+            });

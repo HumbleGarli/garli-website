@@ -1,0 +1,61 @@
+name: "🛒 Thêm sản phẩm mới"
+description: "Tạo sản phẩm mới cho shop"
+title: "[Product] "
+labels: ["product", "auto-process"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Tên sản phẩm
+      placeholder: "Khóa học JavaScript Pro"
+    validations:
+      required: true
+
+  - type: input
+    id: price
+    attributes:
+      label: Giá (VND)
+      placeholder: "599000"
+    validations:
+      required: true
+
+  - type: input
+    id: original_price
+    attributes:
+      label: Giá gốc (VND)
+      placeholder: "1200000"
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Danh mục
+      options:
+        - course
+        - template
+        - ebook
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Mô tả
+      placeholder: "Mô tả chi tiết sản phẩm..."
+    validations:
+      required: true
+
+  - type: input
+    id: tags
+    attributes:
+      label: Tags (phân cách bằng dấu phẩy)
+      placeholder: "javascript, web, frontend"
+
+  - type: dropdown
+    id: featured
+    attributes:
+      label: Sản phẩm nổi bật?
+      options:
+        - "false"
+        - "true"
+    validations:
+      required: true

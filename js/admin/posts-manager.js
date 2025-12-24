@@ -1,0 +1,333 @@
+// ==========================================
+// POSTS-MANAGER.JS - CRUD Blog Posts
+// Tách file: index JSON + markdown files
+// ==========================================
+
+const PostsManager = {
+    posts: [],
+    categories: [],
+    editingId: null,
+    editingContent: '',
+
+    async init() {
+        await this.loadData();
+        this.render();
+    },
+
+    async loadData() {
+        try {
+            const { content } = await GitHubAPI.getJson('data/posts-index.json');
+            this.posts = content.posts || [];
+            this.categories = content.categories || [];
+        } catch (e) {
+            const res = await fetch('data/posts-index.json');
+            const data = await res.json();
+            this.posts = data.posts || [];
+            this.categories = data.categories || [];
+        }
+    },
+
+    render() {
+        const container = document.getElementById('tab-content');
+        container.innerHTML = `
+            <div class="space-y-4">
+                <div class="flex flex-wrap gap-4 items-center justify-between">
+                    <input type="text" id="post-search" placeholder="Tìm bài viết..."
+                        class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                    <button id="add-post-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        + Thêm bài viết
+                    </button>
+                </div>
+                <div id="posts-list" class="space-y-2"></div>
+            </div>
+            <div id="post-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div class="bg-white dark:bg-gray-800 rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"></div>
+            </div>
+        `;
+        this.renderList();
+        this.setupEvents();
+    },
+
+    renderList(filter = '') {
+        const list = document.getElementById('posts-list');
+        let filtered = [...this.posts].sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+        
+        if (filter) {
+            const q = filter.toLowerCase();
+            filtered = filtered.filter(p => p.title.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
+        }
+
+        if (!filtered.length) {
+            list.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-8">Không có bài viết nào</p>';
+            return;
+        }
+
+        list.innerHTML = filtered.map(p => `
+            <div class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div class="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 rounded-lg flex items-center justify-center text-2xl">📝</div>
+                <div class="flex-1 min-w-0">
+                    <h4 class="font-medium text-gray-800 dark:text-white truncate">${p.title}</h4>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">${p.category} • ${p.publishedAt} • ${p.readTime} phút • ${p.views.toLocaleString()} views</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-1 text-xs rounded ${p.featured ? 'bg-yellow-100 text-yellow-600' : 'bg-gray-100 text-gray-600'}">${p.featured ? 'Featured' : 'Normal'}</span>
+                    <button onclick="PostsManager.edit(${p.id})" class="p-2 text-blue-600 hover:bg-blue-50 rounded">✏️</button>
+                    <button onclick="PostsManager.delete(${p.id})" class="p-2 text-red-600 hover:bg-red-50 rounded">🗑️</button>
+                </div>
+            </div>
+        `).join('');
+    },
+
+    setupEvents() {
+        document.getElementById('post-search')?.addEventListener('input', (e) => this.renderList(e.target.value));
+        document.getElementById('add-post-btn')?.addEventListener('click', () => this.showForm());
+    },
+
+    async showForm(post = null) {
+        this.editingId = post?.id || null;
+        this.editingContent = '';
+        
+        // Load markdown content nếu edit
+        if (post?.content) {
+            try {
+                const { content } = await GitHubAPI.getRawFile(post.content);
+                this.editingContent = content;
+            } catch (e) {
+                console.error('Error loading post content:', e);
+            }
+        }
+
+        const modal = document.getElementById('post-modal');
+        const container = modal.querySelector('div');
+        
+        container.innerHTML = `
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">${post ? 'Sửa' : 'Thêm'} bài viết</h3>
+                <form id="post-form" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tiêu đề</label>
+                            <input type="text" name="title" id="post-title" value="${post?.title || ''}" required 
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Slug</label>
+                            <input type="text" name="slug" id="post-slug" value="${post?.slug || ''}" required 
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Danh mục</label>
+                            <select name="category" required class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                ${this.categories.map(c => `<option value="${c.id}" ${post?.category === c.id ? 'selected' : ''}>${c.name}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Mô tả ngắn</label>
+                            <textarea name="excerpt" rows="2" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">${post?.excerpt || ''}</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tác giả</label>
+                            <input type="text" name="authorName" value="${post?.author?.name || 'Admin'}" 
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Thời gian đọc (phút)</label>
+                            <input type="number" name="readTime" value="${post?.readTime || 5}" min="1" 
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tags</label>
+                            <input type="text" name="tags" value="${post?.tags?.join(', ') || ''}" 
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nổi bật?</label>
+                            <select name="featured" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                <option value="false" ${!post?.featured ? 'selected' : ''}>Không</option>
+                                <option value="true" ${post?.featured ? 'selected' : ''}>Có</option>
+                            </select>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nội dung (Markdown)</label>
+                            <textarea name="content" id="post-content" rows="15" 
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white font-mono text-sm">${this.editingContent}</textarea>
+                        </div>
+                    </div>
+                    <div id="form-error" class="text-red-500 text-sm hidden"></div>
+                    <div class="flex gap-3 justify-end pt-4">
+                        <button type="button" onclick="PostsManager.closeForm()" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg">Hủy</button>
+                        <button type="submit" id="post-submit-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        `;
+
+        modal.classList.remove('hidden');
+        
+        // Auto generate slug from title
+        document.getElementById('post-title')?.addEventListener('input', (e) => {
+            if (!this.editingId) {
+                document.getElementById('post-slug').value = Validators.slugify(e.target.value);
+            }
+        });
+        
+        document.getElementById('post-form').addEventListener('submit', (e) => this.handleSubmit(e));
+    },
+
+    async handleSubmit(e) {
+        e.preventDefault();
+        const form = e.target;
+        const errorEl = document.getElementById('form-error');
+        const submitBtn = document.getElementById('post-submit-btn');
+        
+        const slug = form.slug.value.trim();
+        const content = form.content.value.trim();
+        const today = new Date().toISOString().split('T')[0];
+        
+        const metadata = {
+            title: form.title.value.trim(),
+            slug: slug,
+            excerpt: form.excerpt.value.trim(),
+            category: form.category.value,
+            author: {
+                name: form.authorName.value.trim() || 'Admin',
+                avatar: 'assets/images/authors/default.jpg'
+            },
+            tags: form.tags.value.split(',').map(t => t.trim()).filter(Boolean),
+            readTime: parseInt(form.readTime.value) || 5,
+            featured: form.featured.value === 'true'
+        };
+
+        // Validate
+        const errors = Validators.post(metadata);
+        if (!content) errors.push('Nội dung không được trống');
+        if (errors.length) {
+            errorEl.textContent = errors.join(', ');
+            errorEl.classList.remove('hidden');
+            return;
+        }
+
+        // Check slug unique (for new posts)
+        if (!this.editingId && this.posts.some(p => p.slug === slug)) {
+            errorEl.textContent = 'Slug đã tồn tại, vui lòng chọn slug khác';
+            errorEl.classList.remove('hidden');
+            return;
+        }
+
+        try {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Đang lưu...';
+
+            // Generate file path
+            const mdPath = `content/posts/${today}-${slug}.md`;
+            
+            // Encode markdown content to base64
+            const contentBase64 = btoa(unescape(encodeURIComponent(content)));
+
+            if (this.editingId) {
+                // UPDATE existing post
+                const idx = this.posts.findIndex(p => p.id === this.editingId);
+                if (idx !== -1) {
+                    const oldPost = this.posts[idx];
+                    
+                    // Update markdown file
+                    await GitHubAPI.createOrUpdateFile(
+                        oldPost.content, // Use existing path
+                        contentBase64,
+                        `Update post: ${metadata.title}`
+                    );
+
+                    // Update metadata in index
+                    this.posts[idx] = {
+                        ...oldPost,
+                        ...metadata,
+                        id: this.editingId
+                    };
+                }
+            } else {
+                // CREATE new post
+                // 1. Create markdown file
+                await GitHubAPI.createOrUpdateFile(
+                    mdPath,
+                    contentBase64,
+                    `Create post: ${metadata.title}`
+                );
+
+                // 2. Add to index
+                const newPost = {
+                    ...metadata,
+                    id: Math.max(0, ...this.posts.map(p => p.id)) + 1,
+                    content: mdPath,
+                    image: 'assets/images/posts/default.jpg',
+                    views: 0,
+                    publishedAt: today
+                };
+                this.posts.push(newPost);
+            }
+
+            // 3. Update posts-index.json
+            await GitHubAPI.updateJson('data/posts-index.json', {
+                posts: this.posts,
+                categories: this.categories
+            }, `${this.editingId ? 'Update' : 'Add'} post index: ${metadata.title}`);
+
+            this.closeForm();
+            this.renderList();
+            alert('Đã lưu thành công!');
+
+        } catch (err) {
+            errorEl.textContent = 'Lỗi: ' + err.message;
+            errorEl.classList.remove('hidden');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Lưu';
+        }
+    },
+
+    closeForm() {
+        document.getElementById('post-modal').classList.add('hidden');
+        this.editingId = null;
+        this.editingContent = '';
+    },
+
+    edit(id) {
+        const post = this.posts.find(p => p.id === id);
+        if (post) this.showForm(post);
+    },
+
+    async delete(id) {
+        const post = this.posts.find(p => p.id === id);
+        if (!post) return;
+
+        const deleteFile = confirm('Bạn có muốn xóa cả file markdown không?\n\nOK = Xóa cả file\nCancel = Chỉ xóa khỏi index');
+        
+        if (!confirm(`Xác nhận xóa bài viết "${post.title}"?`)) return;
+
+        try {
+            // Remove from index
+            this.posts = this.posts.filter(p => p.id !== id);
+            
+            // Update index first
+            await GitHubAPI.updateJson('data/posts-index.json', {
+                posts: this.posts,
+                categories: this.categories
+            }, `Delete post from index: ${post.title}`);
+
+            // Optionally delete markdown file
+            if (deleteFile && post.content) {
+                try {
+                    await GitHubAPI.deleteFile(post.content, `Delete post file: ${post.title}`);
+                } catch (e) {
+                    console.warn('Could not delete markdown file:', e);
+                }
+            }
+
+            this.renderList();
+            alert('Đã xóa thành công!');
+        } catch (err) {
+            alert('Lỗi: ' + err.message);
+        }
+    }
+};
+
+window.PostsManager = PostsManager;

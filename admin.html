@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin - VibeCoding</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+</head>
+<body class="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors">
+    <!-- Login Form -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 w-full max-w-md">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white text-center mb-2">Admin Panel</h1>
+            <p class="text-gray-500 dark:text-gray-400 text-center mb-6">Đăng nhập bằng GitHub Token</p>
+            
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">GitHub Username</label>
+                    <input type="text" id="input-owner" required
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500"
+                        placeholder="username">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Repository</label>
+                    <input type="text" id="input-repo" required
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500"
+                        placeholder="repo-name">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Personal Access Token</label>
+                    <input type="password" id="input-token" required
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500"
+                        placeholder="ghp_xxxxxxxxxxxx">
+                </div>
+                <div id="login-error" class="text-red-500 text-sm hidden"></div>
+                <button type="submit" id="login-btn"
+                    class="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                    Đăng nhập
+                </button>
+            </form>
+            
+            <p class="text-xs text-gray-400 dark:text-gray-500 text-center mt-4">
+                Token cần quyền <code class="bg-gray-100 dark:bg-gray-700 px-1 rounded">repo</code>
+            </p>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard (hidden by default) -->
+    <div id="admin-dashboard" class="hidden">
+        <!-- Header -->
+        <header class="bg-white dark:bg-gray-800 shadow-sm">
+            <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+                <h1 class="text-xl font-bold text-gray-800 dark:text-white">Admin Panel</h1>
+                <div class="flex items-center gap-4">
+                    <span id="session-timer" class="text-sm text-gray-500 dark:text-gray-400"></span>
+                    <span id="user-info" class="text-sm text-gray-600 dark:text-gray-300"></span>
+                    <button id="logout-btn" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm">
+                        Đăng xuất
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+                    <h3 class="text-gray-500 dark:text-gray-400 text-sm">Sản phẩm</h3>
+                    <p id="stat-products" class="text-3xl font-bold text-gray-800 dark:text-white mt-2">-</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+                    <h3 class="text-gray-500 dark:text-gray-400 text-sm">Bài viết</h3>
+                    <p id="stat-posts" class="text-3xl font-bold text-gray-800 dark:text-white mt-2">-</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+                    <h3 class="text-gray-500 dark:text-gray-400 text-sm">Tài nguyên</h3>
+                    <p id="stat-resources" class="text-3xl font-bold text-gray-800 dark:text-white mt-2">-</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+                    <h3 class="text-gray-500 dark:text-gray-400 text-sm">Session</h3>
+                    <p id="stat-session" class="text-3xl font-bold text-green-500 mt-2">Active</p>
+                </div>
+            </div>
+
+            <!-- Admin Tabs -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm">
+                <div class="border-b border-gray-200 dark:border-gray-700">
+                    <nav class="flex space-x-4 px-6" id="admin-tabs">
+                        <button data-tab="products" class="tab-btn active py-4 text-blue-600 border-b-2 border-blue-600 font-medium">Sản phẩm</button>
+                        <button data-tab="posts" class="tab-btn py-4 text-gray-500 hover:text-gray-700 dark:text-gray-400">Bài viết</button>
+                        <button data-tab="resources" class="tab-btn py-4 text-gray-500 hover:text-gray-700 dark:text-gray-400">Tài nguyên</button>
+                        <button data-tab="config" class="tab-btn py-4 text-gray-500 hover:text-gray-700 dark:text-gray-400">Cấu hình</button>
+                    </nav>
+                </div>
+                <div id="tab-content" class="p-6">
+                    <p class="text-gray-500 dark:text-gray-400">Chọn tab để quản lý nội dung</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/api/github-api.js"></script>
+    <script src="js/admin/image-tools.js"></script>
+    <script src="js/admin/validators.js"></script>
+    <script src="js/admin/products-manager.js"></script>
+    <script src="js/admin/resources-manager.js"></script>
+    <script src="js/admin/posts-manager.js"></script>
+    <script src="js/admin/admin.js"></script>
+</body>
+</html>
