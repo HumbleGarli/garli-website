@@ -58,6 +58,12 @@
   "seo": {
     "defaultTitle": "VibeCoding - Học lập trình & Tài nguyên Dev",
     "defaultDescription": "Nền tảng học lập trình, chia sẻ tài nguyên và cộng đồng developer Việt Nam",
-    "keywords": ["lập trình", "javascript", "web development", "coding", "tutorial"]
+    "keywords": [
+      "lập trình",
+      "javascript",
+      "web development",
+      "coding",
+      "tutorial"
+    ]
   }
 }
