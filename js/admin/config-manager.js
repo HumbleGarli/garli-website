@@ -232,6 +232,9 @@ const ConfigManager = {
             submitBtn.textContent = 'Đang lưu cấu hình...';
             await GitHubAPI.updateJson('data/config.json', this.config, 'Update site config');
 
+            // Reload data để lấy SHA mới
+            await this.loadData();
+            
             alert('Đã lưu cấu hình thành công!');
             this.renderBanners(); // Refresh để hiện path ảnh mới
 

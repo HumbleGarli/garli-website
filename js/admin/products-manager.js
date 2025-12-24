@@ -260,6 +260,9 @@ const ProductsManager = {
                 categories: this.categories
             }, `${this.editingId ? 'Update' : 'Add'} product: ${data.name}`);
 
+            // Reload data để lấy SHA mới (tránh lỗi SHA mismatch khi save tiếp)
+            await this.loadData();
+
             this.closeForm();
             this.renderList();
             alert('Đã lưu thành công!');
@@ -293,6 +296,9 @@ const ProductsManager = {
                 products: this.products,
                 categories: this.categories
             }, `Delete product #${id}`);
+            
+            // Reload data để lấy SHA mới
+            await this.loadData();
             
             this.renderList();
             alert('Đã xóa thành công!');

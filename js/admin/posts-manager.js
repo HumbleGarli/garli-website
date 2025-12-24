@@ -271,6 +271,9 @@ const PostsManager = {
                 categories: this.categories
             }, `${this.editingId ? 'Update' : 'Add'} post index: ${metadata.title}`);
 
+            // Reload data để lấy SHA mới (tránh lỗi SHA mismatch khi save tiếp)
+            await this.loadData();
+
             this.closeForm();
             this.renderList();
             alert('Đã lưu thành công!');
@@ -312,6 +315,9 @@ const PostsManager = {
                 posts: this.posts,
                 categories: this.categories
             }, `Delete post from index: ${post.title}`);
+
+            // Reload data để lấy SHA mới
+            await this.loadData();
 
             // Optionally delete markdown file
             if (deleteFile && post.content) {

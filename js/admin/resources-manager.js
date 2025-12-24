@@ -191,6 +191,9 @@ const ResourcesManager = {
                 types: this.types
             }, `${this.editingId ? 'Update' : 'Add'} resource: ${data.title}`);
 
+            // Reload data để lấy SHA mới (tránh lỗi SHA mismatch khi save tiếp)
+            await this.loadData();
+
             this.closeForm();
             this.renderList();
             alert('Đã lưu thành công!');
@@ -221,6 +224,10 @@ const ResourcesManager = {
                 resources: this.resources,
                 types: this.types
             }, `Delete resource #${id}`);
+            
+            // Reload data để lấy SHA mới
+            await this.loadData();
+            
             this.renderList();
             alert('Đã xóa thành công!');
         } catch (err) {
