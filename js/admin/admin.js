@@ -267,8 +267,7 @@ const AdminPanel = {
                 PostsManager.init();
                 break;
             case 'config':
-                if (typeof ConfigManager !== 'undefined') ConfigManager.init();
-                else document.getElementById('tab-content').innerHTML = '<p class="text-gray-500">Config manager coming soon...</p>';
+                ConfigManager.init();
                 break;
         }
     }
