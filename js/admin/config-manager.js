@@ -58,6 +58,10 @@ const ConfigManager = {
                             <input type="url" name="facebook" value="${c.socialLinks?.facebook || ''}" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                         </div>
                         <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Zalo</label>
+                            <input type="url" name="zalo" value="${c.socialLinks?.zalo || ''}" placeholder="https://zalo.me/..." class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                        </div>
+                        <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Twitter</label>
                             <input type="url" name="twitter" value="${c.socialLinks?.twitter || ''}" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                         </div>
@@ -208,6 +212,7 @@ const ConfigManager = {
             // Update social links
             this.config.socialLinks = {
                 facebook: form.facebook.value,
+                zalo: form.zalo.value,
                 twitter: form.twitter.value,
                 github: form.github.value,
                 youtube: form.youtube.value,
