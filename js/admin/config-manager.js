@@ -83,7 +83,10 @@ const ConfigManager = {
                 </div>
 
                 <div id="config-error" class="text-red-500 text-sm hidden"></div>
-                <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Lưu cấu hình</button>
+                <div class="flex items-center gap-4">
+                    <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Lưu cấu hình</button>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">💡 Nếu gặp lỗi SHA, hãy nhấn <kbd class="px-1.5 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-xs font-mono">Ctrl+Shift+R</kbd> để refresh</span>
+                </div>
             </form>
         `;
 
