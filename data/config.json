@@ -16,7 +16,7 @@
     {
       "id": 1,
       "title": "SHOP",
-      "subtitle": "Tái 30",
+      "subtitle": "Tải 30",
       "image": "assets/images/banners/1766598388883-016-z7306826868878-4345d4db4dd8b0ecfdc09b80aa59c93f.webp",
       "link": "shop.html?id=1",
       "active": true
@@ -24,15 +24,15 @@
     {
       "id": 2,
       "title": "Template Website Premium",
-      "subtitle": "50 máu",
+      "subtitle": "50+ mẫu thiết kế chuyên nghiệp",
       "image": "assets/images/banners/1766598391257-017-z7306826869183-900f2ac567c3183234f5a15731572327.webp",
       "link": "shop.html?category=template",
       "active": true
     },
     {
       "id": 3,
-      "title": "Cá»ng Äá»ng Developer",
-      "subtitle": "Tham gia 10,000+",
+      "title": "Cộng đồng Developer",
+      "subtitle": "Tham gia 10,000+ thành viên",
       "image": "assets/images/banners/1766598394273-016-z7306826868878-4345d4db4dd8b0ecfdc09b80aa59c93f.webp",
       "link": "about.html",
       "active": true
@@ -41,29 +41,23 @@
   "features": [
     {
       "icon": "rocket",
-      "title": "Nhanh chÃ³ng",
-      "description": "Triá»n khai dá»± Ã¡n trong vÃ i phÃºt"
+      "title": "Nhanh chóng",
+      "description": "Triển khai dự án trong vài phút"
     },
     {
       "icon": "shield",
-      "title": "Báº£o máº­t",
-      "description": "Code chuáº©n, an toÃ n tuyá»t Äá»i"
+      "title": "Bảo mật",
+      "description": "Code chuẩn, an toàn tuyệt đối"
     },
     {
       "icon": "support",
-      "title": "Há» trá»£ 24/7",
-      "description": "Äá»i ngÅ© luÃ´n sáºµn sÃ ng giÃºp Äá»¡"
+      "title": "Hỗ trợ 24/7",
+      "description": "Đội ngũ luôn sẵn sàng giúp đỡ"
     }
   ],
   "seo": {
-    "defaultTitle": "VibeCoding - Há»c láº­p trÃ¬nh & TÃ i nguyÃªn Dev",
-    "defaultDescription": "Ná»n táº£ng há»c láº­p trÃ¬nh, chia sáº» tÃ i nguyÃªn vÃ  cá»ng Äá»ng developer Viá»t Nam",
-    "keywords": [
-      "láº­p trÃ¬nh",
-      "javascript",
-      "web development",
-      "coding",
-      "tutorial"
-    ]
+    "defaultTitle": "VibeCoding - Học lập trình & Tài nguyên Dev",
+    "defaultDescription": "Nền tảng học lập trình, chia sẻ tài nguyên và cộng đồng developer Việt Nam",
+    "keywords": ["lập trình", "javascript", "web development", "coding", "tutorial"]
   }
 }
