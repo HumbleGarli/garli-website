@@ -71,7 +71,9 @@ const GitHubAPI = {
     async getJson(path) {
         try {
             const data = await this.request(`/contents/${path}?ref=${this.config.branch}`);
-            const content = JSON.parse(atob(data.content));
+            // Decode base64 với UTF-8 support
+            const decoded = decodeURIComponent(escape(atob(data.content)));
+            const content = JSON.parse(decoded);
             return { content, sha: data.sha, path: data.path };
         } catch (e) {
             console.error(`[GitHubAPI] getJson error (${path}):`, e);
@@ -87,8 +89,9 @@ const GitHubAPI = {
             // Lấy sha hiện tại
             const { sha } = await this.getJson(path);
             
-            // Encode content
-            const content = btoa(unescape(encodeURIComponent(JSON.stringify(json, null, 2))));
+            // Encode content với UTF-8 support
+            const jsonStr = JSON.stringify(json, null, 2);
+            const content = btoa(unescape(encodeURIComponent(jsonStr)));
             
             // Update file
             const result = await this.request(`/contents/${path}`, {
