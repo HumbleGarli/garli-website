@@ -106,8 +106,8 @@ const ConfigManager = {
                     <input type="text" name="banner_subtitle_${i}" value="${b.subtitle || ''}" placeholder="Phụ đề" class="px-3 py-2 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
                     <input type="text" name="banner_link_${i}" value="${b.link || ''}" placeholder="Link (vd: shop.html)" class="px-3 py-2 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
                     <select name="banner_active_${i}" class="px-3 py-2 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
-                        <option value="true" ${b.active !== false ? 'selected' : ''}>Hiển thị</option>
-                        <option value="false" ${b.active === false ? 'selected' : ''}>Ẩn</option>
+                        <option value="true" ${b.active !== false ? 'selected' : ''}>Hiển thị chữ</option>
+                        <option value="false" ${b.active === false ? 'selected' : ''}>Ẩn chữ</option>
                     </select>
                 </div>
                 <div>

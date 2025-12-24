@@ -27,26 +27,25 @@ const HomePage = {
         const container = document.getElementById('banners-container');
         if (!container || !banners?.length) return;
 
-        const activeBanners = banners.filter(b => b.active);
+        // Chỉ lọc banner có ảnh (không lọc theo active nữa)
+        const validBanners = banners.filter(b => b.image);
         
         container.innerHTML = `
             <div class="swiper banner-swiper">
                 <div class="swiper-wrapper">
-                    ${activeBanners.map(b => `
+                    ${validBanners.map(b => `
                         <div class="swiper-slide">
                             <a href="${b.link}" class="block relative h-64 md:h-96 rounded-xl overflow-hidden">
-                                ${b.image ? `
-                                    <img src="${b.image}" alt="${b.title}" class="absolute inset-0 w-full h-full object-cover">
+                                <img src="${b.image}" alt="${b.title || ''}" class="absolute inset-0 w-full h-full object-cover">
+                                ${b.active !== false ? `
                                     <div class="absolute inset-0 bg-black/40"></div>
-                                ` : `
-                                    <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600"></div>
-                                `}
-                                <div class="absolute inset-0 flex items-center justify-center text-center p-8">
-                                    <div>
-                                        <h2 class="text-3xl md:text-5xl font-bold text-white mb-4">${b.title}</h2>
-                                        <p class="text-lg md:text-xl text-white/80">${b.subtitle}</p>
+                                    <div class="absolute inset-0 flex items-center justify-center text-center p-8">
+                                        <div>
+                                            <h2 class="text-3xl md:text-5xl font-bold text-white mb-4">${b.title}</h2>
+                                            <p class="text-lg md:text-xl text-white/80">${b.subtitle}</p>
+                                        </div>
                                     </div>
-                                </div>
+                                ` : ''}
                             </a>
                         </div>
                     `).join('')}
