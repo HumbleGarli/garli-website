@@ -1,33 +1,41 @@
 {
   "products": [
     {
-      "id": 1,
-      "name": "Khóa học JavaScript Pro",
-      "slug": "khoa-hoc-javascript-pro",
-      "description": "Khóa học JavaScript từ cơ bản đến nâng cao, bao gồm ES6+, async/await, và các design patterns",
-      "price": 599000,
-      "originalPrice": 1200000,
+      "name": "Youtube Premium",
+      "slug": "youtube-premium",
+      "description": "KhÃ³a há»c JavaScript tá»« cÆ¡ báº£n Äáº¿n nÃ¢ng cao, bao gá»m ES6+, async/await, vÃ  cÃ¡c design patterns",
+      "price": 45000,
+      "originalPrice": 45000,
       "currency": "VND",
       "category": "course",
-      "tags": ["javascript", "web", "frontend"],
-      "image": "assets/images/products/js-course.jpg",
+      "tags": [
+        "javascript",
+        "web",
+        "frontend"
+      ],
+      "active": true,
+      "featured": false,
+      "id": 1,
+      "createdAt": "2025-01-15",
       "rating": 4.8,
       "reviewCount": 256,
       "sold": 1520,
-      "featured": true,
-      "active": true,
-      "createdAt": "2025-01-15"
+      "image": "assets/images/products/js-course.jpg"
     },
     {
       "id": 2,
       "name": "React Masterclass",
       "slug": "react-masterclass",
-      "description": "Làm chủ React 18, Hooks, Redux Toolkit, React Query và Next.js",
+      "description": "LÃ m chá»§ React 18, Hooks, Redux Toolkit, React Query vÃ  Next.js",
       "price": 799000,
       "originalPrice": 1500000,
       "currency": "VND",
       "category": "course",
-      "tags": ["react", "frontend", "nextjs"],
+      "tags": [
+        "react",
+        "frontend",
+        "nextjs"
+      ],
       "image": "assets/images/products/react-course.jpg",
       "rating": 4.9,
       "reviewCount": 189,
@@ -40,12 +48,16 @@
       "id": 3,
       "name": "Template Dashboard Admin",
       "slug": "template-dashboard-admin",
-      "description": "Template admin dashboard với Tailwind CSS, charts, tables và dark mode",
+      "description": "Template admin dashboard vá»i Tailwind CSS, charts, tables vÃ  dark mode",
       "price": 299000,
       "originalPrice": 500000,
       "currency": "VND",
       "category": "template",
-      "tags": ["tailwind", "dashboard", "admin"],
+      "tags": [
+        "tailwind",
+        "dashboard",
+        "admin"
+      ],
       "image": "assets/images/products/dashboard-template.jpg",
       "rating": 4.7,
       "reviewCount": 87,
@@ -58,12 +70,16 @@
       "id": 4,
       "name": "Landing Page Kit",
       "slug": "landing-page-kit",
-      "description": "Bộ 10 landing page templates responsive, tối ưu conversion",
+      "description": "Bá» 10 landing page templates responsive, tá»i Æ°u conversion",
       "price": 199000,
       "originalPrice": 400000,
       "currency": "VND",
       "category": "template",
-      "tags": ["landing", "marketing", "tailwind"],
+      "tags": [
+        "landing",
+        "marketing",
+        "tailwind"
+      ],
       "image": "assets/images/products/landing-kit.jpg",
       "rating": 4.6,
       "reviewCount": 124,
@@ -76,12 +92,16 @@
       "id": 5,
       "name": "Node.js Backend Course",
       "slug": "nodejs-backend-course",
-      "description": "Xây dựng REST API với Node.js, Express, MongoDB và authentication",
+      "description": "XÃ¢y dá»±ng REST API vá»i Node.js, Express, MongoDB vÃ  authentication",
       "price": 699000,
       "originalPrice": 1300000,
       "currency": "VND",
       "category": "course",
-      "tags": ["nodejs", "backend", "api"],
+      "tags": [
+        "nodejs",
+        "backend",
+        "api"
+      ],
       "image": "assets/images/products/nodejs-course.jpg",
       "rating": 4.8,
       "reviewCount": 156,
@@ -94,12 +114,16 @@
       "id": 6,
       "name": "UI Component Library",
       "slug": "ui-component-library",
-      "description": "50+ React components với Tailwind, fully customizable và accessible",
+      "description": "50+ React components vá»i Tailwind, fully customizable vÃ  accessible",
       "price": 399000,
       "originalPrice": 800000,
       "currency": "VND",
       "category": "template",
-      "tags": ["react", "components", "ui"],
+      "tags": [
+        "react",
+        "components",
+        "ui"
+      ],
       "image": "assets/images/products/ui-library.jpg",
       "rating": 4.9,
       "reviewCount": 98,
@@ -112,12 +136,16 @@
       "id": 7,
       "name": "Ebook: Clean Code Vietnam",
       "slug": "ebook-clean-code-vietnam",
-      "description": "Ebook tiếng Việt về Clean Code, SOLID principles và best practices",
+      "description": "Ebook tiáº¿ng Viá»t vá» Clean Code, SOLID principles vÃ  best practices",
       "price": 99000,
       "originalPrice": 200000,
       "currency": "VND",
       "category": "ebook",
-      "tags": ["ebook", "clean-code", "best-practices"],
+      "tags": [
+        "ebook",
+        "clean-code",
+        "best-practices"
+      ],
       "image": "assets/images/products/clean-code-ebook.jpg",
       "rating": 4.5,
       "reviewCount": 312,
@@ -130,12 +158,16 @@
       "id": 8,
       "name": "Full-stack Bootcamp",
       "slug": "fullstack-bootcamp",
-      "description": "Combo khóa học full-stack: React + Node.js + MongoDB + DevOps",
+      "description": "Combo khÃ³a há»c full-stack: React + Node.js + MongoDB + DevOps",
       "price": 1499000,
       "originalPrice": 3000000,
       "currency": "VND",
       "category": "course",
-      "tags": ["fullstack", "bootcamp", "combo"],
+      "tags": [
+        "fullstack",
+        "bootcamp",
+        "combo"
+      ],
       "image": "assets/images/products/fullstack-bootcamp.jpg",
       "rating": 4.9,
       "reviewCount": 78,
@@ -146,8 +178,20 @@
     }
   ],
   "categories": [
-    { "id": "course", "name": "Khóa học", "icon": "book" },
-    { "id": "template", "name": "Template", "icon": "layout" },
-    { "id": "ebook", "name": "Ebook", "icon": "file-text" }
+    {
+      "id": "course",
+      "name": "KhÃ³a há»c",
+      "icon": "book"
+    },
+    {
+      "id": "template",
+      "name": "Template",
+      "icon": "layout"
+    },
+    {
+      "id": "ebook",
+      "name": "Ebook",
+      "icon": "file-text"
+    }
   ]
 }
