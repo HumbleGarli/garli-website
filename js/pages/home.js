@@ -31,6 +31,15 @@ const HomePage = {
         const validBanners = banners.filter(b => b.image);
         
         container.innerHTML = `
+            <style>
+                .banner-swiper .swiper-slide-active img {
+                    animation: kenburns 4s ease-out forwards;
+                }
+                @keyframes kenburns {
+                    0% { transform: scale(1); }
+                    100% { transform: scale(1.1); }
+                }
+            </style>
             <div class="swiper banner-swiper">
                 <div class="swiper-wrapper">
                     ${validBanners.map(b => `
@@ -56,10 +65,13 @@ const HomePage = {
             </div>
         `;
 
-        // Init Swiper
+        // Init Swiper với autoplay 4 giây
         new Swiper('.banner-swiper', {
             loop: true,
-            autoplay: { delay: 5000 },
+            autoplay: { 
+                delay: 4000,
+                disableOnInteraction: false 
+            },
             pagination: { el: '.swiper-pagination', clickable: true },
             navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' }
         });
