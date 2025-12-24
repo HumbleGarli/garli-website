@@ -1,11 +1,12 @@
 {
   "siteName": "Garli Store",
-  "tagline": "Tỏi đẹp try",
+  "tagline": "TOI DEP TRAI",
   "phone": "+84 868 074 935",
   "email": "leminhthien13122@gmail.com",
   "address": "Hồ Chí Minh",
   "socialLinks": {
     "facebook": "https://www.facebook.com/thienlatoi1312",
+    "zalo": "https://zalo.me/0868074935",
     "twitter": "",
     "github": "https://github.com/",
     "youtube": "https://youtube.com/",
@@ -14,25 +15,25 @@
   "banners": [
     {
       "id": 1,
-      "title": "KhÃ³a há»c JavaScript Pro",
-      "subtitle": "Tá»« zero Äáº¿n hero trong 30 ngÃ y",
-      "image": "assets/images/banner-js.jpg",
+      "title": "SHOP",
+      "subtitle": "TÃ¡Â»Â« zero ÃÂÃ¡ÂºÂ¿n hero trong 30 ngÃÂ y",
+      "image": "assets/images/banners/1766598388883-016-z7306826868878-4345d4db4dd8b0ecfdc09b80aa59c93f.webp",
       "link": "shop.html?id=1",
       "active": true
     },
     {
       "id": 2,
       "title": "Template Website Premium",
-      "subtitle": "50+ máº«u thiáº¿t káº¿ chuyÃªn nghiá»p",
-      "image": "assets/images/banner-template.jpg",
+      "subtitle": "gngk",
+      "image": "assets/images/banners/1766598391257-017-z7306826869183-900f2ac567c3183234f5a15731572327.webp",
       "link": "shop.html?category=template",
       "active": true
     },
     {
       "id": 3,
-      "title": "Cá»ng Äá»ng Developer",
-      "subtitle": "Tham gia 10,000+ thÃ nh viÃªn",
-      "image": "assets/images/banner-community.jpg",
+      "title": "Template 3",
+      "subtitle": "Tham gia ngay",
+      "image": "assets/images/banners/1766598394273-016-z7306826868878-4345d4db4dd8b0ecfdc09b80aa59c93f.webp",
       "link": "about.html",
       "active": true
     }
@@ -40,25 +41,25 @@
   "features": [
     {
       "icon": "rocket",
-      "title": "Nhanh chÃ³ng",
-      "description": "Triá»n khai dá»± Ã¡n trong vÃ i phÃºt"
+      "title": "Nhanh chÃÂ³ng",
+      "description": "TriÃ¡Â»Ân khai dÃ¡Â»Â± ÃÂ¡n trong vÃÂ i phÃÂºt"
     },
     {
       "icon": "shield",
-      "title": "Báº£o máº­t",
-      "description": "Code chuáº©n, an toÃ n tuyá»t Äá»i"
+      "title": "BÃ¡ÂºÂ£o mÃ¡ÂºÂ­t",
+      "description": "Code chuÃ¡ÂºÂ©n, an toÃÂ n tuyÃ¡Â»Ât ÃÂÃ¡Â»Âi"
     },
     {
       "icon": "support",
-      "title": "Há» trá»£ 24/7",
-      "description": "Äá»i ngÅ© luÃ´n sáºµn sÃ ng giÃºp Äá»¡"
+      "title": "HÃ¡Â»Â trÃ¡Â»Â£ 24/7",
+      "description": "ÃÂÃ¡Â»Âi ngÃÂ© luÃÂ´n sÃ¡ÂºÂµn sÃÂ ng giÃÂºp ÃÂÃ¡Â»Â¡"
     }
   ],
   "seo": {
-    "defaultTitle": "VibeCoding - Há»c láº­p trÃ¬nh & TÃ i nguyÃªn Dev",
-    "defaultDescription": "Ná»n táº£ng há»c láº­p trÃ¬nh, chia sáº» tÃ i nguyÃªn vÃ  cá»ng Äá»ng developer Viá»t Nam",
+    "defaultTitle": "VibeCoding - HÃ¡Â»Âc lÃ¡ÂºÂ­p trÃÂ¬nh & TÃÂ i nguyÃÂªn Dev",
+    "defaultDescription": "NÃ¡Â»Ân tÃ¡ÂºÂ£ng hÃ¡Â»Âc lÃ¡ÂºÂ­p trÃÂ¬nh, chia sÃ¡ÂºÂ» tÃÂ i nguyÃÂªn vÃÂ  cÃ¡Â»Âng ÃÂÃ¡Â»Âng developer ViÃ¡Â»Ât Nam",
     "keywords": [
-      "láº­p trÃ¬nh",
+      "lÃ¡ÂºÂ­p trÃÂ¬nh",
       "javascript",
       "web development",
       "coding",
