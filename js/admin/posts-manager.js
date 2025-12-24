@@ -34,14 +34,22 @@ const PostsManager = {
                 <div class="flex flex-wrap gap-4 items-center justify-between">
                     <input type="text" id="post-search" placeholder="Tìm bài viết..."
                         class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
-                    <button id="add-post-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                        + Thêm bài viết
-                    </button>
+                    <div class="flex gap-2">
+                        <button id="manage-post-categories-btn" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white">
+                            📁 Danh mục
+                        </button>
+                        <button id="add-post-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            + Thêm bài viết
+                        </button>
+                    </div>
                 </div>
                 <div id="posts-list" class="space-y-2"></div>
             </div>
             <div id="post-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                 <div class="bg-white dark:bg-gray-800 rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"></div>
+            </div>
+            <div id="post-category-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div class="bg-white dark:bg-gray-800 rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto"></div>
             </div>
         `;
         this.renderList();
@@ -81,6 +89,128 @@ const PostsManager = {
     setupEvents() {
         document.getElementById('post-search')?.addEventListener('input', (e) => this.renderList(e.target.value));
         document.getElementById('add-post-btn')?.addEventListener('click', () => this.showForm());
+        document.getElementById('manage-post-categories-btn')?.addEventListener('click', () => this.showCategoryManager());
+    },
+
+    // ==========================================
+    // CATEGORY MANAGEMENT
+    // ==========================================
+    showCategoryManager() {
+        const modal = document.getElementById('post-category-modal');
+        const content = modal.querySelector('div');
+        
+        content.innerHTML = `
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Quản lý danh mục bài viết</h3>
+                <div id="post-categories-list" class="space-y-2 mb-4"></div>
+                <div class="flex gap-2">
+                    <input type="text" id="new-post-category-name" placeholder="Tên danh mục mới" 
+                        class="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                    <button onclick="PostsManager.addCategory()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Thêm</button>
+                </div>
+                <div id="post-category-error" class="text-red-500 text-sm mt-2 hidden"></div>
+                <div class="flex justify-end mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <button onclick="PostsManager.closeCategoryManager()" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white">Đóng</button>
+                </div>
+            </div>
+        `;
+        
+        this.renderCategories();
+        modal.classList.remove('hidden');
+    },
+
+    renderCategories() {
+        const list = document.getElementById('post-categories-list');
+        if (!list) return;
+        
+        list.innerHTML = this.categories.map(c => `
+            <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full" style="background-color: ${c.color || '#888'}"></span>
+                    <span class="text-gray-800 dark:text-white font-medium">${c.name}</span>
+                    <span class="text-xs text-gray-500">(${c.id})</span>
+                </div>
+                <button onclick="PostsManager.deleteCategory('${c.id}')" class="text-red-500 hover:text-red-700 p-1">🗑️</button>
+            </div>
+        `).join('');
+    },
+
+    async addCategory() {
+        const input = document.getElementById('new-post-category-name');
+        const errorEl = document.getElementById('post-category-error');
+        const name = input.value.trim();
+        
+        if (!name) {
+            errorEl.textContent = 'Vui lòng nhập tên danh mục';
+            errorEl.classList.remove('hidden');
+            return;
+        }
+
+        const id = name.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/đ/g, 'd').replace(/Đ/g, 'D')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)/g, '');
+
+        if (this.categories.some(c => c.id === id)) {
+            errorEl.textContent = 'Danh mục này đã tồn tại';
+            errorEl.classList.remove('hidden');
+            return;
+        }
+
+        const colors = ['blue', 'green', 'purple', 'pink', 'orange', 'red', 'yellow', 'teal'];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+        try {
+            this.categories.push({ id, name, color: randomColor });
+            
+            await GitHubAPI.updateJson('data/posts-index.json', {
+                posts: this.posts,
+                categories: this.categories
+            }, `Add category: ${name}`);
+
+            await this.loadData();
+            
+            input.value = '';
+            errorEl.classList.add('hidden');
+            this.renderCategories();
+            alert('Đã thêm danh mục!');
+        } catch (err) {
+            errorEl.textContent = 'Lỗi: ' + err.message;
+            errorEl.classList.remove('hidden');
+        }
+    },
+
+    async deleteCategory(id) {
+        const category = this.categories.find(c => c.id === id);
+        if (!category) return;
+
+        const postsInCategory = this.posts.filter(p => p.category === id);
+        if (postsInCategory.length > 0) {
+            alert(`Không thể xóa! Có ${postsInCategory.length} bài viết đang dùng danh mục này.`);
+            return;
+        }
+
+        if (!confirm(`Xác nhận xóa danh mục "${category.name}"?`)) return;
+
+        try {
+            this.categories = this.categories.filter(c => c.id !== id);
+            
+            await GitHubAPI.updateJson('data/posts-index.json', {
+                posts: this.posts,
+                categories: this.categories
+            }, `Delete category: ${category.name}`);
+
+            await this.loadData();
+            this.renderCategories();
+            alert('Đã xóa danh mục!');
+        } catch (err) {
+            alert('Lỗi: ' + err.message);
+        }
+    },
+
+    closeCategoryManager() {
+        document.getElementById('post-category-modal').classList.add('hidden');
     },
 
     async showForm(post = null) {
