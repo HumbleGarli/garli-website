@@ -4,6 +4,7 @@
 
 const ConfigManager = {
     config: null,
+    pendingImages: {}, // Lưu ảnh chờ upload cho từng banner
 
     async init() {
         await this.loadData();
@@ -91,22 +92,72 @@ const ConfigManager = {
         const banners = this.config.banners || [];
         
         container.innerHTML = banners.map((b, i) => `
-            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg space-y-3">
+            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg space-y-3" data-banner-index="${i}">
                 <div class="flex justify-between items-center">
                     <span class="font-medium text-gray-800 dark:text-white">Banner ${i + 1}</span>
                     <button type="button" onclick="ConfigManager.removeBanner(${i})" class="text-red-500 hover:text-red-700">🗑️ Xóa</button>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <input type="text" name="banner_title_${i}" value="${b.title}" placeholder="Tiêu đề" class="px-3 py-2 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
-                    <input type="text" name="banner_subtitle_${i}" value="${b.subtitle}" placeholder="Phụ đề" class="px-3 py-2 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
-                    <input type="text" name="banner_link_${i}" value="${b.link}" placeholder="Link" class="px-3 py-2 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <input type="text" name="banner_title_${i}" value="${b.title || ''}" placeholder="Tiêu đề" class="px-3 py-2 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+                    <input type="text" name="banner_subtitle_${i}" value="${b.subtitle || ''}" placeholder="Phụ đề" class="px-3 py-2 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+                    <input type="text" name="banner_link_${i}" value="${b.link || ''}" placeholder="Link (vd: shop.html)" class="px-3 py-2 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
                     <select name="banner_active_${i}" class="px-3 py-2 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
-                        <option value="true" ${b.active ? 'selected' : ''}>Hiển thị</option>
-                        <option value="false" ${!b.active ? 'selected' : ''}>Ẩn</option>
+                        <option value="true" ${b.active !== false ? 'selected' : ''}>Hiển thị</option>
+                        <option value="false" ${b.active === false ? 'selected' : ''}>Ẩn</option>
                     </select>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Ảnh banner</label>
+                    <div class="flex items-center gap-3">
+                        <input type="file" accept="image/*" onchange="ConfigManager.handleBannerImage(${i}, this)" class="text-sm">
+                        <span class="text-xs text-gray-500" id="banner-image-path-${i}">${b.image || 'Chưa có ảnh'}</span>
+                    </div>
+                    <div id="banner-preview-${i}" class="mt-2 ${b.image ? '' : 'hidden'}">
+                        <img src="${b.image || ''}" class="h-20 rounded object-cover" onerror="this.style.display='none'">
+                    </div>
                 </div>
             </div>
         `).join('');
+    },
+
+    async handleBannerImage(index, input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const pathEl = document.getElementById(`banner-image-path-${index}`);
+        const previewEl = document.getElementById(`banner-preview-${index}`);
+
+        try {
+            pathEl.textContent = 'Đang xử lý...';
+
+            // Validate và nén ảnh
+            const validation = ImageTools.validate(file);
+            if (!validation.valid) {
+                throw new Error(validation.errors.join('. '));
+            }
+
+            const result = await ImageTools.compress(file, {
+                maxWidth: 1600,
+                maxHeight: 900,
+                quality: 0.85
+            });
+
+            // Preview
+            const preview = await ImageTools.getPreview(result.file);
+            previewEl.innerHTML = `
+                <img src="${preview}" class="h-20 rounded object-cover">
+                <p class="text-xs text-green-600 mt-1">Đã nén: ${ImageTools.formatSize(result.compressedSize)} (giảm ${result.savings}%)</p>
+            `;
+            previewEl.classList.remove('hidden');
+
+            // Lưu file để upload khi save
+            this.pendingImages[index] = result.file;
+            pathEl.textContent = result.file.name;
+
+        } catch (err) {
+            pathEl.textContent = 'Lỗi: ' + err.message;
+            previewEl.classList.add('hidden');
+        }
     },
 
     addBanner() {
@@ -115,7 +166,7 @@ const ConfigManager = {
             id: Date.now(),
             title: 'Banner mới',
             subtitle: 'Mô tả banner',
-            image: 'assets/images/banner.jpg',
+            image: '',
             link: 'index.html',
             active: true
         });
@@ -123,7 +174,9 @@ const ConfigManager = {
     },
 
     removeBanner(index) {
+        if (!confirm('Xác nhận xóa banner này?')) return;
         this.config.banners.splice(index, 1);
+        delete this.pendingImages[index];
         this.renderBanners();
     },
 
@@ -136,6 +189,14 @@ const ConfigManager = {
         try {
             submitBtn.disabled = true;
             submitBtn.textContent = 'Đang lưu...';
+
+            // Upload pending banner images
+            for (const [index, file] of Object.entries(this.pendingImages)) {
+                submitBtn.textContent = `Đang upload ảnh banner ${parseInt(index) + 1}...`;
+                const result = await GitHubAPI.uploadImage(file, 'assets/images/banners');
+                this.config.banners[index].image = result.path;
+            }
+            this.pendingImages = {};
 
             // Update basic info
             this.config.siteName = form.siteName.value;
@@ -163,9 +224,12 @@ const ConfigManager = {
             }));
 
             // Save to GitHub
+            submitBtn.textContent = 'Đang lưu cấu hình...';
             await GitHubAPI.updateJson('data/config.json', this.config, 'Update site config');
 
             alert('Đã lưu cấu hình thành công!');
+            this.renderBanners(); // Refresh để hiện path ảnh mới
+
         } catch (err) {
             errorEl.textContent = 'Lỗi: ' + err.message;
             errorEl.classList.remove('hidden');
