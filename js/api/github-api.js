@@ -86,7 +86,7 @@ const GitHubAPI = {
     // ==========================================
     async updateJson(path, json, message = 'Update via admin', retryCount = 0) {
         try {
-            // Lấy sha hiện tại
+            // Lấy sha hiện tại (luôn lấy mới nhất từ GitHub)
             const { sha } = await this.getJson(path);
             
             // Encode content với UTF-8 support
@@ -106,11 +106,16 @@ const GitHubAPI = {
             
             return { success: true, sha: result.content.sha };
         } catch (e) {
-            // Nếu lỗi SHA mismatch và chưa retry quá 2 lần, tự động retry
-            if (e.message.includes('does not match') && retryCount < 2) {
-                console.warn(`[GitHubAPI] SHA mismatch, retrying... (attempt ${retryCount + 1})`);
-                // Đợi 500ms rồi retry
-                await new Promise(resolve => setTimeout(resolve, 500));
+            // Nếu lỗi SHA mismatch và chưa retry quá 3 lần, tự động retry
+            const isShaError = e.message.includes('does not match') || 
+                               e.message.includes('SHA') || 
+                               e.message.includes('409') ||
+                               e.message.includes('conflict');
+            
+            if (isShaError && retryCount < 3) {
+                console.warn(`[GitHubAPI] SHA conflict, retrying... (attempt ${retryCount + 1})`);
+                // Đợi lâu hơn mỗi lần retry (1s, 2s, 3s)
+                await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
                 return this.updateJson(path, json, message, retryCount + 1);
             }
             console.error(`[GitHubAPI] updateJson error (${path}):`, e);
