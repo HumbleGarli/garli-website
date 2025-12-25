@@ -8,7 +8,11 @@
       "originalPrice": 45000,
       "currency": "VND",
       "category": "course",
-      "tags": ["youtube", "ytb", "yt"],
+      "tags": [
+        "youtube",
+        "ytb",
+        "yt"
+      ],
       "active": true,
       "featured": false,
       "image": "assets/images/products/1766597441245-011-youtube-premium-music-1nam-65910.webp",
@@ -19,96 +23,6 @@
       "sold": 1520
     },
     {
-      "id": 2,
-      "name": "React Masterclass",
-      "slug": "react-masterclass",
-      "description": "Làm chủ React 18, Hooks, Redux Toolkit, React Query và Next.js",
-      "price": 799000,
-      "originalPrice": 1500000,
-      "currency": "VND",
-      "category": "course",
-      "tags": ["react", "frontend", "nextjs"],
-      "image": "assets/images/products/react-course.jpg",
-      "rating": 4.9,
-      "reviewCount": 189,
-      "sold": 980,
-      "featured": true,
-      "active": true,
-      "createdAt": "2025-02-20"
-    },
-    {
-      "id": 3,
-      "name": "Template Dashboard Admin",
-      "slug": "template-dashboard-admin",
-      "description": "Template admin dashboard với Tailwind CSS, charts, tables và dark mode",
-      "price": 299000,
-      "originalPrice": 500000,
-      "currency": "VND",
-      "category": "template",
-      "tags": ["tailwind", "dashboard", "admin"],
-      "image": "assets/images/products/dashboard-template.jpg",
-      "rating": 4.7,
-      "reviewCount": 87,
-      "sold": 450,
-      "featured": false,
-      "active": true,
-      "createdAt": "2025-03-10"
-    },
-    {
-      "id": 4,
-      "name": "Landing Page Kit",
-      "slug": "landing-page-kit",
-      "description": "Bộ 10 landing page templates responsive, tối ưu conversion",
-      "price": 199000,
-      "originalPrice": 400000,
-      "currency": "VND",
-      "category": "template",
-      "tags": ["landing", "marketing", "tailwind"],
-      "image": "assets/images/products/landing-kit.jpg",
-      "rating": 4.6,
-      "reviewCount": 124,
-      "sold": 780,
-      "featured": true,
-      "active": true,
-      "createdAt": "2025-04-05"
-    },
-    {
-      "id": 5,
-      "name": "Node.js Backend Course",
-      "slug": "nodejs-backend-course",
-      "description": "Xây dựng REST API với Node.js, Express, MongoDB và authentication",
-      "price": 699000,
-      "originalPrice": 1300000,
-      "currency": "VND",
-      "category": "course",
-      "tags": ["nodejs", "backend", "api"],
-      "image": "assets/images/products/nodejs-course.jpg",
-      "rating": 4.8,
-      "reviewCount": 156,
-      "sold": 620,
-      "featured": false,
-      "active": true,
-      "createdAt": "2025-05-12"
-    },
-    {
-      "id": 6,
-      "name": "UI Component Library",
-      "slug": "ui-component-library",
-      "description": "50+ React components với Tailwind, fully customizable và accessible",
-      "price": 399000,
-      "originalPrice": 800000,
-      "currency": "VND",
-      "category": "template",
-      "tags": ["react", "components", "ui"],
-      "image": "assets/images/products/ui-library.jpg",
-      "rating": 4.9,
-      "reviewCount": 98,
-      "sold": 340,
-      "featured": false,
-      "active": true,
-      "createdAt": "2025-06-18"
-    },
-    {
       "id": 7,
       "name": "Ebook: Clean Code Vietnam",
       "slug": "ebook-clean-code-vietnam",
@@ -117,7 +31,11 @@
       "originalPrice": 200000,
       "currency": "VND",
       "category": "ebook",
-      "tags": ["ebook", "clean-code", "best-practices"],
+      "tags": [
+        "ebook",
+        "clean-code",
+        "best-practices"
+      ],
       "image": "assets/images/products/clean-code-ebook.jpg",
       "rating": 4.5,
       "reviewCount": 312,
@@ -135,7 +53,11 @@
       "originalPrice": 3000000,
       "currency": "VND",
       "category": "course",
-      "tags": ["fullstack", "bootcamp", "combo"],
+      "tags": [
+        "fullstack",
+        "bootcamp",
+        "combo"
+      ],
       "image": "assets/images/products/fullstack-bootcamp.jpg",
       "rating": 4.9,
       "reviewCount": 78,
@@ -146,8 +68,20 @@
     }
   ],
   "categories": [
-    { "id": "course", "name": "Khóa học", "icon": "book" },
-    { "id": "template", "name": "Template", "icon": "layout" },
-    { "id": "ebook", "name": "Ebook", "icon": "file-text" }
+    {
+      "id": "course",
+      "name": "Khóa học",
+      "icon": "book"
+    },
+    {
+      "id": "template",
+      "name": "Template",
+      "icon": "layout"
+    },
+    {
+      "id": "ebook",
+      "name": "Ebook",
+      "icon": "file-text"
+    }
   ]
 }
