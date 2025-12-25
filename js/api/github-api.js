@@ -82,44 +82,48 @@ const GitHubAPI = {
     },
 
     // ==========================================
-    // UPDATE JSON - Cập nhật file JSON
+    // UPDATE JSON - Cập nhật file JSON (với auto-retry)
     // ==========================================
-    async updateJson(path, json, message = 'Update via admin', retryCount = 0) {
-        try {
-            // Lấy sha hiện tại (luôn lấy mới nhất từ GitHub)
-            const { sha } = await this.getJson(path);
-            
-            // Encode content với UTF-8 support
-            const jsonStr = JSON.stringify(json, null, 2);
-            const content = btoa(unescape(encodeURIComponent(jsonStr)));
-            
-            // Update file
-            const result = await this.request(`/contents/${path}`, {
-                method: 'PUT',
-                body: JSON.stringify({
-                    message,
-                    content,
-                    sha,
-                    branch: this.config.branch
-                })
-            });
-            
-            return { success: true, sha: result.content.sha };
-        } catch (e) {
-            // Nếu lỗi SHA mismatch và chưa retry quá 3 lần, tự động retry
-            const isShaError = e.message.includes('does not match') || 
-                               e.message.includes('SHA') || 
-                               e.message.includes('409') ||
-                               e.message.includes('conflict');
-            
-            if (isShaError && retryCount < 3) {
-                console.warn(`[GitHubAPI] SHA conflict, retrying... (attempt ${retryCount + 1})`);
-                // Đợi lâu hơn mỗi lần retry (1s, 2s, 3s)
-                await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
-                return this.updateJson(path, json, message, retryCount + 1);
+    async updateJson(path, json, message = 'Update via admin') {
+        const maxRetries = 5;
+        
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                // Luôn lấy SHA mới nhất từ GitHub trước mỗi lần thử
+                const { sha } = await this.getJson(path);
+                
+                // Encode content với UTF-8 support
+                const jsonStr = JSON.stringify(json, null, 2);
+                const content = btoa(unescape(encodeURIComponent(jsonStr)));
+                
+                // Update file
+                const result = await this.request(`/contents/${path}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        message,
+                        content,
+                        sha,
+                        branch: this.config.branch
+                    })
+                });
+                
+                return { success: true, sha: result.content.sha };
+            } catch (e) {
+                const isShaError = e.message.includes('does not match') || 
+                                   e.message.includes('SHA') || 
+                                   e.message.includes('409') ||
+                                   e.message.includes('conflict');
+                
+                if (isShaError && attempt < maxRetries) {
+                    console.warn(`[GitHubAPI] SHA conflict (attempt ${attempt}/${maxRetries}), retrying...`);
+                    // Đợi trước khi retry (exponential backoff)
+                    await new Promise(resolve => setTimeout(resolve, 500 * attempt));
+                    continue;
+                }
+                
+                console.error(`[GitHubAPI] updateJson error (${path}):`, e);
+                throw e;
             }
-            console.error(`[GitHubAPI] updateJson error (${path}):`, e);
-            throw e;
         }
     },
 
