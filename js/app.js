@@ -44,6 +44,21 @@ const App = {
             const res = await fetch('data/config.json');
             const config = await res.json();
             
+            // Update logo
+            const logoText = document.getElementById('logo-text');
+            const logoImage = document.getElementById('logo-image');
+            if (logoText && logoImage && config.logo) {
+                if (config.logo.type === 'image' && config.logo.image) {
+                    logoText.classList.add('hidden');
+                    logoImage.src = config.logo.image;
+                    logoImage.classList.remove('hidden');
+                } else {
+                    logoText.textContent = config.logo.text || config.siteName || 'Logo';
+                    logoText.classList.remove('hidden');
+                    logoImage.classList.add('hidden');
+                }
+            }
+            
             // Update contact info
             const emailEl = document.getElementById('footer-email');
             const phoneEl = document.getElementById('footer-phone');

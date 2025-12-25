@@ -5,6 +5,7 @@
 const ConfigManager = {
     config: null,
     pendingImages: {}, // Lưu ảnh chờ upload cho từng banner
+    pendingLogoImage: null, // Lưu ảnh logo chờ upload
 
     async init() {
         await this.loadData();
@@ -24,6 +25,7 @@ const ConfigManager = {
     render() {
         const container = document.getElementById('tab-content');
         const c = this.config;
+        const logo = c.logo || { type: 'text', text: '', image: '' };
         
         container.innerHTML = `
             <form id="config-form" class="space-y-6">
@@ -34,6 +36,31 @@ const ConfigManager = {
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tên website</label>
                             <input type="text" name="siteName" value="${c.siteName || ''}" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                         </div>
+                        
+                        <!-- Logo Section -->
+                        <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg space-y-3">
+                            <h4 class="font-medium text-gray-800 dark:text-white">Logo</h4>
+                            <div>
+                                <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Loại logo</label>
+                                <select name="logoType" onchange="ConfigManager.toggleLogoType(this.value)" class="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+                                    <option value="text" ${logo.type === 'text' ? 'selected' : ''}>Text</option>
+                                    <option value="image" ${logo.type === 'image' ? 'selected' : ''}>Hình ảnh</option>
+                                </select>
+                            </div>
+                            <div id="logo-text-input" class="${logo.type === 'image' ? 'hidden' : ''}">
+                                <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Text logo</label>
+                                <input type="text" name="logoText" value="${logo.text || ''}" placeholder="Tên hiển thị" class="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+                            </div>
+                            <div id="logo-image-input" class="${logo.type === 'text' ? 'hidden' : ''}">
+                                <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Ảnh logo</label>
+                                <input type="file" accept="image/*" onchange="ConfigManager.handleLogoImage(this)" class="text-sm">
+                                <span class="text-xs text-gray-500 block mt-1" id="logo-image-path">${logo.image || 'Chưa có ảnh'}</span>
+                                <div id="logo-preview" class="mt-2 ${logo.image ? '' : 'hidden'}">
+                                    <img src="${logo.image || ''}" class="h-12 rounded object-contain" onerror="this.style.display='none'">
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tagline</label>
                             <input type="text" name="tagline" value="${c.tagline || ''}" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
@@ -187,6 +214,55 @@ const ConfigManager = {
         this.renderBanners();
     },
 
+    toggleLogoType(type) {
+        const textInput = document.getElementById('logo-text-input');
+        const imageInput = document.getElementById('logo-image-input');
+        if (type === 'text') {
+            textInput.classList.remove('hidden');
+            imageInput.classList.add('hidden');
+        } else {
+            textInput.classList.add('hidden');
+            imageInput.classList.remove('hidden');
+        }
+    },
+
+    async handleLogoImage(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const pathEl = document.getElementById('logo-image-path');
+        const previewEl = document.getElementById('logo-preview');
+
+        try {
+            pathEl.textContent = 'Đang xử lý...';
+
+            const validation = ImageTools.validate(file);
+            if (!validation.valid) {
+                throw new Error(validation.errors.join('. '));
+            }
+
+            const result = await ImageTools.compress(file, {
+                maxWidth: 400,
+                maxHeight: 100,
+                quality: 0.9
+            });
+
+            const preview = await ImageTools.getPreview(result.file);
+            previewEl.innerHTML = `
+                <img src="${preview}" class="h-12 rounded object-contain">
+                <p class="text-xs text-green-600 mt-1">Đã nén: ${ImageTools.formatSize(result.compressedSize)}</p>
+            `;
+            previewEl.classList.remove('hidden');
+
+            this.pendingLogoImage = result.file;
+            pathEl.textContent = result.file.name;
+
+        } catch (err) {
+            pathEl.textContent = 'Lỗi: ' + err.message;
+            previewEl.classList.add('hidden');
+        }
+    },
+
     async handleSubmit(e) {
         e.preventDefault();
         const form = e.target;
@@ -196,6 +272,15 @@ const ConfigManager = {
         try {
             submitBtn.disabled = true;
             submitBtn.textContent = 'Đang lưu...';
+
+            // Upload pending logo image
+            if (this.pendingLogoImage) {
+                submitBtn.textContent = 'Đang upload logo...';
+                const result = await GitHubAPI.uploadImage(this.pendingLogoImage, 'assets/images');
+                this.config.logo = this.config.logo || {};
+                this.config.logo.image = result.path;
+                this.pendingLogoImage = null;
+            }
 
             // Upload pending banner images
             for (const [index, file] of Object.entries(this.pendingImages)) {
@@ -211,6 +296,13 @@ const ConfigManager = {
             this.config.email = form.email.value;
             this.config.phone = form.phone.value;
             this.config.address = form.address.value;
+
+            // Update logo
+            this.config.logo = {
+                type: form.logoType.value,
+                text: form.logoText.value,
+                image: this.config.logo?.image || ''
+            };
 
             // Update social links
             this.config.socialLinks = {

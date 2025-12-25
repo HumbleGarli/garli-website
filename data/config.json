@@ -1,5 +1,10 @@
 {
   "siteName": "Garli Store",
+  "logo": {
+    "type": "text",
+    "text": "Garli",
+    "image": ""
+  },
   "tagline": "TOI DEP TRAI",
   "phone": "+84 868 074 935",
   "email": "leminhthien13122@gmail.com",
