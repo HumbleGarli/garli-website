@@ -93,8 +93,8 @@ const ConfigManager = {
                             <input type="url" name="twitter" value="${c.socialLinks?.twitter || ''}" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">GitHub</label>
-                            <input type="url" name="github" value="${c.socialLinks?.github || ''}" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Telegram</label>
+                            <input type="url" name="telegram" value="${c.socialLinks?.telegram || ''}" placeholder="https://t.me/..." class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">YouTube</label>
@@ -309,7 +309,7 @@ const ConfigManager = {
                 facebook: form.facebook.value,
                 zalo: form.zalo.value,
                 twitter: form.twitter.value,
-                github: form.github.value,
+                telegram: form.telegram.value,
                 youtube: form.youtube.value,
                 discord: this.config.socialLinks?.discord || ''
             };
