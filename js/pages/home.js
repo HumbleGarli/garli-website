@@ -129,10 +129,15 @@ const HomePage = {
 
     renderProductCard(p) {
         const discount = Math.round((1 - p.price / p.originalPrice) * 100);
+        const hasImage = p.image && !p.image.includes('default');
+        
         return `
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden group">
-                <div class="h-40 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center">
-                    <span class="text-4xl">📦</span>
+                <div class="h-40 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center overflow-hidden">
+                    ${hasImage 
+                        ? `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">` 
+                        : '<span class="text-4xl">📦</span>'
+                    }
                 </div>
                 <div class="p-4">
                     <h3 class="font-semibold text-gray-800 dark:text-white mb-2 line-clamp-2">${p.name}</h3>
