@@ -1,19 +1,19 @@
 {
   "siteName": "Garli Store",
   "colors": {
-    "primary": "#0d544c",
-    "primaryHover": "#0a4d40",
-    "secondary": "#658b88",
-    "background": "#112627",
+    "primary": "#24ebd3",
+    "primaryHover": "#1dd7c2",
+    "secondary": "#658b81",
+    "background": "#112721",
     "backgroundLight": "#ffffff",
-    "card": "#1f2937",
+    "card": "#1f3731",
     "cardLight": "#ffffff",
     "text": "#f3f4f6",
-    "textLight": "#1f3737",
-    "accent": "#3bf796",
+    "textLight": "#1f372e",
+    "accent": "#3bf7e1",
     "button": "#24ebc9",
-    "buttonHover": "#1dd799",
-    "footer": "#03110e"
+    "buttonHover": "#1dd7a0",
+    "footer": "#03110b"
   },
   "logo": {
     "type": "text",
