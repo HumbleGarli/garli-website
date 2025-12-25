@@ -1,21 +1,19 @@
 {
   "resources": [
     {
-      "id": 4,
-      "title": "Git Commands Poster",
-      "description": "Poster A3 tổng hợp Git commands quan trọng",
-      "type": "cheatsheet",
+      "title": "Test",
+      "description": "Test",
+      "type": "guide",
       "format": "pdf",
-      "url": "assets/downloads/git-poster.pdf",
-      "image": "assets/images/resources/git-poster.jpg",
-      "downloadCount": 2890,
+      "url": "https://www.perplexity.ai/search/gioi-han-ve-upload-anh-cua-cac-otu8gdaGTVicUcqSXn8XHw",
       "tags": [
-        "git",
-        "cheatsheet",
-        "beginner"
+        "test"
       ],
-      "free": true,
-      "createdAt": "2025-04-05"
+      "free": false,
+      "id": 4,
+      "downloadCount": 2890,
+      "createdAt": "2025-04-05",
+      "image": "assets/images/resources/git-poster.jpg"
     },
     {
       "id": 5,
@@ -69,13 +67,13 @@
       "createdAt": "2025-08-30"
     },
     {
-      "title": "Test",
-      "description": "ggg",
-      "type": "cheatsheet",
+      "title": "Test 2",
+      "description": "Đẹp",
+      "type": "guide",
       "format": "pdf",
-      "url": "ggg",
+      "url": "https://humblegarli.github.io/garli-website/index.html#",
       "tags": [
-        "ggg"
+        "âsa"
       ],
       "free": true,
       "id": 9,
