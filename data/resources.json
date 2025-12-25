@@ -69,13 +69,13 @@
       "createdAt": "2025-08-30"
     },
     {
-      "title": "Test 2",
-      "description": "Đẹp",
-      "type": "guide",
+      "title": "Test",
+      "description": "ggg",
+      "type": "cheatsheet",
       "format": "pdf",
-      "url": "https://humblegarli.github.io/garli-website/index.html#",
+      "url": "ggg",
       "tags": [
-        "âsa"
+        "ggg"
       ],
       "free": true,
       "id": 9,
