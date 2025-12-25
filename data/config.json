@@ -11,8 +11,8 @@
     "text": "#f3f4f6",
     "textLight": "#1f3737",
     "accent": "#0d544c",
-    "button": "#24ebc9",
-    "buttonHover": "#1dd799",
+    "button": "#0d544c",
+    "buttonHover": "#0d544c",
     "footer": "#03110e"
   },
   "logo": {
