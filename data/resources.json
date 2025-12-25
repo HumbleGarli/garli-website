@@ -9,7 +9,11 @@
       "url": "assets/downloads/js-cheatsheet.pdf",
       "image": "assets/images/resources/js-cheatsheet.jpg",
       "downloadCount": 5420,
-      "tags": ["javascript", "cheatsheet", "beginner"],
+      "tags": [
+        "javascript",
+        "cheatsheet",
+        "beginner"
+      ],
       "free": true,
       "createdAt": "2025-01-10"
     },
@@ -22,7 +26,11 @@
       "url": "assets/downloads/react-hooks-guide.pdf",
       "image": "assets/images/resources/react-hooks.jpg",
       "downloadCount": 3280,
-      "tags": ["react", "hooks", "intermediate"],
+      "tags": [
+        "react",
+        "hooks",
+        "intermediate"
+      ],
       "free": true,
       "createdAt": "2025-02-15"
     },
@@ -35,7 +43,11 @@
       "url": "assets/downloads/tailwind-components.zip",
       "image": "assets/images/resources/tailwind-components.jpg",
       "downloadCount": 4150,
-      "tags": ["tailwind", "css", "components"],
+      "tags": [
+        "tailwind",
+        "css",
+        "components"
+      ],
       "free": true,
       "createdAt": "2025-03-20"
     },
@@ -48,7 +60,11 @@
       "url": "assets/downloads/git-poster.pdf",
       "image": "assets/images/resources/git-poster.jpg",
       "downloadCount": 2890,
-      "tags": ["git", "cheatsheet", "beginner"],
+      "tags": [
+        "git",
+        "cheatsheet",
+        "beginner"
+      ],
       "free": true,
       "createdAt": "2025-04-05"
     },
@@ -61,7 +77,11 @@
       "url": "assets/downloads/vscode-extensions.md",
       "image": "assets/images/resources/vscode-extensions.jpg",
       "downloadCount": 6720,
-      "tags": ["vscode", "tools", "productivity"],
+      "tags": [
+        "vscode",
+        "tools",
+        "productivity"
+      ],
       "free": true,
       "createdAt": "2025-05-12"
     },
@@ -74,7 +94,11 @@
       "url": "assets/downloads/api-design.pdf",
       "image": "assets/images/resources/api-design.jpg",
       "downloadCount": 1950,
-      "tags": ["api", "backend", "advanced"],
+      "tags": [
+        "api",
+        "backend",
+        "advanced"
+      ],
       "free": false,
       "createdAt": "2025-06-18"
     },
@@ -87,29 +111,40 @@
       "url": "https://youtube.com/watch?v=example",
       "image": "assets/images/resources/figma-to-code.jpg",
       "downloadCount": 3100,
-      "tags": ["figma", "design", "workflow"],
+      "tags": [
+        "figma",
+        "design",
+        "workflow"
+      ],
       "free": true,
       "createdAt": "2025-07-25"
-    },
-    {
-      "id": 8,
-      "title": "Docker cho Developer",
-      "description": "Hướng dẫn Docker từ cơ bản đến deploy production",
-      "type": "guide",
-      "format": "pdf",
-      "url": "assets/downloads/docker-guide.pdf",
-      "image": "assets/images/resources/docker-guide.jpg",
-      "downloadCount": 2340,
-      "tags": ["docker", "devops", "intermediate"],
-      "free": true,
-      "createdAt": "2025-08-30"
     }
   ],
   "types": [
-    { "id": "cheatsheet", "name": "Cheatsheet", "icon": "file-text" },
-    { "id": "guide", "name": "Hướng dẫn", "icon": "book-open" },
-    { "id": "code", "name": "Source Code", "icon": "code" },
-    { "id": "ebook", "name": "Ebook", "icon": "book" },
-    { "id": "video", "name": "Video", "icon": "play-circle" }
+    {
+      "id": "cheatsheet",
+      "name": "Cheatsheet",
+      "icon": "file-text"
+    },
+    {
+      "id": "guide",
+      "name": "Hướng dẫn",
+      "icon": "book-open"
+    },
+    {
+      "id": "code",
+      "name": "Source Code",
+      "icon": "code"
+    },
+    {
+      "id": "ebook",
+      "name": "Ebook",
+      "icon": "book"
+    },
+    {
+      "id": "video",
+      "name": "Video",
+      "icon": "play-circle"
+    }
   ]
 }
