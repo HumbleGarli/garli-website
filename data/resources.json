@@ -103,21 +103,21 @@
       "createdAt": "2025-06-18"
     },
     {
-      "id": 7,
-      "title": "Figma to Code Workflow",
-      "description": "Video hướng dẫn convert Figma design sang code hiệu quả",
-      "type": "video",
-      "format": "mp4",
-      "url": "https://youtube.com/watch?v=example",
-      "image": "assets/images/resources/figma-to-code.jpg",
-      "downloadCount": 3100,
+      "id": 8,
+      "title": "Docker cho Developer",
+      "description": "Hướng dẫn Docker từ cơ bản đến deploy production",
+      "type": "guide",
+      "format": "pdf",
+      "url": "assets/downloads/docker-guide.pdf",
+      "image": "assets/images/resources/docker-guide.jpg",
+      "downloadCount": 2340,
       "tags": [
-        "figma",
-        "design",
-        "workflow"
+        "docker",
+        "devops",
+        "intermediate"
       ],
       "free": true,
-      "createdAt": "2025-07-25"
+      "createdAt": "2025-08-30"
     }
   ],
   "types": [
