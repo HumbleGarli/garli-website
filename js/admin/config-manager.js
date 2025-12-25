@@ -103,6 +103,15 @@ const ConfigManager = {
                     </div>
                 </div>
 
+                <!-- Colors Section -->
+                <div class="space-y-4">
+                    <h3 class="font-bold text-gray-800 dark:text-white">🎨 Màu sắc giao diện</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        ${this.renderColorInputs(c.colors)}
+                    </div>
+                    <button type="button" onclick="ConfigManager.resetColors()" class="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400">↺ Khôi phục màu mặc định</button>
+                </div>
+
                 <div class="space-y-4">
                     <h3 class="font-bold text-gray-800 dark:text-white">Banners</h3>
                     <div id="banners-list" class="space-y-4"></div>
@@ -226,6 +235,72 @@ const ConfigManager = {
         }
     },
 
+    // Color management
+    defaultColors: {
+        primary: '#2563eb',
+        primaryHover: '#1d4ed8',
+        secondary: '#64748b',
+        background: '#111827',
+        backgroundLight: '#ffffff',
+        card: '#1f2937',
+        cardLight: '#ffffff',
+        text: '#f3f4f6',
+        textLight: '#1f2937',
+        accent: '#3b82f6',
+        button: '#2563eb',
+        buttonHover: '#1d4ed8',
+        footer: '#030712'
+    },
+
+    colorLabels: {
+        primary: 'Màu chủ đạo',
+        primaryHover: 'Màu chủ đạo (hover)',
+        secondary: 'Màu phụ',
+        background: 'Nền (Dark mode)',
+        backgroundLight: 'Nền (Light mode)',
+        card: 'Card (Dark mode)',
+        cardLight: 'Card (Light mode)',
+        text: 'Chữ (Dark mode)',
+        textLight: 'Chữ (Light mode)',
+        accent: 'Màu nhấn',
+        button: 'Nút bấm',
+        buttonHover: 'Nút bấm (hover)',
+        footer: 'Footer'
+    },
+
+    renderColorInputs(colors) {
+        const c = colors || this.defaultColors;
+        return Object.entries(this.colorLabels).map(([key, label]) => `
+            <div class="space-y-1">
+                <label class="block text-xs font-medium text-gray-600 dark:text-gray-400">${label}</label>
+                <div class="flex items-center gap-2">
+                    <input type="color" name="color_${key}" value="${c[key] || this.defaultColors[key]}" 
+                        class="w-10 h-10 rounded cursor-pointer border border-gray-300 dark:border-gray-600">
+                    <input type="text" name="color_${key}_hex" value="${c[key] || this.defaultColors[key]}" 
+                        onchange="ConfigManager.syncColorInput('${key}', this.value)"
+                        class="flex-1 px-2 py-1 text-xs rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white font-mono">
+                </div>
+            </div>
+        `).join('');
+    },
+
+    syncColorInput(key, value) {
+        const colorInput = document.querySelector(`input[name="color_${key}"]`);
+        if (colorInput && /^#[0-9A-Fa-f]{6}$/.test(value)) {
+            colorInput.value = value;
+        }
+    },
+
+    resetColors() {
+        if (!confirm('Khôi phục tất cả màu về mặc định?')) return;
+        Object.entries(this.defaultColors).forEach(([key, value]) => {
+            const colorInput = document.querySelector(`input[name="color_${key}"]`);
+            const hexInput = document.querySelector(`input[name="color_${key}_hex"]`);
+            if (colorInput) colorInput.value = value;
+            if (hexInput) hexInput.value = value;
+        });
+    },
+
     async handleLogoImage(input) {
         const file = input.files[0];
         if (!file) return;
@@ -303,6 +378,12 @@ const ConfigManager = {
                 text: form.logoText.value,
                 image: this.config.logo?.image || ''
             };
+
+            // Update colors
+            this.config.colors = {};
+            Object.keys(this.defaultColors).forEach(key => {
+                this.config.colors[key] = form[`color_${key}`]?.value || this.defaultColors[key];
+            });
 
             // Update social links
             this.config.socialLinks = {

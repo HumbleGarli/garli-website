@@ -1,5 +1,20 @@
 {
   "siteName": "Garli Store",
+  "colors": {
+    "primary": "#2563eb",
+    "primaryHover": "#1d4ed8",
+    "secondary": "#64748b",
+    "background": "#111827",
+    "backgroundLight": "#ffffff",
+    "card": "#1f2937",
+    "cardLight": "#ffffff",
+    "text": "#f3f4f6",
+    "textLight": "#1f2937",
+    "accent": "#3b82f6",
+    "button": "#2563eb",
+    "buttonHover": "#1d4ed8",
+    "footer": "#030712"
+  },
   "logo": {
     "type": "text",
     "text": "Garli Store",

@@ -37,12 +37,77 @@ const App = {
     },
 
     // ==========================================
+    // APPLY CUSTOM COLORS
+    // ==========================================
+    applyColors(colors) {
+        const root = document.documentElement;
+        
+        // Set CSS variables
+        root.style.setProperty('--color-primary', colors.primary || '#2563eb');
+        root.style.setProperty('--color-primary-hover', colors.primaryHover || '#1d4ed8');
+        root.style.setProperty('--color-secondary', colors.secondary || '#64748b');
+        root.style.setProperty('--color-background', colors.background || '#111827');
+        root.style.setProperty('--color-background-light', colors.backgroundLight || '#ffffff');
+        root.style.setProperty('--color-card', colors.card || '#1f2937');
+        root.style.setProperty('--color-card-light', colors.cardLight || '#ffffff');
+        root.style.setProperty('--color-text', colors.text || '#f3f4f6');
+        root.style.setProperty('--color-text-light', colors.textLight || '#1f2937');
+        root.style.setProperty('--color-accent', colors.accent || '#3b82f6');
+        root.style.setProperty('--color-button', colors.button || '#2563eb');
+        root.style.setProperty('--color-button-hover', colors.buttonHover || '#1d4ed8');
+        root.style.setProperty('--color-footer', colors.footer || '#030712');
+
+        // Inject dynamic styles
+        let styleEl = document.getElementById('custom-colors');
+        if (!styleEl) {
+            styleEl = document.createElement('style');
+            styleEl.id = 'custom-colors';
+            document.head.appendChild(styleEl);
+        }
+        
+        styleEl.textContent = `
+            /* Primary colors */
+            .bg-blue-600, .bg-primary { background-color: ${colors.primary} !important; }
+            .bg-blue-700, .hover\\:bg-blue-700:hover, .bg-primary-hover { background-color: ${colors.primaryHover} !important; }
+            .text-blue-600, .text-primary { color: ${colors.primary} !important; }
+            .text-blue-400, .dark\\:text-blue-400 { color: ${colors.accent} !important; }
+            .border-blue-600, .border-primary { border-color: ${colors.primary} !important; }
+            .ring-blue-500, .focus\\:ring-blue-500:focus { --tw-ring-color: ${colors.primary} !important; }
+            
+            /* Background */
+            .dark .dark\\:bg-gray-900, body.dark { background-color: ${colors.background} !important; }
+            .dark .dark\\:bg-gray-800 { background-color: ${colors.card} !important; }
+            .dark .dark\\:bg-gray-700 { background-color: ${colors.card} !important; }
+            
+            /* Footer */
+            footer, .footer-bg { background-color: ${colors.footer} !important; }
+            
+            /* Text */
+            .dark .dark\\:text-white { color: ${colors.text} !important; }
+            .dark .dark\\:text-gray-300, .dark .dark\\:text-gray-400 { color: ${colors.text}cc !important; }
+            
+            /* Buttons */
+            .btn-primary, button.bg-blue-600 { 
+                background-color: ${colors.button} !important; 
+            }
+            .btn-primary:hover, button.bg-blue-600:hover { 
+                background-color: ${colors.buttonHover} !important; 
+            }
+        `;
+    },
+
+    // ==========================================
     // LOAD FOOTER CONFIG
     // ==========================================
     async loadFooterConfig() {
         try {
             const res = await fetch('data/config.json');
             const config = await res.json();
+            
+            // Apply custom colors
+            if (config.colors) {
+                this.applyColors(config.colors);
+            }
             
             // Update logo
             const logoText = document.getElementById('logo-text');
