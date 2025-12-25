@@ -8,6 +8,7 @@ const PostsManager = {
     categories: [],
     editingId: null,
     editingContent: '',
+    selectedIds: new Set(), // Track selected items for bulk delete
 
     async init() {
         await this.loadData();
@@ -35,6 +36,9 @@ const PostsManager = {
                     <input type="text" id="post-search" placeholder="Tìm bài viết..."
                         class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                     <div class="flex gap-2">
+                        <button id="bulk-delete-posts-btn" class="hidden px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                            🗑️ Xóa (<span id="selected-posts-count">0</span>)
+                        </button>
                         <button id="manage-post-categories-btn" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white">
                             📁 Danh mục
                         </button>
@@ -52,6 +56,7 @@ const PostsManager = {
                 <div class="bg-white dark:bg-gray-800 rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto"></div>
             </div>
         `;
+        this.selectedIds.clear();
         this.renderList();
         this.setupEvents();
     },
@@ -72,6 +77,8 @@ const PostsManager = {
 
         list.innerHTML = filtered.map(p => `
             <div class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <input type="checkbox" class="post-checkbox w-5 h-5 rounded border-gray-300 dark:border-gray-600" 
+                    data-id="${p.id}" ${this.selectedIds.has(p.id) ? 'checked' : ''} onchange="PostsManager.toggleSelect(${p.id})">
                 <div class="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 rounded-lg flex items-center justify-center text-2xl">📝</div>
                 <div class="flex-1 min-w-0">
                     <h4 class="font-medium text-gray-800 dark:text-white truncate">${p.title}</h4>
@@ -86,10 +93,84 @@ const PostsManager = {
         `).join('');
     },
 
+    toggleSelect(id) {
+        if (this.selectedIds.has(id)) {
+            this.selectedIds.delete(id);
+        } else {
+            this.selectedIds.add(id);
+        }
+        this.updateBulkDeleteBtn();
+    },
+
+    updateBulkDeleteBtn() {
+        const btn = document.getElementById('bulk-delete-posts-btn');
+        const count = document.getElementById('selected-posts-count');
+        if (btn && count) {
+            count.textContent = this.selectedIds.size;
+            btn.classList.toggle('hidden', this.selectedIds.size === 0);
+        }
+    },
+
+    async bulkDelete() {
+        const count = this.selectedIds.size;
+        if (count === 0) return;
+
+        const deleteFiles = confirm(`Bạn có muốn xóa cả file markdown không?\n\nOK = Xóa cả file\nCancel = Chỉ xóa khỏi index`);
+        
+        if (!confirm(`Bạn có chắc muốn xóa ${count} bài viết đã chọn?\n\n⚠️ Hành động này không thể hoàn tác!`)) return;
+
+        try {
+            const btn = document.getElementById('bulk-delete-posts-btn');
+            btn.disabled = true;
+            btn.textContent = 'Đang xóa...';
+
+            // Get posts to delete (for file deletion)
+            const postsToDelete = this.posts.filter(p => this.selectedIds.has(p.id));
+            
+            // Remove from index
+            this.posts = this.posts.filter(p => !this.selectedIds.has(p.id));
+            
+            await GitHubAPI.updateJson('data/posts-index.json', {
+                posts: this.posts,
+                categories: this.categories
+            }, `Bulk delete ${count} posts`);
+
+            await this.loadData();
+
+            // Optionally delete markdown files
+            if (deleteFiles) {
+                for (const post of postsToDelete) {
+                    if (post.content) {
+                        try {
+                            await GitHubAPI.deleteFile(post.content, `Delete post file: ${post.title}`);
+                        } catch (e) {
+                            console.warn('Could not delete markdown file:', e);
+                        }
+                    }
+                }
+            }
+
+            this.selectedIds.clear();
+            this.renderList();
+            this.updateBulkDeleteBtn();
+            
+            alert(`✅ Đã xóa ${count} bài viết thành công!`);
+        } catch (err) {
+            alert('❌ Lỗi: ' + err.message + '\n\n💡 Thử nhấn Ctrl+Shift+R để refresh rồi thử lại.');
+        } finally {
+            const btn = document.getElementById('bulk-delete-posts-btn');
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '🗑️ Xóa (<span id="selected-posts-count">0</span>)';
+            }
+        }
+    },
+
     setupEvents() {
         document.getElementById('post-search')?.addEventListener('input', (e) => this.renderList(e.target.value));
         document.getElementById('add-post-btn')?.addEventListener('click', () => this.showForm());
         document.getElementById('manage-post-categories-btn')?.addEventListener('click', () => this.showCategoryManager());
+        document.getElementById('bulk-delete-posts-btn')?.addEventListener('click', () => this.bulkDelete());
     },
 
     // ==========================================

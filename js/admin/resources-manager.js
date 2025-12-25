@@ -6,6 +6,7 @@ const ResourcesManager = {
     resources: [],
     types: [],
     editingId: null,
+    selectedIds: new Set(), // Track selected items for bulk delete
 
     async init() {
         await this.loadData();
@@ -33,6 +34,9 @@ const ResourcesManager = {
                     <input type="text" id="resource-search" placeholder="Tìm tài nguyên..."
                         class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                     <div class="flex gap-2">
+                        <button id="bulk-delete-resources-btn" class="hidden px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                            🗑️ Xóa (<span id="selected-resources-count">0</span>)
+                        </button>
                         <button id="manage-types-btn" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white">
                             📁 Loại
                         </button>
@@ -50,6 +54,7 @@ const ResourcesManager = {
                 <div class="bg-white dark:bg-gray-800 rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto"></div>
             </div>
         `;
+        this.selectedIds.clear();
         this.renderList();
         this.setupEvents();
     },
@@ -70,6 +75,8 @@ const ResourcesManager = {
 
         list.innerHTML = filtered.map(r => `
             <div class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <input type="checkbox" class="resource-checkbox w-5 h-5 rounded border-gray-300 dark:border-gray-600" 
+                    data-id="${r.id}" ${this.selectedIds.has(r.id) ? 'checked' : ''} onchange="ResourcesManager.toggleSelect(${r.id})">
                 <div class="w-16 h-16 bg-gray-200 dark:bg-gray-600 rounded-lg flex items-center justify-center text-2xl">📄</div>
                 <div class="flex-1 min-w-0">
                     <h4 class="font-medium text-gray-800 dark:text-white truncate">${r.title}</h4>
@@ -84,10 +91,64 @@ const ResourcesManager = {
         `).join('');
     },
 
+    toggleSelect(id) {
+        if (this.selectedIds.has(id)) {
+            this.selectedIds.delete(id);
+        } else {
+            this.selectedIds.add(id);
+        }
+        this.updateBulkDeleteBtn();
+    },
+
+    updateBulkDeleteBtn() {
+        const btn = document.getElementById('bulk-delete-resources-btn');
+        const count = document.getElementById('selected-resources-count');
+        if (btn && count) {
+            count.textContent = this.selectedIds.size;
+            btn.classList.toggle('hidden', this.selectedIds.size === 0);
+        }
+    },
+
+    async bulkDelete() {
+        const count = this.selectedIds.size;
+        if (count === 0) return;
+
+        if (!confirm(`Bạn có chắc muốn xóa ${count} tài nguyên đã chọn?\n\n⚠️ Hành động này không thể hoàn tác!`)) return;
+
+        try {
+            const btn = document.getElementById('bulk-delete-resources-btn');
+            btn.disabled = true;
+            btn.textContent = 'Đang xóa...';
+
+            this.resources = this.resources.filter(r => !this.selectedIds.has(r.id));
+            
+            await GitHubAPI.updateJson('data/resources.json', {
+                resources: this.resources,
+                types: this.types
+            }, `Bulk delete ${count} resources`);
+
+            await this.loadData();
+            this.selectedIds.clear();
+            this.renderList();
+            this.updateBulkDeleteBtn();
+            
+            alert(`✅ Đã xóa ${count} tài nguyên thành công!`);
+        } catch (err) {
+            alert('❌ Lỗi: ' + err.message + '\n\n💡 Thử nhấn Ctrl+Shift+R để refresh rồi thử lại.');
+        } finally {
+            const btn = document.getElementById('bulk-delete-resources-btn');
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '🗑️ Xóa (<span id="selected-resources-count">0</span>)';
+            }
+        }
+    },
+
     setupEvents() {
         document.getElementById('resource-search')?.addEventListener('input', (e) => this.renderList(e.target.value));
         document.getElementById('add-resource-btn')?.addEventListener('click', () => this.showForm());
         document.getElementById('manage-types-btn')?.addEventListener('click', () => this.showTypeManager());
+        document.getElementById('bulk-delete-resources-btn')?.addEventListener('click', () => this.bulkDelete());
     },
 
     // ==========================================
