@@ -1,57 +1,6 @@
 {
   "resources": [
     {
-      "id": 1,
-      "title": "JavaScript Cheatsheet",
-      "description": "Tổng hợp syntax và methods JavaScript thường dùng",
-      "type": "cheatsheet",
-      "format": "pdf",
-      "url": "assets/downloads/js-cheatsheet.pdf",
-      "image": "assets/images/resources/js-cheatsheet.jpg",
-      "downloadCount": 5420,
-      "tags": [
-        "javascript",
-        "cheatsheet",
-        "beginner"
-      ],
-      "free": true,
-      "createdAt": "2025-01-10"
-    },
-    {
-      "id": 2,
-      "title": "React Hooks Guide",
-      "description": "Hướng dẫn chi tiết về React Hooks với ví dụ thực tế",
-      "type": "guide",
-      "format": "pdf",
-      "url": "assets/downloads/react-hooks-guide.pdf",
-      "image": "assets/images/resources/react-hooks.jpg",
-      "downloadCount": 3280,
-      "tags": [
-        "react",
-        "hooks",
-        "intermediate"
-      ],
-      "free": true,
-      "createdAt": "2025-02-15"
-    },
-    {
-      "id": 3,
-      "title": "Tailwind CSS Components",
-      "description": "Bộ sưu tập 30+ components Tailwind copy-paste",
-      "type": "code",
-      "format": "zip",
-      "url": "assets/downloads/tailwind-components.zip",
-      "image": "assets/images/resources/tailwind-components.jpg",
-      "downloadCount": 4150,
-      "tags": [
-        "tailwind",
-        "css",
-        "components"
-      ],
-      "free": true,
-      "createdAt": "2025-03-20"
-    },
-    {
       "id": 4,
       "title": "Git Commands Poster",
       "description": "Poster A3 tổng hợp Git commands quan trọng",
