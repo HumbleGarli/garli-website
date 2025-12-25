@@ -3,7 +3,7 @@
     {
       "name": "Youtube Premium",
       "slug": "youtube-premium",
-      "description": "Khóa học JavaScript từ cơ bản đến nâng cao, bao gồm ES6+, async/await, và các design patterns",
+      "description": "Youtube Premium",
       "price": 45000,
       "originalPrice": 45000,
       "currency": "VND",
