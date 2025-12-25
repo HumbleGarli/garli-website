@@ -67,6 +67,21 @@
       ],
       "free": true,
       "createdAt": "2025-08-30"
+    },
+    {
+      "title": "Test 2",
+      "description": "Đẹp",
+      "type": "guide",
+      "format": "pdf",
+      "url": "https://humblegarli.github.io/garli-website/index.html#",
+      "tags": [
+        "âsa"
+      ],
+      "free": true,
+      "id": 9,
+      "downloadCount": 0,
+      "createdAt": "2025-12-25",
+      "image": "assets/images/resources/default.jpg"
     }
   ],
   "types": [
