@@ -1,19 +1,19 @@
 {
   "siteName": "Garli Store",
   "colors": {
-    "primary": "#2563eb",
-    "primaryHover": "#1d4ed8",
-    "secondary": "#64748b",
-    "background": "#111827",
+    "primary": "#0d544c",
+    "primaryHover": "#0a4d40",
+    "secondary": "#658b88",
+    "background": "#112627",
     "backgroundLight": "#ffffff",
     "card": "#1f2937",
     "cardLight": "#ffffff",
     "text": "#f3f4f6",
-    "textLight": "#1f2937",
-    "accent": "#3b82f6",
-    "button": "#2563eb",
-    "buttonHover": "#1d4ed8",
-    "footer": "#030712"
+    "textLight": "#1f3737",
+    "accent": "#3bf796",
+    "button": "#24ebc9",
+    "buttonHover": "#1dd799",
+    "footer": "#03110e"
   },
   "logo": {
     "type": "text",
@@ -39,7 +39,7 @@
       "subtitle": "Tải 30",
       "image": "assets/images/banners/1766598388883-016-z7306826868878-4345d4db4dd8b0ecfdc09b80aa59c93f.webp",
       "link": "shop.html?id=1",
-      "active": true
+      "active": false
     },
     {
       "id": 2,
@@ -47,7 +47,7 @@
       "subtitle": "50+ mẫu thiết kế chuyên nghiệp",
       "image": "assets/images/banners/1766598391257-017-z7306826869183-900f2ac567c3183234f5a15731572327.webp",
       "link": "shop.html?category=template",
-      "active": true
+      "active": false
     },
     {
       "id": 3,
