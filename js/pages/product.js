@@ -70,7 +70,7 @@ const ProductPage = {
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 lg:p-8">
                     <!-- Image -->
                     <div class="relative">
-                        <div class="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 rounded-xl overflow-hidden flex items-center justify-center">
+                        <div class="aspect-[920/430] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 rounded-xl overflow-hidden flex items-center justify-center">
                             ${hasImage 
                                 ? `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover">` 
                                 : '<span class="text-8xl">📦</span>'
