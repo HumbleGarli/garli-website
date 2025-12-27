@@ -40,6 +40,9 @@ const ProductsManager = {
                         <button id="bulk-delete-products-btn" class="hidden px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
                             🗑️ Xóa (<span id="selected-products-count">0</span>)
                         </button>
+                        <button id="bulk-import-btn" class="px-4 py-2 border border-green-500 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20">
+                            📥 Import hàng loạt
+                        </button>
                         <button id="manage-categories-btn" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white">
                             📁 Danh mục
                         </button>
@@ -55,6 +58,9 @@ const ProductsManager = {
             </div>
             <div id="category-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                 <div class="bg-white dark:bg-gray-800 rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto"></div>
+            </div>
+            <div id="import-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div class="bg-white dark:bg-gray-800 rounded-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"></div>
             </div>
         `;
         this.selectedIds.clear();
@@ -157,6 +163,171 @@ const ProductsManager = {
         document.getElementById('add-product-btn')?.addEventListener('click', () => this.showForm());
         document.getElementById('manage-categories-btn')?.addEventListener('click', () => this.showCategoryManager());
         document.getElementById('bulk-delete-products-btn')?.addEventListener('click', () => this.bulkDelete());
+        document.getElementById('bulk-import-btn')?.addEventListener('click', () => this.showImportModal());
+    },
+
+    // ==========================================
+    // BULK IMPORT
+    // ==========================================
+    showImportModal() {
+        const modal = document.getElementById('import-modal');
+        const content = modal.querySelector('div');
+        
+        content.innerHTML = `
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">📥 Import sản phẩm hàng loạt</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Paste dữ liệu từ Excel hoặc nhập theo format bên dưới</p>
+                
+                <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg mb-4">
+                    <p class="text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Format (mỗi dòng 1 sản phẩm, phân cách bằng Tab hoặc |):</p>
+                    <code class="text-xs text-blue-600 dark:text-blue-400">Tên | Giá | Giá gốc | Danh mục | Mô tả</code>
+                    <p class="text-xs text-gray-500 mt-2">Ví dụ:</p>
+                    <code class="text-xs text-gray-600 dark:text-gray-400 block">Youtube Premium | 45000 | 50000 | course | Gói 1 năm</code>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Danh mục mặc định</label>
+                    <select id="import-default-category" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                        ${this.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Dữ liệu sản phẩm</label>
+                    <textarea id="import-data" rows="10" placeholder="Paste dữ liệu từ Excel vào đây...&#10;&#10;Hoặc nhập theo format:&#10;Tên | Giá | Giá gốc | Danh mục | Mô tả" 
+                        class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white font-mono text-sm"></textarea>
+                </div>
+
+                <div id="import-preview" class="hidden mb-4">
+                    <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Xem trước (<span id="import-count">0</span> sản phẩm):</p>
+                    <div id="import-preview-list" class="max-h-40 overflow-y-auto bg-gray-50 dark:bg-gray-700 rounded-lg p-2 text-sm"></div>
+                </div>
+
+                <div id="import-error" class="text-red-500 text-sm mb-4 hidden"></div>
+
+                <div class="flex gap-3 justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <button onclick="ProductsManager.closeImportModal()" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white">Hủy</button>
+                    <button onclick="ProductsManager.previewImport()" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">Xem trước</button>
+                    <button onclick="ProductsManager.executeImport()" id="import-btn" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Import</button>
+                </div>
+            </div>
+        `;
+        
+        modal.classList.remove('hidden');
+    },
+
+    parseImportData(text) {
+        const lines = text.trim().split('\n').filter(line => line.trim());
+        const products = [];
+        const defaultCategory = document.getElementById('import-default-category')?.value || this.categories[0]?.id || 'course';
+        
+        for (const line of lines) {
+            // Hỗ trợ cả Tab và | làm separator
+            const parts = line.includes('\t') ? line.split('\t') : line.split('|');
+            const [name, price, originalPrice, category, description] = parts.map(p => p?.trim());
+            
+            if (!name) continue;
+            
+            products.push({
+                name,
+                slug: Validators.slugify(name),
+                price: parseInt(price) || 0,
+                originalPrice: parseInt(originalPrice) || parseInt(price) || 0,
+                category: category || defaultCategory,
+                description: description || '',
+                content: '',
+                currency: 'VND',
+                tags: [],
+                active: true,
+                featured: false,
+                rating: 0,
+                reviewCount: 0,
+                sold: 0,
+                image: 'assets/images/products/default.jpg',
+                createdAt: new Date().toISOString().split('T')[0]
+            });
+        }
+        
+        return products;
+    },
+
+    previewImport() {
+        const text = document.getElementById('import-data')?.value || '';
+        const previewEl = document.getElementById('import-preview');
+        const listEl = document.getElementById('import-preview-list');
+        const countEl = document.getElementById('import-count');
+        const errorEl = document.getElementById('import-error');
+        
+        if (!text.trim()) {
+            errorEl.textContent = 'Vui lòng nhập dữ liệu sản phẩm';
+            errorEl.classList.remove('hidden');
+            previewEl.classList.add('hidden');
+            return;
+        }
+
+        const products = this.parseImportData(text);
+        
+        if (products.length === 0) {
+            errorEl.textContent = 'Không tìm thấy sản phẩm hợp lệ';
+            errorEl.classList.remove('hidden');
+            previewEl.classList.add('hidden');
+            return;
+        }
+
+        errorEl.classList.add('hidden');
+        countEl.textContent = products.length;
+        listEl.innerHTML = products.map((p, i) => `
+            <div class="flex justify-between py-1 border-b border-gray-200 dark:border-gray-600 last:border-0">
+                <span class="text-gray-800 dark:text-white">${i + 1}. ${p.name}</span>
+                <span class="text-gray-500">${p.price.toLocaleString()}đ - ${p.category}</span>
+            </div>
+        `).join('');
+        previewEl.classList.remove('hidden');
+        
+        this.pendingImport = products;
+    },
+
+    async executeImport() {
+        if (!this.pendingImport?.length) {
+            alert('Vui lòng nhấn "Xem trước" trước khi import');
+            return;
+        }
+
+        const btn = document.getElementById('import-btn');
+        btn.disabled = true;
+        btn.textContent = 'Đang import...';
+
+        try {
+            // Tạo ID mới cho từng sản phẩm
+            let maxId = Math.max(0, ...this.products.map(p => p.id));
+            for (const product of this.pendingImport) {
+                product.id = ++maxId;
+                this.products.push(product);
+            }
+
+            await GitHubAPI.updateJson('data/products.json', {
+                products: this.products,
+                categories: this.categories
+            }, `Bulk import ${this.pendingImport.length} products`);
+
+            await this.loadData();
+            this.closeImportModal();
+            this.renderList();
+            
+            alert(`✅ Đã import ${this.pendingImport.length} sản phẩm thành công!`);
+            this.pendingImport = null;
+        } catch (err) {
+            document.getElementById('import-error').textContent = 'Lỗi: ' + err.message;
+            document.getElementById('import-error').classList.remove('hidden');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Import';
+        }
+    },
+
+    closeImportModal() {
+        document.getElementById('import-modal').classList.add('hidden');
+        this.pendingImport = null;
     },
 
     // ==========================================
