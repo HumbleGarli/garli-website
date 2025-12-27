@@ -21,50 +21,6 @@
       "reviewCount": 256,
       "sold": 1520,
       "image": "assets/images/products/1766597441245-011-youtube-premium-music-1nam-65910.webp"
-    },
-    {
-      "id": 7,
-      "name": "Ebook: Clean Code Vietnam",
-      "slug": "ebook-clean-code-vietnam",
-      "description": "Ebook tiếng Việt về Clean Code, SOLID principles và best practices",
-      "price": 99000,
-      "originalPrice": 200000,
-      "currency": "VND",
-      "category": "ebook",
-      "tags": [
-        "ebook",
-        "clean-code",
-        "best-practices"
-      ],
-      "image": "assets/images/products/clean-code-ebook.jpg",
-      "rating": 4.5,
-      "reviewCount": 312,
-      "sold": 2100,
-      "featured": false,
-      "active": true,
-      "createdAt": "2025-07-01"
-    },
-    {
-      "id": 8,
-      "name": "Full-stack Bootcamp",
-      "slug": "fullstack-bootcamp",
-      "description": "Combo khóa học full-stack: React + Node.js + MongoDB + DevOps",
-      "price": 1499000,
-      "originalPrice": 3000000,
-      "currency": "VND",
-      "category": "course",
-      "tags": [
-        "fullstack",
-        "bootcamp",
-        "combo"
-      ],
-      "image": "assets/images/products/fullstack-bootcamp.jpg",
-      "rating": 4.9,
-      "reviewCount": 78,
-      "sold": 290,
-      "featured": true,
-      "active": true,
-      "createdAt": "2025-08-15"
     }
   ],
   "categories": [
