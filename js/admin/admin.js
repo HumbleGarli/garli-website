@@ -266,6 +266,9 @@ const AdminPanel = {
             case 'posts':
                 PostsManager.init();
                 break;
+            case 'about':
+                AboutManager.init();
+                break;
             case 'config':
                 ConfigManager.init();
                 break;
