@@ -69,7 +69,7 @@ const PostPage = {
                 <div class="h-64 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 rounded-xl flex items-center justify-center mb-8">
                     <span class="text-6xl">📝</span>
                 </div>
-                <div class="prose prose-lg dark:prose-invert max-w-none">${content}</div>
+                <div class="prose-content max-w-none">${content}</div>
                 <footer class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
                     <div class="flex flex-wrap gap-2">
                         ${safeTags.map(t => `<span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full text-sm">#${t}</span>`).join('')}
