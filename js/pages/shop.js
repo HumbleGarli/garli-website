@@ -102,8 +102,8 @@ const ShopPage = {
         const hasImage = p.image && !p.image.includes('default');
         
         return `
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden group hover:shadow-lg transition-shadow">
-                <div class="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center overflow-hidden">
+            <a href="product.html?slug=${p.slug}" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden group hover:shadow-lg transition-shadow flex flex-col h-full">
+                <div class="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center overflow-hidden flex-shrink-0">
                     ${hasImage 
                         ? `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">` 
                         : '<span class="text-5xl">📦</span>'
@@ -111,25 +111,27 @@ const ShopPage = {
                     ${p.featured ? '<span class="absolute top-2 left-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded">HOT</span>' : ''}
                     <span class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">-${discount}%</span>
                 </div>
-                <div class="p-4">
+                <div class="p-4 flex flex-col flex-1">
                     <span class="text-xs text-blue-600 dark:text-blue-400 uppercase">${this.categories.find(c => c.id === p.category)?.name || p.category}</span>
-                    <h3 class="font-semibold text-gray-800 dark:text-white mt-1 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">${p.name}</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">${p.description}</p>
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="text-xl font-bold text-blue-600 dark:text-blue-400">${p.price.toLocaleString('vi-VN')}đ</span>
-                        <span class="text-sm text-gray-400 line-through">${p.originalPrice.toLocaleString('vi-VN')}đ</span>
-                    </div>
-                    <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                        <div class="flex items-center">
-                            <span class="text-yellow-500">★</span>
-                            <span class="ml-1">${p.rating}</span>
-                            <span class="ml-1">(${p.reviewCount})</span>
+                    <h3 class="font-semibold text-gray-800 dark:text-white mt-1 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors min-h-[3rem]">${p.name}</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2 min-h-[2.5rem]">${p.description || ''}</p>
+                    <div class="mt-auto">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="text-xl font-bold text-blue-600 dark:text-blue-400">${p.price.toLocaleString('vi-VN')}đ</span>
+                            <span class="text-sm text-gray-400 line-through">${p.originalPrice.toLocaleString('vi-VN')}đ</span>
                         </div>
-                        <span>Đã bán ${p.sold}</span>
+                        <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
+                            <div class="flex items-center">
+                                <span class="text-yellow-500">★</span>
+                                <span class="ml-1">${p.rating}</span>
+                                <span class="ml-1">(${p.reviewCount})</span>
+                            </div>
+                            <span>Đã bán ${p.sold}</span>
+                        </div>
+                        <span class="block w-full py-2 bg-blue-600 text-white rounded-lg text-center group-hover:bg-blue-700 transition-colors">Xem chi tiết</span>
                     </div>
-                    <button class="w-full mt-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Xem chi tiết</button>
                 </div>
-            </div>
+            </a>
         `;
     },
 

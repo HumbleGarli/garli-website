@@ -314,8 +314,12 @@ const ProductsManager = {
                             </select>
                         </div>
                         <div class="col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Mô tả</label>
-                            <textarea name="description" rows="3" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">${product?.description || ''}</textarea>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Mô tả ngắn (hiển thị ở danh sách)</label>
+                            <textarea name="description" rows="2" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">${product?.description || ''}</textarea>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nội dung chi tiết (hiển thị ở trang sản phẩm)</label>
+                            <textarea name="content" rows="5" placeholder="Mô tả đầy đủ về sản phẩm, tính năng, hướng dẫn sử dụng..." class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">${product?.content || ''}</textarea>
                         </div>
                         <div class="col-span-2">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tags (phân cách bằng dấu phẩy)</label>
@@ -392,6 +396,7 @@ const ProductsManager = {
             name: form.name.value.trim(),
             slug: Validators.slugify(form.name.value),
             description: form.description.value.trim(),
+            content: form.content.value.trim(),
             price: parseInt(form.price.value) || 0,
             originalPrice: parseInt(form.originalPrice.value) || parseInt(form.price.value),
             currency: 'VND',
@@ -430,6 +435,7 @@ const ProductsManager = {
                     data.reviewCount = this.products[idx].reviewCount || 0;
                     data.sold = this.products[idx].sold || 0;
                     data.image = data.image || this.products[idx].image;
+                    data.content = data.content || this.products[idx].content || '';
                     this.products[idx] = data;
                 }
             } else {

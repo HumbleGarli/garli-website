@@ -132,28 +132,30 @@ const HomePage = {
         const hasImage = p.image && !p.image.includes('default');
         
         return `
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden group">
-                <div class="h-40 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center overflow-hidden">
+            <a href="product.html?slug=${p.slug}" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden group block hover:shadow-lg transition-shadow flex flex-col h-full">
+                <div class="h-40 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center overflow-hidden flex-shrink-0">
                     ${hasImage 
                         ? `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">` 
                         : '<span class="text-4xl">📦</span>'
                     }
                 </div>
-                <div class="p-4">
-                    <h3 class="font-semibold text-gray-800 dark:text-white mb-2 line-clamp-2">${p.name}</h3>
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="text-lg font-bold text-blue-600 dark:text-blue-400">${p.price.toLocaleString('vi-VN')}đ</span>
-                        <span class="text-sm text-gray-400 line-through">${p.originalPrice.toLocaleString('vi-VN')}đ</span>
-                        <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded">-${discount}%</span>
-                    </div>
-                    <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                        <span class="text-yellow-500">★</span>
-                        <span class="ml-1">${p.rating}</span>
-                        <span class="mx-2">•</span>
-                        <span>Đã bán ${p.sold}</span>
+                <div class="p-4 flex flex-col flex-1">
+                    <h3 class="font-semibold text-gray-800 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors h-12">${p.name}</h3>
+                    <div class="mt-auto">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-lg font-bold text-blue-600 dark:text-blue-400">${p.price.toLocaleString('vi-VN')}đ</span>
+                            <span class="text-sm text-gray-400 line-through">${p.originalPrice.toLocaleString('vi-VN')}đ</span>
+                            <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded">-${discount}%</span>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                            <span class="text-yellow-500">★</span>
+                            <span class="ml-1">${p.rating}</span>
+                            <span class="mx-2">•</span>
+                            <span>Đã bán ${p.sold}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </a>
         `;
     },
 
