@@ -70,12 +70,13 @@ const PostPage = {
                     <span class="text-6xl">📝</span>
                 </div>
                 <div class="prose-content max-w-none">${content}</div>
-                <div class="mt-8 pt-8">
-                    <div class="flex flex-wrap gap-3">
-                        ${safeTags.map(t => `<span class="px-4 py-2 bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full text-sm shadow-sm">#${t}</span>`).join('')}
-                    </div>
-                </div>
             </article>
+            <div class="max-w-3xl mx-auto mt-8">
+                <hr class="border-gray-300 dark:border-gray-600 mb-6">
+                <div class="flex flex-wrap gap-3">
+                    ${safeTags.map(t => `<span class="px-4 py-2 bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full text-sm shadow-sm">#${t}</span>`).join('')}
+                </div>
+            </div>
         `);
     },
 
