@@ -30,11 +30,6 @@
       "icon": "book"
     },
     {
-      "id": "template",
-      "name": "Template",
-      "icon": "layout"
-    },
-    {
       "id": "ebook",
       "name": "Ebook",
       "icon": "file-text"
