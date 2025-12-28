@@ -359,6 +359,13 @@ const PostsManager = {
                             </select>
                         </div>
                         <div class="col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Ảnh banner</label>
+                            <input type="file" id="post-image" accept="image/*" class="w-full">
+                            <div id="post-image-preview" class="mt-2 ${post?.image && !post.image.includes('default') ? '' : 'hidden'}">
+                                <img src="${post?.image || ''}" class="h-32 rounded-lg object-cover">
+                            </div>
+                        </div>
+                        <div class="col-span-2">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nội dung (Markdown)</label>
                             <textarea name="content" id="post-content" rows="15" 
                                 class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white font-mono text-sm">${this.editingContent}</textarea>
@@ -383,6 +390,44 @@ const PostsManager = {
         });
         
         document.getElementById('post-form').addEventListener('submit', (e) => this.handleSubmit(e));
+        document.getElementById('post-image')?.addEventListener('change', (e) => this.handleImageChange(e));
+    },
+
+    async handleImageChange(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const previewEl = document.getElementById('post-image-preview');
+        previewEl.innerHTML = '<p class="text-gray-500">Đang xử lý ảnh...</p>';
+        previewEl.classList.remove('hidden');
+
+        try {
+            const validation = ImageTools.validate(file);
+            if (!validation.valid) {
+                throw new Error(validation.errors.join('. '));
+            }
+
+            const result = await ImageTools.compress(file, {
+                maxWidth: 1200,
+                maxHeight: 630,
+                quality: 0.85
+            });
+            
+            const preview = await ImageTools.getPreview(result.file);
+            
+            previewEl.innerHTML = `
+                <img src="${preview}" class="h-32 rounded-lg object-cover">
+                <p class="text-xs text-gray-500 mt-1">
+                    ${ImageTools.formatSize(result.originalSize)} → ${ImageTools.formatSize(result.compressedSize)} 
+                    <span class="text-green-600">(giảm ${result.savings}%)</span>
+                </p>
+            `;
+            
+            this.pendingImage = result.file;
+        } catch (err) {
+            previewEl.innerHTML = `<p class="text-red-500 text-sm">${err.message}</p>`;
+            this.pendingImage = null;
+        }
     },
 
     async handleSubmit(e) {
@@ -429,6 +474,14 @@ const PostsManager = {
             submitBtn.disabled = true;
             submitBtn.textContent = 'Đang lưu...';
 
+            // Upload image if pending
+            let imagePath = null;
+            if (this.pendingImage) {
+                const result = await GitHubAPI.uploadImage(this.pendingImage, 'assets/images/posts');
+                imagePath = result.path;
+                this.pendingImage = null;
+            }
+
             // Generate file path
             const mdPath = `content/posts/${today}-${slug}.md`;
             
@@ -452,7 +505,8 @@ const PostsManager = {
                     this.posts[idx] = {
                         ...oldPost,
                         ...metadata,
-                        id: this.editingId
+                        id: this.editingId,
+                        image: imagePath || oldPost.image
                     };
                 }
             } else {
@@ -469,7 +523,7 @@ const PostsManager = {
                     ...metadata,
                     id: Math.max(0, ...this.posts.map(p => p.id)) + 1,
                     content: mdPath,
-                    image: 'assets/images/posts/default.jpg',
+                    image: imagePath || 'assets/images/posts/default.jpg',
                     views: 0,
                     publishedAt: today
                 };

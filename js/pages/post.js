@@ -66,8 +66,11 @@ const PostPage = {
                         <span>${post.views.toLocaleString()} lượt xem</span>
                     </div>
                 </header>
-                <div class="h-64 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 rounded-xl flex items-center justify-center mb-8">
-                    <span class="text-6xl">📝</span>
+                <div class="h-64 rounded-xl overflow-hidden flex items-center justify-center mb-8 ${post.image && !post.image.includes('default') ? '' : 'bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900'}">
+                    ${post.image && !post.image.includes('default') 
+                        ? `<img src="${post.image}" alt="${safeTitle}" class="w-full h-full object-cover">`
+                        : '<span class="text-6xl">📝</span>'
+                    }
                 </div>
                 <div class="prose-content max-w-none">${content}</div>
             </article>
