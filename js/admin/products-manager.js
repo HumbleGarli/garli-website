@@ -95,7 +95,7 @@ const ProductsManager = {
                     <p class="text-sm text-gray-500 dark:text-gray-400">${p.category} • ${p.price.toLocaleString()}đ</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="px-2 py-1 text-xs rounded ${p.active ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'}">${p.active ? 'Active' : 'Draft'}</span>
+                    <span class="px-2 py-1 text-xs rounded ${p.active ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}">${p.active ? 'Còn hàng' : 'Hết hàng'}</span>
                     <button onclick="ProductsManager.edit(${p.id})" class="p-2 text-blue-600 hover:bg-blue-50 rounded">✏️</button>
                     <button onclick="ProductsManager.delete(${p.id})" class="p-2 text-red-600 hover:bg-red-50 rounded">🗑️</button>
                 </div>
@@ -480,8 +480,8 @@ const ProductsManager = {
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Trạng thái</label>
                             <select name="active" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
-                                <option value="true" ${product?.active !== false ? 'selected' : ''}>Active</option>
-                                <option value="false" ${product?.active === false ? 'selected' : ''}>Draft</option>
+                                <option value="true" ${product?.active !== false ? 'selected' : ''}>Còn hàng</option>
+                                <option value="false" ${product?.active === false ? 'selected' : ''}>Hết hàng</option>
                             </select>
                         </div>
                         <div>
