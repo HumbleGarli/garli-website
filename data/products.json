@@ -28,11 +28,6 @@
       "id": "course",
       "name": "Khóa học",
       "icon": "book"
-    },
-    {
-      "id": "ebook",
-      "name": "Ebook",
-      "icon": "file-text"
     }
   ]
 }
