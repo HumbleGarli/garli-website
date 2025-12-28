@@ -28,6 +28,11 @@
       "id": "course",
       "name": "Khóa học",
       "icon": "book"
+    },
+    {
+      "id": "hoc-tap",
+      "name": "Học tập",
+      "icon": "folder"
     }
   ]
 }
