@@ -85,5 +85,13 @@
       "coding",
       "tutorial"
     ]
+  },
+  "donate": {
+    "enabled": true,
+    "avatar": "assets/images/donate/1766943977967-an-xin.webp",
+    "qrCode": "assets/images/donate/1766943980438-img.webp",
+    "title": "Nuôi tôi",
+    "message": "Chủ web đói quá, xin được nuôi 🐱",
+    "thankYou": "Cảm ơn bạn rất nhiều! ❤️"
   }
 }
