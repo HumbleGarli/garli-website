@@ -484,6 +484,13 @@ const ProductsManager = {
                                 <option value="false" ${product?.active === false ? 'selected' : ''}>Draft</option>
                             </select>
                         </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">⭐ Nổi bật (hiện trang chủ)</label>
+                            <select name="featured" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                <option value="false" ${!product?.featured ? 'selected' : ''}>Không</option>
+                                <option value="true" ${product?.featured ? 'selected' : ''}>Có - Hiện ở trang chủ</option>
+                            </select>
+                        </div>
                         <div class="col-span-2">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Mô tả ngắn (hiển thị ở danh sách)</label>
                             <textarea name="description" rows="2" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">${product?.description || ''}</textarea>
@@ -575,7 +582,7 @@ const ProductsManager = {
             category: form.category.value,
             tags: form.tags.value.split(',').map(t => t.trim()).filter(Boolean),
             active: form.active.value === 'true',
-            featured: false
+            featured: form.featured.value === 'true'
         };
 
         // Validate
