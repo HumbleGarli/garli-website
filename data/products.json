@@ -43,6 +43,11 @@
       "id": "ai",
       "name": "AI",
       "icon": "folder"
+    },
+    {
+      "id": "khac",
+      "name": "Khác",
+      "icon": "folder"
     }
   ]
 }
