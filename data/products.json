@@ -48,6 +48,11 @@
       "id": "khac",
       "name": "Khác",
       "icon": "folder"
+    },
+    {
+      "id": "lam-viec",
+      "name": "Làm việc",
+      "icon": "folder"
     }
   ]
 }
