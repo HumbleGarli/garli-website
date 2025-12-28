@@ -33,6 +33,11 @@
       "id": "hoc-tap",
       "name": "Học tập",
       "icon": "folder"
+    },
+    {
+      "id": "giai-tri",
+      "name": "Giải trí",
+      "icon": "folder"
     }
   ]
 }
