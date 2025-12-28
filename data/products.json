@@ -53,6 +53,11 @@
       "id": "lam-viec",
       "name": "Làm việc",
       "icon": "folder"
+    },
+    {
+      "id": "do-hoa",
+      "name": "Đồ hoạ",
+      "icon": "folder"
     }
   ]
 }
