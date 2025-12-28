@@ -498,6 +498,7 @@ const ProductsManager = {
                         </div>
                         <div class="col-span-2">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Ảnh sản phẩm</label>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">📐 Kích thước khuyến nghị: 920 x 430px (tỷ lệ 2.14:1)</p>
                             <input type="file" id="product-image" accept="image/*" class="w-full">
                             <div id="image-preview" class="mt-2 ${product?.image ? '' : 'hidden'}">
                                 <img src="${product?.image || ''}" class="h-32 rounded-lg object-cover">

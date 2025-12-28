@@ -53,6 +53,7 @@ const ConfigManager = {
                             </div>
                             <div id="logo-image-input" class="${logo.type === 'text' ? 'hidden' : ''}">
                                 <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Ảnh logo</label>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">📐 Kích thước khuyến nghị: 400 x 100px (tỷ lệ 4:1)</p>
                                 <input type="file" accept="image/*" onchange="ConfigManager.handleLogoImage(this)" class="text-sm">
                                 <span class="text-xs text-gray-500 block mt-1" id="logo-image-path">${logo.image || 'Chưa có ảnh'}</span>
                                 <div id="logo-preview" class="mt-2 ${logo.image ? '' : 'hidden'}">
@@ -151,6 +152,7 @@ const ConfigManager = {
                 </div>
                 <div>
                     <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Ảnh banner</label>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">📐 Kích thước khuyến nghị: 1600 x 900px (tỷ lệ 16:9)</p>
                     <div class="flex items-center gap-3">
                         <input type="file" accept="image/*" onchange="ConfigManager.handleBannerImage(${i}, this)" class="text-sm">
                         <span class="text-xs text-gray-500" id="banner-image-path-${i}">${b.image || 'Chưa có ảnh'}</span>

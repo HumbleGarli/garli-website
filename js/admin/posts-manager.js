@@ -360,6 +360,7 @@ const PostsManager = {
                         </div>
                         <div class="col-span-2">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Ảnh banner</label>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">📐 Kích thước khuyến nghị: 1200 x 630px (tỷ lệ 1.9:1)</p>
                             <input type="file" id="post-image" accept="image/*" class="w-full">
                             <div id="post-image-preview" class="mt-2 ${post?.image && !post.image.includes('default') ? '' : 'hidden'}">
                                 <img src="${post?.image || ''}" class="h-32 rounded-lg object-cover">
