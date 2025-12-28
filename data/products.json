@@ -38,6 +38,11 @@
       "id": "giai-tri",
       "name": "Giải trí",
       "icon": "folder"
+    },
+    {
+      "id": "ai",
+      "name": "AI",
+      "icon": "folder"
     }
   ]
 }
