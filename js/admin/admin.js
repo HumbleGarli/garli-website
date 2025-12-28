@@ -269,6 +269,9 @@ const AdminPanel = {
             case 'about':
                 AboutManager.init();
                 break;
+            case 'donate':
+                DonateManager.init();
+                break;
             case 'config':
                 ConfigManager.init();
                 break;
