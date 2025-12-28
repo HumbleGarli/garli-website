@@ -250,10 +250,17 @@ body.dark {
    ========================================== */
 
 /* Floating Button */
-.donate-float-btn {
+.donate-float-wrapper {
     position: fixed;
     bottom: 24px;
     right: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 9999;
+}
+
+.donate-float-btn {
     width: 60px;
     height: 60px;
     border-radius: 50%;
@@ -264,14 +271,32 @@ body.dark {
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4);
-    z-index: 9999;
     animation: donate-bounce 2s ease-in-out infinite;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
 }
 
 .donate-float-btn:hover {
     transform: scale(1.1);
     box-shadow: 0 6px 30px rgba(236, 72, 153, 0.6);
+}
+
+/* Label dưới nút */
+.donate-label {
+    margin-top: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #374151;
+    background: white;
+    padding: 3px 10px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    white-space: nowrap;
+}
+
+.dark .donate-label {
+    background: #1f2937;
+    color: #f3f4f6;
 }
 
 /* Ping animation */
@@ -394,11 +419,19 @@ body.dark {
 
 /* Responsive */
 @media (max-width: 640px) {
-    .donate-float-btn {
+    .donate-float-wrapper {
         bottom: 16px;
         right: 16px;
+    }
+    
+    .donate-float-btn {
         width: 52px;
         height: 52px;
+    }
+    
+    .donate-label {
+        font-size: 10px;
+        padding: 2px 8px;
     }
     
     .donate-popup-content {

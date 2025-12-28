@@ -27,6 +27,7 @@ const DonateManager = {
         const donate = this.config.donate || {
             enabled: false,
             avatar: '',
+            buttonLabel: 'Donate',
             qrCode: '',
             title: 'Ủng hộ tác giả',
             message: 'Chủ web đói quá, xin được nuôi 🐱',
@@ -55,6 +56,13 @@ const DonateManager = {
                         <div class="space-y-4">
                             <h3 class="font-semibold text-gray-800 dark:text-white">📝 Nội dung</h3>
                             
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nhãn nút (hiển thị dưới avatar)</label>
+                                <input type="text" name="buttonLabel" value="${donate.buttonLabel || ''}" 
+                                    placeholder="Donate"
+                                    class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                            </div>
+
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tiêu đề popup</label>
                                 <input type="text" name="title" value="${donate.title || ''}" 
@@ -106,11 +114,12 @@ const DonateManager = {
                     <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                         <h3 class="font-semibold text-gray-800 dark:text-white mb-3">👁️ Xem trước</h3>
                         <div class="flex items-start gap-4">
-                            <div class="relative">
+                            <div class="relative flex flex-col items-center">
                                 <div class="w-14 h-14 rounded-full bg-gradient-to-r from-pink-500 to-orange-500 flex items-center justify-center text-2xl animate-bounce shadow-lg">
                                     ${donate.avatar ? `<img src="${donate.avatar}" class="w-full h-full rounded-full object-cover">` : '🎁'}
                                 </div>
                                 <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full animate-ping"></span>
+                                <span class="mt-1 text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 px-2 py-0.5 rounded-full shadow">${donate.buttonLabel || 'Donate'}</span>
                             </div>
                             <div class="flex-1 bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg max-w-xs">
                                 <h4 class="font-bold text-gray-800 dark:text-white">${donate.title || 'Ủng hộ tác giả'}</h4>
@@ -216,6 +225,7 @@ const DonateManager = {
             this.config.donate = {
                 enabled: form.enabled.checked,
                 avatar: avatarPath,
+                buttonLabel: form.buttonLabel.value.trim(),
                 qrCode: qrPath,
                 title: form.title.value.trim(),
                 message: form.message.value.trim(),

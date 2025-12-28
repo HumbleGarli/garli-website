@@ -287,13 +287,16 @@ const App = {
             widget.id = 'donate-widget';
             widget.innerHTML = `
                 <!-- Floating Button -->
-                <button id="donate-btn" class="donate-float-btn" title="Ủng hộ tác giả">
-                    ${donate.avatar 
-                        ? `<img src="${donate.avatar}" alt="Donate" class="w-full h-full rounded-full object-cover">`
-                        : '<span class="text-2xl">🎁</span>'
-                    }
-                    <span class="donate-ping"></span>
-                </button>
+                <div class="donate-float-wrapper">
+                    <button id="donate-btn" class="donate-float-btn" title="Ủng hộ tác giả">
+                        ${donate.avatar 
+                            ? `<img src="${donate.avatar}" alt="Donate" class="w-full h-full rounded-full object-cover">`
+                            : '<span class="text-2xl">🎁</span>'
+                        }
+                        <span class="donate-ping"></span>
+                    </button>
+                    <span class="donate-label">${donate.buttonLabel || 'Donate'}</span>
+                </div>
                 
                 <!-- Popup -->
                 <div id="donate-popup" class="donate-popup hidden">
