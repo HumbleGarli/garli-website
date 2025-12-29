@@ -362,7 +362,7 @@ const App = {
     // FLOATING ICONS BACKGROUND
     // ==========================================
     initFloatingIcons() {
-        // Icon file paths
+        // Icon file paths - supports both SVG and PNG
         const iconFiles = [
             'assets/images/icons/photoshop.svg',
             'assets/images/icons/illustrator.svg',
@@ -399,6 +399,12 @@ const App = {
             const img = document.createElement('img');
             img.src = iconFiles[i % iconFiles.length];
             img.alt = '';
+            
+            // Handle load error - hide broken images
+            img.onerror = () => {
+                icon.style.display = 'none';
+            };
+            
             icon.appendChild(img);
             
             // Random position
