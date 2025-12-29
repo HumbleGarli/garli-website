@@ -62,23 +62,26 @@
       "id": 12
     },
     {
-      "name": "Netflix",
-      "slug": "netflix",
-      "description": "\"Lợi ích của Netflix Premium",
-      "content": "",
+      "name": "Netflix Premium",
+      "slug": "netflix-premium",
+      "description": "Netflix Premium (Gói Cao cấp) là lựa chọn hoàn hảo nhất dành cho những người dùng yêu cầu trải nghiệm điện ảnh đỉnh cao ngay tại nhà.",
+      "content": "Netflix Premium (Gói Cao cấp) là lựa chọn hoàn hảo nhất dành cho những người dùng yêu cầu trải nghiệm điện ảnh đỉnh cao ngay tại nhà. Gói dịch vụ này cung cấp chất lượng hình ảnh tốt nhất với độ phân giải 4K Ultra HD và HDR, mang lại độ sắc nét và màu sắc sống động vượt trội. Đặc biệt, gói Premium cho phép bạn xem trên 4 thiết bị cùng lúc (rất phù hợp để chia sẻ với gia đình) và hỗ trợ công nghệ Âm thanh không gian (Spatial Audio) để tạo hiệu ứng âm thanh vòm sống động mà không cần loa chuyên dụng.",
       "price": 80000,
-      "originalPrice": 80000,
+      "originalPrice": 273000,
       "currency": "VND",
-      "category": "course",
-      "tags": [],
+      "category": "giai-tri",
+      "tags": [
+        "netflix",
+        "xemphim"
+      ],
       "active": true,
       "featured": true,
+      "image": "assets/images/products/1767029841585-netflix.webp",
       "id": 13,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0,
-      "image": "assets/images/products/default.jpg"
+      "sold": 0
     },
     {
       "name": "Canva",
