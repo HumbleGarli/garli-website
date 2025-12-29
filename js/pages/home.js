@@ -111,12 +111,12 @@ const HomePage = {
         try {
             const res = await fetch('data/products.json');
             const { products } = await res.json();
-            const featured = products.filter(p => p.featured && p.active).slice(0, 4);
+            const featured = products.filter(p => p.featured && p.active).slice(0, 3);
 
             container.innerHTML = `
                 <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Sản phẩm nổi bật</h2>
-                <div class="flex flex-wrap justify-center gap-6">
-                    ${featured.map(p => `<div class="w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)]">${this.renderProductCard(p)}</div>`).join('')}
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    ${featured.map(p => this.renderProductCard(p)).join('')}
                 </div>
                 <div class="text-center mt-8">
                     <a href="shop.html" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Xem tất cả</a>
