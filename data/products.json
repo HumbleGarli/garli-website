@@ -143,23 +143,23 @@
       "sold": 0
     },
     {
-      "name": "Perplexity",
-      "slug": "perplexity",
+      "name": "Perplexity Pro",
+      "slug": "perplexity-pro",
+      "description": "Perplexity Pro là gói nâng cấp toàn diện giúp biến công cụ tìm kiếm này thành một trợ lý nghiên cứu và xử lý thông tin cực kỳ mạnh mẽ.",
+      "content": "Perplexity Pro là gói nâng cấp toàn diện giúp biến công cụ tìm kiếm này thành một trợ lý nghiên cứu và xử lý thông tin cực kỳ mạnh mẽ.\n\nQuyền lợi nổi bật nhất khi nâng cấp là khả năng tùy chọn linh hoạt các mô hình AI thông minh nhất thế giới (như GPT-4o của OpenAI, Claude 3.5 Sonnet của Anthropic, hoặc mô hình Sonar chuyên biệt của chính Perplexity) để xử lý câu hỏi của bạn. Bên cạnh đó, bạn sẽ được sử dụng không giới hạn tính năng Pro Search (tìm kiếm sâu đa bước để giải quyết các vấn đề phức tạp), khả năng phân tích tệp tin (file upload) và tạo hình ảnh chất lượng cao. Đây là lựa chọn tối ưu cho những ai cần thông tin chính xác, cập nhật và có chiều sâu hơn so với các chatbot AI thông thường.",
       "price": 150000,
-      "originalPrice": 150000,
-      "category": "AI",
-      "description": "",
-      "content": "",
+      "originalPrice": 4600000,
       "currency": "VND",
+      "category": "ai",
       "tags": [],
       "active": true,
       "featured": false,
+      "image": "assets/images/products/1767032681503-per.webp",
+      "id": 29,
+      "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0,
-      "image": "assets/images/products/default.jpg",
-      "createdAt": "2025-12-28",
-      "id": 29
+      "sold": 0
     },
     {
       "name": "Adobe Full App",
