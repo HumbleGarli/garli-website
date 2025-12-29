@@ -322,20 +322,34 @@ const App = {
             const popup = document.getElementById('donate-popup');
             const closeBtn = document.getElementById('donate-close');
             
+            const openPopup = () => {
+                popup.classList.remove('hidden', 'hide');
+                popup.classList.add('show');
+                btn.style.animation = 'none';
+            };
+            
+            const closePopup = () => {
+                popup.classList.remove('show');
+                popup.classList.add('hide');
+                btn.style.animation = '';
+                // Wait for animation to finish before hiding
+                setTimeout(() => {
+                    popup.classList.add('hidden');
+                    popup.classList.remove('hide');
+                }, 250);
+            };
+            
             btn?.addEventListener('click', () => {
-                popup?.classList.toggle('hidden');
-                // Stop bounce animation when popup is open
-                if (!popup?.classList.contains('hidden')) {
-                    btn.style.animation = 'none';
+                if (popup.classList.contains('hidden')) {
+                    openPopup();
                 } else {
-                    btn.style.animation = '';
+                    closePopup();
                 }
             });
             
             closeBtn?.addEventListener('click', (e) => {
                 e.stopPropagation();
-                popup?.classList.add('hidden');
-                btn.style.animation = '';
+                closePopup();
             });
             
             console.log('[App] Donate widget loaded');
