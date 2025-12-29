@@ -351,7 +351,8 @@ body.dark {
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     z-index: 9998;
     overflow: hidden;
-    animation: donate-slide-up 0.3s ease;
+    transform-origin: bottom right;
+    animation: donate-scale-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .donate-chat-popup.hidden {
@@ -360,6 +361,17 @@ body.dark {
 
 .dark .donate-chat-popup {
     background: #1f2937;
+}
+
+@keyframes donate-scale-in {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .donate-chat-header {
