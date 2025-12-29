@@ -355,23 +355,23 @@
       "id": 88
     },
     {
-      "name": "Lovable",
-      "slug": "lovable",
-      "price": 30000,
-      "originalPrice": 30000,
-      "category": "course",
-      "description": "\"Điểm nổi bật của Lovable",
-      "content": "",
+      "name": "Lovable Pro",
+      "slug": "lovable-pro",
+      "description": "Lovable Pro là gói đăng ký nâng cao của nền tảng Lovable.dev (một công cụ lập trình hỗ trợ bởi AI), được thiết kế dành cho các nhà phát triển và người sáng tạo muốn xây dựng ứng dụng Full-stack chuyên nghiệp với tốc độ \"ánh sáng\".",
+      "content": "Lovable Pro là gói đăng ký nâng cao của nền tảng Lovable.dev (một công cụ lập trình hỗ trợ bởi AI), được thiết kế dành cho các nhà phát triển và người sáng tạo muốn xây dựng ứng dụng Full-stack chuyên nghiệp với tốc độ \"ánh sáng\".\n\nKhi nâng cấp lên Pro, bạn sẽ nhận được:\n\nTăng giới hạn tương tác: Mở rộng số lượng tin nhắn và lượt tạo code (credits) mỗi tháng, cho phép xây dựng các dự án phức tạp mà không bị gián đoạn.\n\nSức mạnh AI tối đa: Ưu tiên truy cập vào các mô hình ngôn ngữ mạnh mẽ nhất hiện nay (như Claude 3.5 Sonnet), giúp AI hiểu ý tưởng sâu hơn, viết code sạch hơn và xử lý logic backend/database chính xác hơn.\n\nTriển khai & Riêng tư: Hỗ trợ các tính năng deploy (triển khai) ứng dụng nhanh chóng và quyền kiểm soát tốt hơn đối với sự riêng tư của dự án.\n\nĐây là lựa chọn lý tưởng cho những ai muốn biến ý tưởng thành sản phẩm thực tế (MVP) chỉ trong vài giờ thay vì vài tuần.",
+      "price": 80000,
+      "originalPrice": 1350000,
       "currency": "VND",
+      "category": "ai",
       "tags": [],
       "active": true,
       "featured": false,
+      "image": "assets/images/products/1767032179148-lovable.webp",
+      "id": 89,
+      "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0,
-      "image": "assets/images/products/default.jpg",
-      "createdAt": "2025-12-28",
-      "id": 89
+      "sold": 0
     }
   ],
   "categories": [
