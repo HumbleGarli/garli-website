@@ -550,9 +550,10 @@ body.dark {
     animation: float-random linear infinite;
 }
 
-.floating-icon svg {
+.floating-icon img {
     width: 100%;
     height: 100%;
+    object-fit: contain;
 }
 
 /* Random floating animation */
