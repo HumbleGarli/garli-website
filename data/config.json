@@ -94,5 +94,18 @@
     "title": "DỰ ÁN NUÔI TÔI",
     "message": "Chủ web đói quá, xin hãy nuôi tôi🐱",
     "thankYou": "Cảm ơn phú ông/ phú pà rất nhiều! ❤️"
+  },
+  "about": {
+    "title": "Garli Store",
+    "description": "Chào mừng bạn đến với website của chúng tôi",
+    "paragraphs": [
+      "Chúng tôi cung cấp các sản phẩm và dịch vụ chất lượng.",
+      "Liên hệ với chúng tôi để được hỗ trợ tốt nhất."
+    ],
+    "stats": [
+      { "value": "500+", "label": "Khách hàng" },
+      { "value": "20+", "label": "Sản phẩm" },
+      { "value": "200+", "label": "Tấu hài" }
+    ]
   }
 }
