@@ -336,23 +336,23 @@
       "sold": 0
     },
     {
-      "name": "Figma",
-      "slug": "figma",
-      "price": 0,
-      "originalPrice": 0,
-      "category": "course",
+      "name": "Figma Edu",
+      "slug": "figma-edu",
       "description": "Figma là một công cụ thiết kế UI/UX chạy trực tuyến, nổi bật với khả năng làm việc nhóm mạnh mẽ, giao diện thân thiện và hỗ trợ đa nền tảng. Không cần cài đặt phần mềm, bạn có thể bắt đầu thiết kế ngay trên trình duyệt với tốc độ mượt mà và khả năng đồng bộ mạnh mẽ.",
-      "content": "",
+      "content": "Figma là một công cụ thiết kế UI/UX chạy trực tuyến, nổi bật với khả năng làm việc nhóm mạnh mẽ, giao diện thân thiện và hỗ trợ đa nền tảng. Không cần cài đặt phần mềm, bạn có thể bắt đầu thiết kế ngay trên trình duyệt với tốc độ mượt mà và khả năng đồng bộ mạnh mẽ.",
+      "price": 250000,
+      "originalPrice": 800002,
       "currency": "VND",
+      "category": "do-hoa",
       "tags": [],
       "active": true,
       "featured": false,
+      "image": "assets/images/products/1767032777315-figma.webp",
+      "id": 88,
+      "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0,
-      "image": "assets/images/products/default.jpg",
-      "createdAt": "2025-12-28",
-      "id": 88
+      "sold": 0
     },
     {
       "name": "Lovable Pro",
