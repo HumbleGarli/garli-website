@@ -527,3 +527,94 @@ body.dark {
     background-color: #374151;
     color: #f3f4f6 !important;
 }
+
+
+/* ==========================================
+   FLOATING ICONS BACKGROUND
+   ========================================== */
+
+.floating-icons-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.floating-icon {
+    position: absolute;
+    filter: blur(3px);
+    animation: float-random linear infinite;
+}
+
+.floating-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Random floating animation */
+@keyframes float-random {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    25% {
+        transform: translate(50px, -80px) rotate(90deg);
+    }
+    50% {
+        transform: translate(-30px, -150px) rotate(180deg);
+    }
+    75% {
+        transform: translate(80px, -80px) rotate(270deg);
+    }
+    100% {
+        transform: translate(0, 0) rotate(360deg);
+    }
+}
+
+/* Different animation variants for variety */
+.floating-icon:nth-child(odd) {
+    animation-name: float-random-alt;
+}
+
+@keyframes float-random-alt {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    25% {
+        transform: translate(-60px, -60px) rotate(-90deg);
+    }
+    50% {
+        transform: translate(40px, -120px) rotate(-180deg);
+    }
+    75% {
+        transform: translate(-50px, -60px) rotate(-270deg);
+    }
+    100% {
+        transform: translate(0, 0) rotate(-360deg);
+    }
+}
+
+.floating-icon:nth-child(3n) {
+    animation-name: float-drift;
+}
+
+@keyframes float-drift {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+    33% {
+        transform: translate(100px, -50px) scale(1.1);
+    }
+    66% {
+        transform: translate(-50px, -100px) scale(0.9);
+    }
+}
+
+/* Ensure content stays above background */
+header, main, footer, #donate-widget {
+    position: relative;
+    z-index: 1;
+}
