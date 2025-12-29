@@ -257,23 +257,23 @@
       "sold": 0
     },
     {
-      "name": "Truecaller",
-      "slug": "truecaller",
-      "price": 200000,
-      "originalPrice": 200000,
-      "category": "Khác",
+      "name": "Truecaller Premium",
+      "slug": "truecaller-premium",
       "description": "\"Truecaller là ứng dụng hàng đầu giúp bạn nhận diện người gọi, chặn cuộc gọi spam và bảo vệ bạn khỏi các cuộc gọi không mong muốn. Với cơ sở dữ liệu khổng lồ, Truecaller cho phép bạn dễ dàng nhận biết các cuộc gọi từ số điện thoại lạ và tự động chặn các cuộc gọi quảng cáo, spam hoặc lừa đảo. Đây là giải pháp lý tưởng cho những ai muốn quản lý cuộc gọi một cách hiệu quả và an toàn hơn.",
-      "content": "",
+      "content": "\"Truecaller là ứng dụng hàng đầu giúp bạn nhận diện người gọi, chặn cuộc gọi spam và bảo vệ bạn khỏi các cuộc gọi không mong muốn. Với cơ sở dữ liệu khổng lồ, Truecaller cho phép bạn dễ dàng nhận biết các cuộc gọi từ số điện thoại lạ và tự động chặn các cuộc gọi quảng cáo, spam hoặc lừa đảo. Đây là giải pháp lý tưởng cho những ai muốn quản lý cuộc gọi một cách hiệu quả và an toàn hơn.",
+      "price": 200000,
+      "originalPrice": 1900000,
       "currency": "VND",
+      "category": "khac",
       "tags": [],
       "active": true,
       "featured": false,
+      "image": "assets/images/products/1767033164353-true.webp",
+      "id": 45,
+      "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0,
-      "image": "assets/images/products/default.jpg",
-      "createdAt": "2025-12-28",
-      "id": 45
+      "sold": 0
     },
     {
       "name": "Vietmap",
