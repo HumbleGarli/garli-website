@@ -124,23 +124,23 @@
       "id": 23
     },
     {
-      "name": "Grok",
-      "slug": "grok",
-      "price": 300000,
-      "originalPrice": 300000,
-      "category": "AI",
+      "name": "Super Grok",
+      "slug": "super-grok",
       "description": "SuperGrok AI – bản xịn từ xAI: chat siêu thông minh, phân tích dữ liệu, sáng tạo nội dung cực nhanh.",
-      "content": "",
+      "content": "SuperGrok AI – bản xịn từ xAI: chat siêu thông minh, phân tích dữ liệu, sáng tạo nội dung cực nhanh.",
+      "price": 300000,
+      "originalPrice": 800000,
       "currency": "VND",
+      "category": "ai",
       "tags": [],
       "active": true,
       "featured": false,
+      "image": "assets/images/products/1767031930404-grok.webp",
+      "id": 28,
+      "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0,
-      "image": "assets/images/products/default.jpg",
-      "createdAt": "2025-12-28",
-      "id": 28
+      "sold": 0
     },
     {
       "name": "Perplexity",
