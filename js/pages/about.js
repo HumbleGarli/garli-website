@@ -35,7 +35,7 @@ const AboutPage = {
         if (!container) return;
 
         container.innerHTML = `
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8">
+            <div class="glass-card bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8">
                 <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">${about.title || 'Giới thiệu'}</h2>
                 
                 ${about.description ? `<p class="text-lg text-gray-600 dark:text-gray-400 mb-6">${about.description}</p>` : ''}

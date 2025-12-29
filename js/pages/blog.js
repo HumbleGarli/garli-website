@@ -29,7 +29,7 @@ const BlogPage = {
         const container = document.getElementById('blog-filters');
         if (!container) return;
         container.innerHTML = `
-            <div class="flex flex-wrap gap-4 items-center justify-between bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
+            <div class="flex flex-wrap gap-4 items-center justify-between glass-card bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
                 <div class="flex flex-wrap gap-3">
                     <button data-cat="" class="cat-btn active px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white">Tất cả</button>
                     ${this.categories.map(c => `<button data-cat="${c.id}" class="cat-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">${c.name}</button>`).join('')}
@@ -58,7 +58,7 @@ const BlogPage = {
         const catInfo = this.categories.find(c => c.id === p.category) || {};
         const colors = { blue: 'bg-blue-100 text-blue-600', green: 'bg-green-100 text-green-600', purple: 'bg-purple-100 text-purple-600', pink: 'bg-pink-100 text-pink-600' };
         return `
-            <a href="post.html?slug=${p.slug}" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden group hover:shadow-lg transition-shadow">
+            <a href="post.html?slug=${p.slug}" class="glass-card bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden group hover:shadow-lg transition-shadow">
                 <div class="h-48 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 flex items-center justify-center">
                     <span class="text-5xl">📝</span>
                 </div>

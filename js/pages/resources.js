@@ -33,7 +33,7 @@ const ResourcesPage = {
         if (!container) return;
 
         container.innerHTML = `
-            <div class="flex flex-wrap gap-4 items-center justify-between bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
+            <div class="flex flex-wrap gap-4 items-center justify-between glass-card bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
                 <div class="flex flex-wrap gap-3">
                     <button data-type="" class="type-btn active px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white">Tất cả</button>
                     ${this.types.map(t => `
@@ -86,7 +86,7 @@ const ResourcesPage = {
         };
 
         return `
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
+            <div class="glass-card bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
                 <div class="h-40 bg-gradient-to-br from-green-100 to-teal-100 dark:from-green-900 dark:to-teal-900 flex items-center justify-center">
                     <span class="text-5xl">${r.type === 'video' ? '🎬' : r.type === 'code' ? '💻' : '📄'}</span>
                 </div>

@@ -132,7 +132,7 @@ const HomePage = {
         const hasImage = p.image && !p.image.includes('default');
         
         return `
-            <a href="product.html?slug=${p.slug}" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden group block hover:shadow-lg transition-shadow flex flex-col h-full">
+            <a href="product.html?slug=${p.slug}" class="glass-card bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden group block hover:shadow-lg transition-shadow flex flex-col h-full">
                 <div class="aspect-[920/430] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center overflow-hidden flex-shrink-0">
                     ${hasImage 
                         ? `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">` 
@@ -172,7 +172,7 @@ const HomePage = {
                 <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Bài viết mới</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     ${latest.map(p => `
-                        <a href="post.html?slug=${p.slug}" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden group">
+                        <a href="post.html?slug=${p.slug}" class="glass-card bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden group">
                             <div class="h-40 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 flex items-center justify-center">
                                 <span class="text-4xl">📝</span>
                             </div>
