@@ -657,3 +657,28 @@ header, main, footer, #donate-widget {
     background: rgba(31, 41, 55, 0.8);
     border-color: rgba(255, 255, 255, 0.2);
 }
+
+
+/* ==========================================
+   STICKY HEADER
+   ========================================== */
+
+header {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* Light mode header */
+header {
+    background: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Dark mode header */
+.dark header {
+    background: rgba(17, 24, 39, 0.9) !important;
+}
+
+/* Add padding to main content to account for sticky header */
+main {
+    padding-top: 0;
+}
