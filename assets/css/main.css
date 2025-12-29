@@ -271,14 +271,15 @@ body.dark {
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4);
-    animation: donate-bounce 2s ease-in-out infinite;
+    animation: donate-shake 0.5s ease-in-out infinite;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
 }
 
 .donate-float-btn:hover {
-    transform: scale(1.1);
+    transform: scale(1.15);
     box-shadow: 0 6px 30px rgba(236, 72, 153, 0.6);
+    animation: none;
 }
 
 /* Label dưới nút */
@@ -311,13 +312,19 @@ body.dark {
     animation: donate-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
-/* Bounce animation */
-@keyframes donate-bounce {
+/* Shake animation - nhanh và thu hút */
+@keyframes donate-shake {
     0%, 100% {
-        transform: translateY(0);
+        transform: rotate(0deg) scale(1);
+    }
+    25% {
+        transform: rotate(-8deg) scale(1.05);
     }
     50% {
-        transform: translateY(-8px);
+        transform: rotate(8deg) scale(1.1);
+    }
+    75% {
+        transform: rotate(-5deg) scale(1.05);
     }
 }
 
