@@ -217,23 +217,23 @@
       "id": 32
     },
     {
-      "name": "Doulingo",
-      "slug": "doulingo",
-      "price": 0,
-      "originalPrice": 0,
-      "category": "Học tập",
+      "name": "Duolingo Super",
+      "slug": "duolingo-super",
       "description": "\"Học ngôn ngữ dễ dàng hơn với Duolingo Super, ứng dụng giáo dục ngôn ngữ được tải về hàng đầu trên thế giới!",
-      "content": "",
+      "content": "\"Học ngôn ngữ dễ dàng hơn với Duolingo Super, ứng dụng giáo dục ngôn ngữ được tải về hàng đầu trên thế giới!",
+      "price": 290,
+      "originalPrice": 1850000,
       "currency": "VND",
+      "category": "hoc-tap",
       "tags": [],
       "active": true,
       "featured": false,
+      "image": "assets/images/products/1767030829995-doulingo.webp",
+      "id": 33,
+      "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0,
-      "image": "assets/images/products/default.jpg",
-      "createdAt": "2025-12-28",
-      "id": 33
+      "sold": 0
     },
     {
       "name": "Grammarly",
