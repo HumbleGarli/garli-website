@@ -493,3 +493,37 @@ body.dark {
         height: 160px;
     }
 }
+
+
+/* ==========================================
+   NAVIGATION ACTIVE STATE
+   ========================================== */
+
+/* Active nav link - box style */
+.nav-link.active {
+    background-color: #374151;
+    color: #f3f4f6 !important;
+}
+
+/* Light mode active */
+.nav-link.active {
+    background-color: #1f2937;
+    color: white !important;
+}
+
+/* Dark mode - already dark bg so use lighter */
+.dark .nav-link.active {
+    background-color: #374151;
+    color: #f3f4f6 !important;
+}
+
+/* Mobile active */
+#mobile-menu .nav-link.active {
+    background-color: #1f2937;
+    color: white !important;
+}
+
+.dark #mobile-menu .nav-link.active {
+    background-color: #374151;
+    color: #f3f4f6 !important;
+}

@@ -195,14 +195,14 @@ const App = {
     // ==========================================
     setActiveNav() {
         const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-        const navLinks = document.querySelectorAll('nav a[href]');
+        const navLinks = document.querySelectorAll('.nav-link');
         
         navLinks.forEach(link => {
             const href = link.getAttribute('href');
-            link.classList.remove('text-blue-600', 'font-semibold', 'dark:text-blue-400');
+            link.classList.remove('active');
             
             if (href === currentPage || (currentPage === '' && href === 'index.html')) {
-                link.classList.add('text-blue-600', 'font-semibold', 'dark:text-blue-400');
+                link.classList.add('active');
             }
         });
     },
