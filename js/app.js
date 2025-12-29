@@ -286,6 +286,22 @@ const App = {
             const widget = document.createElement('div');
             widget.id = 'donate-widget';
             widget.innerHTML = `
+                <!-- Chat-style Popup (above button) -->
+                <div id="donate-popup" class="donate-chat-popup hidden">
+                    <div class="donate-chat-header">
+                        <span class="font-semibold">${donate.title || 'Ủng hộ tác giả'}</span>
+                        <button id="donate-close" class="donate-chat-close">&times;</button>
+                    </div>
+                    <div class="donate-chat-body">
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-3">${donate.message || ''}</p>
+                        ${donate.qrCode 
+                            ? `<img src="${donate.qrCode}" alt="QR Code" class="donate-qr-img">`
+                            : '<div class="donate-qr-placeholder">📱</div>'
+                        }
+                        <p class="text-xs text-center text-gray-500 dark:text-gray-400 mt-3">${donate.thankYou || 'Cảm ơn bạn!'}</p>
+                    </div>
+                </div>
+                
                 <!-- Floating Button -->
                 <div class="donate-float-wrapper">
                     <button id="donate-btn" class="donate-float-btn" title="Ủng hộ tác giả">
@@ -296,20 +312,6 @@ const App = {
                         <span class="donate-ping"></span>
                     </button>
                     <span class="donate-label">${donate.buttonLabel || 'Donate'}</span>
-                </div>
-                
-                <!-- Popup -->
-                <div id="donate-popup" class="donate-popup hidden">
-                    <div class="donate-popup-content">
-                        <button id="donate-close" class="donate-close">&times;</button>
-                        <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-2">${donate.title || 'Ủng hộ tác giả'}</h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">${donate.message || ''}</p>
-                        ${donate.qrCode 
-                            ? `<img src="${donate.qrCode}" alt="QR Code" class="w-48 h-48 mx-auto rounded-lg border border-gray-200 dark:border-gray-600">`
-                            : '<div class="w-48 h-48 mx-auto bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center text-6xl">📱</div>'
-                        }
-                        <p class="text-xs text-center text-gray-500 dark:text-gray-400 mt-3">${donate.thankYou || 'Cảm ơn bạn!'}</p>
-                    </div>
                 </div>
             `;
             
@@ -322,17 +324,18 @@ const App = {
             
             btn?.addEventListener('click', () => {
                 popup?.classList.toggle('hidden');
-            });
-            
-            closeBtn?.addEventListener('click', () => {
-                popup?.classList.add('hidden');
-            });
-            
-            // Close on click outside
-            popup?.addEventListener('click', (e) => {
-                if (e.target === popup) {
-                    popup.classList.add('hidden');
+                // Stop bounce animation when popup is open
+                if (!popup?.classList.contains('hidden')) {
+                    btn.style.animation = 'none';
+                } else {
+                    btn.style.animation = '';
                 }
+            });
+            
+            closeBtn?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                popup?.classList.add('hidden');
+                btn.style.animation = '';
             });
             
             console.log('[App] Donate widget loaded');
