@@ -293,23 +293,23 @@
       "id": 77
     },
     {
-      "name": "Microsoft 365",
-      "slug": "microsoft-365",
+      "name": "Microsoft Office 365",
+      "slug": "microsoft-office-365",
+      "description": "Microsoft 365 là giải pháp đám mây toàn diện giúp nâng cao hiệu suất làm việc và bảo vệ dữ liệu cá nhân.",
+      "content": "Microsoft 365 là giải pháp đám mây toàn diện giúp nâng cao hiệu suất làm việc và bảo vệ dữ liệu cá nhân. Gói đăng ký này cung cấp quyền truy cập vào các ứng dụng Office cao cấp (Word, Excel, PowerPoint, Outlook) luôn được cập nhật phiên bản mới nhất, cùng với 1TB dung lượng lưu trữ đám mây OneDrive an toàn. Điểm mạnh của Microsoft 365 là khả năng đồng bộ hóa mượt mà trên nhiều thiết bị (Windows, macOS, iOS, Android) và các công cụ hỗ trợ thông minh như Microsoft Editor, giúp bạn làm việc chuyên nghiệp mọi lúc, mọi nơi.",
       "price": 150000,
-      "originalPrice": 150000,
-      "category": "Làm việc",
-      "description": "\"Gói nâng cấp hoặc Gia hạn bản quyền Office 365 cho tài khoản cá nhân 1 năm:",
-      "content": "",
+      "originalPrice": 2602166,
       "currency": "VND",
+      "category": "lam-viec",
       "tags": [],
       "active": true,
       "featured": false,
+      "image": "assets/images/products/1767030136675-365.webp",
+      "id": 78,
+      "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0,
-      "image": "assets/images/products/default.jpg",
-      "createdAt": "2025-12-28",
-      "id": 78
+      "sold": 0
     },
     {
       "name": "CamScanner",
