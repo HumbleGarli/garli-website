@@ -160,23 +160,23 @@
       "id": 29
     },
     {
-      "name": "Adobe",
-      "slug": "adobe",
+      "name": "Adobe Full App",
+      "slug": "adobe-full-app",
       "description": "Adobe Creative Cloud Full-Apps là gói dịch vụ toàn diện cho sáng tạo, cung cấp hơn 20 ứng dụng chuyên nghiệp như Photoshop, Illustrator, Premiere Pro, và After Effects. Người dùng có thể thiết kế đồ họa, chỉnh sửa video, ảnh, hoặc tạo nội dung 3D với công cụ hàng đầu. Gói này đi kèm 100GB lưu trữ đám mây, giúp đồng bộ và chia sẻ dự án dễ dàng trên nhiều thiết bị. Phù hợp cho nhà thiết kế, nhiếp ảnh gia, và nhà làm phim, Adobe Full-Apps hỗ trợ cập nhật phiên bản mới nhất, đảm bảo hiệu suất cao và bảo mật. Đây là lựa chọn lý tưởng để biến ý tưởng thành hiện thực một cách chuyên nghiệp.",
-      "content": "",
+      "content": "Adobe Creative Cloud Full-Apps là gói dịch vụ toàn diện cho sáng tạo, cung cấp hơn 20 ứng dụng chuyên nghiệp như Photoshop, Illustrator, Premiere Pro, và After Effects. Người dùng có thể thiết kế đồ họa, chỉnh sửa video, ảnh, hoặc tạo nội dung 3D với công cụ hàng đầu. Gói này đi kèm 100GB lưu trữ đám mây, giúp đồng bộ và chia sẻ dự án dễ dàng trên nhiều thiết bị. Phù hợp cho nhà thiết kế, nhiếp ảnh gia, và nhà làm phim, Adobe Full-Apps hỗ trợ cập nhật phiên bản mới nhất, đảm bảo hiệu suất cao và bảo mật. Đây là lựa chọn lý tưởng để biến ý tưởng thành hiện thực một cách chuyên nghiệp.",
       "price": 500000,
-      "originalPrice": 500000,
+      "originalPrice": 15000000,
       "currency": "VND",
-      "category": "course",
+      "category": "lam-viec",
       "tags": [],
       "active": true,
       "featured": true,
+      "image": "assets/images/products/1767031013127-adobe.webp",
       "id": 30,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0,
-      "image": "assets/images/products/default.jpg"
+      "sold": 0
     },
     {
       "name": "Spotify",
