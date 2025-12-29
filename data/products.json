@@ -24,23 +24,23 @@
       "sold": 1520
     },
     {
-      "name": "Capcut",
-      "slug": "capcut",
+      "name": "Capcut Pro",
+      "slug": "capcut-pro",
+      "description": "\"CapCut Pro là một ứng dụng chỉnh sửa video chuyên nghiệp. Đây là phiên bản nâng cao của ứng dụng CapCut, cung cấp nhiều tính năng và công cụ chỉnh sửa mạnh mẽ hơn để tạo ra các video chất lượng cao.",
+      "content": "\"CapCut Pro là một ứng dụng chỉnh sửa video chuyên nghiệp. Đây là phiên bản nâng cao của ứng dụng CapCut, cung cấp nhiều tính năng và công cụ chỉnh sửa mạnh mẽ hơn để tạo ra các video chất lượng cao.",
       "price": 30000,
-      "originalPrice": 30000,
-      "category": "Đồ hoạ",
-      "description": "\"CapCut Pro là một ứng dụng chỉnh sửa video chuyên nghiệp. Đây là phiên bản nâng cao của ứng dụng CapCut, cung cấp nhiều tính năng và công cụ chỉnh sửa mạnh mẽ hơn để tạo ra các video chất lượng cao. Một số tính năng chính của CapCut Pro có thể bao gồm:",
-      "content": "",
+      "originalPrice": 200000,
       "currency": "VND",
+      "category": "do-hoa",
       "tags": [],
       "active": true,
       "featured": false,
+      "image": "assets/images/products/1767031334863-capcut.webp",
+      "id": 3,
+      "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0,
-      "image": "assets/images/products/default.jpg",
-      "createdAt": "2025-12-28",
-      "id": 3
+      "sold": 0
     },
     {
       "name": "ChatGPT",
