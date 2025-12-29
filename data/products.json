@@ -314,21 +314,24 @@
     {
       "name": "CamScanner",
       "slug": "camscanner",
-      "price": 100000,
-      "originalPrice": 100000,
-      "category": "Làm việc",
       "description": "\"CamScanner  là ứng dụng Scan với đầy đủ các chức năng mà dành cho dân văn phòng. CamScanner dễ dàng Scan các loại tài liệu khác nhau như các tập hồ sơ, các loại chứng từ, tài liệu học tập, các loại bằng cấp, thẻ chứng minh nhân dân…",
-      "content": "",
+      "content": "\"CamScanner  là ứng dụng Scan với đầy đủ các chức năng mà dành cho dân văn phòng. CamScanner dễ dàng Scan các loại tài liệu khác nhau như các tập hồ sơ, các loại chứng từ, tài liệu học tập, các loại bằng cấp, thẻ chứng minh nhân dân…",
+      "price": 80000,
+      "originalPrice": 120000,
       "currency": "VND",
-      "tags": [],
+      "category": "lam-viec",
+      "tags": [
+        "scan",
+        "pdf"
+      ],
       "active": true,
       "featured": false,
+      "image": "assets/images/products/1767030346710-camscanner.webp",
+      "id": 85,
+      "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0,
-      "image": "assets/images/products/default.jpg",
-      "createdAt": "2025-12-28",
-      "id": 85
+      "sold": 0
     },
     {
       "name": "Figma",
