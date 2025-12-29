@@ -660,25 +660,22 @@ header, main, footer, #donate-widget {
 
 
 /* ==========================================
-   STICKY HEADER
+   STICKY HEADER - GLASSMORPHISM
    ========================================== */
 
-header {
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+.glass-header {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.7) !important;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
-/* Light mode header */
-header {
-    background: rgba(255, 255, 255, 0.9) !important;
+.dark .glass-header {
+    background: rgba(17, 24, 39, 0.75) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-/* Dark mode header */
-.dark header {
-    background: rgba(17, 24, 39, 0.9) !important;
-}
-
-/* Add padding to main content to account for sticky header */
-main {
-    padding-top: 0;
+/* Add padding to body to account for fixed header */
+body {
+    padding-top: 72px;
 }
