@@ -388,11 +388,12 @@ const PostsManager = {
                         </div>
                     </div>
                     <div id="form-error" class="text-red-500 text-sm hidden"></div>
-                    <div class="flex gap-3 justify-end pt-4">
-                        <button type="button" onclick="PostsManager.closeForm()" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg">Hủy</button>
-                        <button type="submit" id="post-submit-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Lưu</button>
-                    </div>
                 </form>
+            </div>
+            <!-- Sticky footer buttons -->
+            <div class="sticky bottom-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4 flex gap-3 justify-end">
+                <button type="button" onclick="PostsManager.closeForm()" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white">Hủy</button>
+                <button type="submit" form="post-form" id="post-submit-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Lưu</button>
             </div>
         `;
 
