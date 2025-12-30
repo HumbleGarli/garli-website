@@ -6,22 +6,256 @@
     <title>Tiện ích - Garli Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="assets/css/main.css">
+    <!-- OTPAuth for 2FA -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/otpauth/9.2.2/otpauth.umd.min.js"></script>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
     <div id="header-placeholder"></div>
     
     <main class="pt-24 pb-16">
         <div class="container mx-auto px-4">
-            <div class="text-center py-20">
-                <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-4">🛠️ Tiện ích</h1>
-                <p class="text-gray-600 dark:text-gray-400">Trang này đang được xây dựng...</p>
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">🛠️ Tiện ích</h1>
+                <p class="text-gray-600 dark:text-gray-400">Các công cụ hữu ích cho công việc hàng ngày</p>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="flex justify-center mb-8">
+                <div class="inline-flex bg-gray-200 dark:bg-gray-700 rounded-full p-1 relative">
+                    <div id="tools-tab-indicator" class="absolute h-[calc(100%-8px)] bg-[#0d544c] rounded-full transition-all duration-300" style="width: 33.33%; left: 4px;"></div>
+                    <button data-tab="2fa" class="tools-tab active relative z-10 px-6 py-2 rounded-full font-medium text-white transition-colors">
+                        🔐 2FA Code
+                    </button>
+                    <button data-tab="vietqr" class="tools-tab relative z-10 px-6 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors">
+                        📱 VietQR
+                    </button>
+                    <button data-tab="bookmarks" class="tools-tab relative z-10 px-6 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors">
+                        🔖 Bookmarks
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab Contents -->
+            <div id="tools-content">
+                <!-- 2FA Tab -->
+                <div id="tab-2fa" class="tab-panel">
+                    <div class="max-w-2xl mx-auto">
+                        <div class="glass-card rounded-2xl p-6">
+                            <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Lấy Code từ KEY 2FA</h2>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">KEY 2FA</label>
+                                    <textarea id="input-2fa-keys" rows="4" 
+                                        class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-[#0d544c] focus:border-transparent resize-none"
+                                        placeholder="Nhập Full KEY 2FA ở đây ... ¥NQV HJNP QCNP JJIY ...&#10;L2WA M4BZ RBM2 YVJP ..."></textarea>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                        Có thể nhập Full định dạng ID | Pass | 2FA. Mỗi dòng sẽ lấy 1 code.
+                                    </p>
+                                </div>
+                                <button onclick="ToolsPage.generate2FA()" 
+                                    class="flex items-center gap-2 px-6 py-3 bg-[#0d544c] text-white rounded-xl hover:bg-[#0a443e] transition-colors font-medium">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                    </svg>
+                                    LẤY CODE
+                                </button>
+                                
+                                <!-- Results -->
+                                <div id="2fa-results" class="hidden space-y-3 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                                    <div class="flex items-center justify-between">
+                                        <h3 class="font-semibold text-gray-800 dark:text-white">Kết quả</h3>
+                                        <div class="flex gap-2">
+                                            <span id="2fa-countdown" class="text-sm text-gray-500 dark:text-gray-400"></span>
+                                            <button onclick="ToolsPage.copy2FAResults()" class="text-sm text-[#0d544c] hover:underline">📋 Copy tất cả</button>
+                                        </div>
+                                    </div>
+                                    <div id="2fa-codes" class="space-y-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VietQR Tab -->
+                <div id="tab-vietqr" class="tab-panel hidden">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <!-- Form -->
+                            <div class="glass-card rounded-2xl p-6">
+                                <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Tạo mã QR thanh toán</h2>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Ngân hàng</label>
+                                        <select id="qr-bank" class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                            <option value="970422">MB Bank</option>
+                                            <option value="970415">VietinBank</option>
+                                            <option value="970436">Vietcombank</option>
+                                            <option value="970418">BIDV</option>
+                                            <option value="970405">Agribank</option>
+                                            <option value="970407">Techcombank</option>
+                                            <option value="970416">ACB</option>
+                                            <option value="970432">VPBank</option>
+                                            <option value="970423">TPBank</option>
+                                            <option value="970403">Sacombank</option>
+                                            <option value="970448">OCB</option>
+                                            <option value="970437">HDBank</option>
+                                            <option value="970441">VIB</option>
+                                            <option value="970443">SHB</option>
+                                            <option value="970431">Eximbank</option>
+                                            <option value="970426">MSB</option>
+                                            <option value="970454">VietCapital Bank</option>
+                                            <option value="970429">SCB</option>
+                                            <option value="970414">OceanBank</option>
+                                            <option value="970438">BaoViet Bank</option>
+                                            <option value="970446">COOP Bank</option>
+                                            <option value="970452">KienLong Bank</option>
+                                            <option value="970430">PGBank</option>
+                                            <option value="970400">SaigonBank</option>
+                                            <option value="970425">ABBank</option>
+                                            <option value="970427">VietABank</option>
+                                            <option value="970433">VietBank</option>
+                                            <option value="970439">NCB</option>
+                                            <option value="970440">SeABank</option>
+                                            <option value="970458">UOB</option>
+                                            <option value="970449">LPBank</option>
+                                            <option value="422589">CAKE</option>
+                                            <option value="546034">Ubank</option>
+                                            <option value="963388">Viettel Money</option>
+                                            <option value="971005">VNPTMoney</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Số tài khoản</label>
+                                        <input type="text" id="qr-account" placeholder="0123456789"
+                                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tên chủ tài khoản</label>
+                                        <input type="text" id="qr-name" placeholder="NGUYEN VAN A"
+                                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Số tiền (tùy chọn)</label>
+                                        <input type="number" id="qr-amount" placeholder="100000"
+                                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nội dung (tùy chọn)</label>
+                                        <input type="text" id="qr-content" placeholder="Thanh toan don hang"
+                                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                    </div>
+                                    <button onclick="ToolsPage.generateQR()" 
+                                        class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#0d544c] text-white rounded-xl hover:bg-[#0a443e] transition-colors font-medium">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+                                        </svg>
+                                        TẠO MÃ QR
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- QR Preview -->
+                            <div class="glass-card rounded-2xl p-6 flex flex-col items-center justify-center">
+                                <div id="qr-preview" class="w-64 h-64 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center">
+                                    <p class="text-gray-400 text-center px-4">Mã QR sẽ hiển thị ở đây</p>
+                                </div>
+                                <button id="qr-download-btn" onclick="ToolsPage.downloadQR()" 
+                                    class="hidden mt-4 px-4 py-2 border border-[#0d544c] text-[#0d544c] rounded-lg hover:bg-[#0d544c] hover:text-white transition-colors">
+                                    📥 Tải xuống
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bookmarks Tab -->
+                <div id="tab-bookmarks" class="tab-panel hidden">
+                    <div class="max-w-6xl mx-auto">
+                        <!-- Actions -->
+                        <div class="flex flex-wrap gap-4 items-center justify-between mb-6">
+                            <div class="flex gap-2">
+                                <button onclick="ToolsPage.showAddBookmark()" 
+                                    class="px-4 py-2 bg-[#0d544c] text-white rounded-lg hover:bg-[#0a443e] transition-colors">
+                                    + Thêm bookmark
+                                </button>
+                                <button onclick="ToolsPage.showAddGroup()" 
+                                    class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white transition-colors">
+                                    📁 Thêm nhóm
+                                </button>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="ToolsPage.exportBookmarks()" 
+                                    class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white transition-colors">
+                                    📤 Xuất JSON
+                                </button>
+                                <label class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white transition-colors cursor-pointer">
+                                    📥 Nhập JSON
+                                    <input type="file" accept=".json" onchange="ToolsPage.importBookmarks(event)" class="hidden">
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Bookmarks Grid -->
+                        <div id="bookmarks-container" class="space-y-6"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
+
+    <!-- Add/Edit Bookmark Modal -->
+    <div id="bookmark-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="bookmark-modal-title" class="text-xl font-bold text-gray-800 dark:text-white">Thêm bookmark</h3>
+                <button onclick="ToolsPage.closeModal('bookmark-modal')" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-2xl">&times;</button>
+            </div>
+            <form id="bookmark-form" class="space-y-4">
+                <input type="hidden" id="bookmark-edit-id">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tên</label>
+                    <input type="text" id="bookmark-title" required class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL</label>
+                    <input type="url" id="bookmark-url" required class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white" placeholder="https://...">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nhóm</label>
+                    <select id="bookmark-group" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"></select>
+                </div>
+                <div class="flex gap-3 justify-end pt-4">
+                    <button type="button" onclick="ToolsPage.closeModal('bookmark-modal')" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:text-white">Hủy</button>
+                    <button type="submit" class="px-4 py-2 bg-[#0d544c] text-white rounded-lg hover:bg-[#0a443e]">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Group Modal -->
+    <div id="group-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white">Thêm nhóm</h3>
+                <button onclick="ToolsPage.closeModal('group-modal')" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-2xl">&times;</button>
+            </div>
+            <form id="group-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tên nhóm</label>
+                    <input type="text" id="group-name" required class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                </div>
+                <div class="flex gap-3 justify-end pt-4">
+                    <button type="button" onclick="ToolsPage.closeModal('group-modal')" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:text-white">Hủy</button>
+                    <button type="submit" class="px-4 py-2 bg-[#0d544c] text-white rounded-lg hover:bg-[#0a443e]">Thêm</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <div id="footer-placeholder"></div>
 
     <script src="js/config.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/pages/tools.js"></script>
 </body>
 </html>
