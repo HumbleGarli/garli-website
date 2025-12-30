@@ -34,15 +34,35 @@ const ResourcesPage = {
 
         container.innerHTML = `
             <div class="flex flex-wrap gap-4 items-center justify-between glass-card bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
-                <div class="flex flex-wrap gap-3">
-                    <button data-type="" class="type-btn active px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white">Tất cả</button>
+                <div class="tab-container" id="resources-tabs">
+                    <div class="tab-indicator"></div>
+                    <button data-type="" class="tab-btn type-btn active">Tất cả</button>
                     ${this.types.map(t => `
-                        <button data-type="${t.id}" class="type-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600">${t.name}</button>
+                        <button data-type="${t.id}" class="tab-btn type-btn">${t.name}</button>
                     `).join('')}
                 </div>
                 <input type="text" id="resources-search" placeholder="Tìm tài nguyên..." class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
         `;
+        
+        setTimeout(() => this.initTabIndicator('resources-tabs'), 0);
+    },
+
+    initTabIndicator(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const indicator = container.querySelector('.tab-indicator');
+        const activeBtn = container.querySelector('.tab-btn.active');
+        if (indicator && activeBtn) {
+            this.moveIndicator(indicator, activeBtn);
+        }
+    },
+
+    moveIndicator(indicator, btn) {
+        indicator.style.width = `${btn.offsetWidth}px`;
+        indicator.style.height = `${btn.offsetHeight}px`;
+        indicator.style.left = `${btn.offsetLeft}px`;
+        indicator.style.top = `${btn.offsetTop}px`;
     },
 
     renderResources() {
@@ -116,14 +136,18 @@ const ResourcesPage = {
     },
 
     setupEvents() {
+        const container = document.getElementById('resources-tabs');
+        const indicator = container?.querySelector('.tab-indicator');
+        
         document.querySelectorAll('.type-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.type-btn').forEach(b => {
-                    b.classList.remove('active', 'bg-blue-600', 'text-white');
-                    b.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-                });
-                btn.classList.add('active', 'bg-blue-600', 'text-white');
-                btn.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+                document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                if (indicator) {
+                    this.moveIndicator(indicator, btn);
+                }
+                
                 this.filters.type = btn.dataset.type;
                 this.renderResources();
             });
@@ -136,6 +160,13 @@ const ResourcesPage = {
                 this.filters.search = e.target.value;
                 this.renderResources();
             }, 300);
+        });
+        
+        window.addEventListener('resize', () => {
+            const activeBtn = container?.querySelector('.tab-btn.active');
+            if (indicator && activeBtn) {
+                this.moveIndicator(indicator, activeBtn);
+            }
         });
     }
 };

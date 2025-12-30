@@ -35,10 +35,11 @@ const ShopPage = {
 
         container.innerHTML = `
             <div class="flex flex-wrap gap-4 items-center justify-between glass-card bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
-                <div class="flex flex-wrap gap-3">
-                    <button data-category="" class="filter-btn active px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white">Tất cả</button>
+                <div class="tab-container" id="category-tabs">
+                    <div class="tab-indicator"></div>
+                    <button data-category="" class="tab-btn filter-btn active">Tất cả</button>
                     ${this.categories.map(c => `
-                        <button data-category="${c.id}" class="filter-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600">${c.name}</button>
+                        <button data-category="${c.id}" class="tab-btn filter-btn">${c.name}</button>
                     `).join('')}
                 </div>
                 <div class="flex gap-3">
@@ -48,11 +49,32 @@ const ShopPage = {
                         <option value="price-asc">Giá tăng dần</option>
                         <option value="price-desc">Giá giảm dần</option>
                         <option value="popular">Bán chạy</option>
-                        <option value="rating">Đánh giá cao</option>
                     </select>
                 </div>
             </div>
         `;
+        
+        // Initialize tab indicator
+        setTimeout(() => this.initTabIndicator('category-tabs'), 0);
+    },
+
+    initTabIndicator(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        
+        const indicator = container.querySelector('.tab-indicator');
+        const activeBtn = container.querySelector('.tab-btn.active');
+        
+        if (indicator && activeBtn) {
+            this.moveIndicator(indicator, activeBtn);
+        }
+    },
+
+    moveIndicator(indicator, btn) {
+        indicator.style.width = `${btn.offsetWidth}px`;
+        indicator.style.height = `${btn.offsetHeight}px`;
+        indicator.style.left = `${btn.offsetLeft}px`;
+        indicator.style.top = `${btn.offsetTop}px`;
     },
 
     renderProducts() {
@@ -128,15 +150,19 @@ const ShopPage = {
     },
 
     setupEvents() {
+        const container = document.getElementById('category-tabs');
+        const indicator = container?.querySelector('.tab-indicator');
+        
         // Category filter
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => {
-                    b.classList.remove('active', 'bg-blue-600', 'text-white');
-                    b.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-                });
-                btn.classList.add('active', 'bg-blue-600', 'text-white');
-                btn.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                if (indicator) {
+                    this.moveIndicator(indicator, btn);
+                }
+                
                 this.filters.category = btn.dataset.category;
                 this.renderProducts();
             });
@@ -156,6 +182,14 @@ const ShopPage = {
                 this.filters.search = e.target.value;
                 this.renderProducts();
             }, 300);
+        });
+        
+        // Recalculate indicator on resize
+        window.addEventListener('resize', () => {
+            const activeBtn = container?.querySelector('.tab-btn.active');
+            if (indicator && activeBtn) {
+                this.moveIndicator(indicator, activeBtn);
+            }
         });
     }
 };
