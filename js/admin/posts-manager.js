@@ -508,31 +508,35 @@ const PostsManager = {
         const index = range ? range.index : this.quillEditor.getLength();
 
         // Show loading placeholder
-        const loadingId = 'loading-' + Date.now();
         this.quillEditor.insertText(index, '\n', Quill.sources.USER);
         this.quillEditor.insertEmbed(index + 1, 'image', 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNjQ3NDhiIiBmb250LXNpemU9IjE0Ij7im7Mg4buQcGxvYWRpbmcuLi48L3RleHQ+PC9zdmc+');
 
         try {
-            // Compress image
-            const result = await ImageTools.compress(file, {
-                maxWidth: 1200,
-                maxHeight: 800,
-                quality: 0.85
-            });
-
-            // Try upload to GitHub first
             let imageUrl;
+            
+            // Try to compress if it's a supported format
             try {
-                const uploadResult = await GitHubAPI.uploadImage(result.file, 'assets/images/posts');
-                imageUrl = uploadResult.path;
-            } catch (uploadErr) {
-                console.warn('GitHub upload failed, using base64:', uploadErr);
-                // Fallback to base64
-                imageUrl = await this.fileToBase64(result.file);
+                const result = await ImageTools.compress(file, {
+                    maxWidth: 1200,
+                    maxHeight: 800,
+                    quality: 0.85
+                });
+                
+                // Try upload to GitHub
+                try {
+                    const uploadResult = await GitHubAPI.uploadImage(result.file, 'assets/images/posts');
+                    imageUrl = uploadResult.path;
+                } catch (uploadErr) {
+                    console.warn('GitHub upload failed, using base64:', uploadErr);
+                    imageUrl = await this.fileToBase64(result.file);
+                }
+            } catch (compressErr) {
+                console.warn('Compression failed, using original as base64:', compressErr);
+                // Fallback: use original file as base64
+                imageUrl = await this.fileToBase64(file);
             }
 
             // Replace loading with actual image
-            // Find and remove loading placeholder
             const delta = this.quillEditor.getContents();
             let loadingIndex = -1;
             let currentIndex = 0;
@@ -546,12 +550,11 @@ const PostsManager = {
             }
 
             if (loadingIndex !== -1) {
-                this.quillEditor.deleteText(loadingIndex, 2); // Delete loading image + newline
+                this.quillEditor.deleteText(loadingIndex, 2);
                 this.quillEditor.insertEmbed(loadingIndex, 'image', imageUrl);
                 this.quillEditor.insertText(loadingIndex + 1, '\n');
                 this.quillEditor.setSelection(loadingIndex + 2);
             } else {
-                // Fallback: just insert at end
                 const len = this.quillEditor.getLength();
                 this.quillEditor.insertEmbed(len - 1, 'image', imageUrl);
                 this.quillEditor.insertText(len, '\n');
