@@ -25,7 +25,8 @@ const ToolsPage = {
                 this.banks = data.data.map(bank => ({
                     bin: bank.bin,
                     code: bank.code,
-                    name: bank.shortName || bank.name
+                    name: bank.shortName || bank.name,
+                    logo: bank.logo // Use logo URL from API
                 }));
             } else {
                 this.loadFallbackBanks();
@@ -41,16 +42,16 @@ const ToolsPage = {
     loadFallbackBanks() {
         // Fallback bank list if API fails
         this.banks = [
-            { bin: '970422', code: 'MB', name: 'MB Bank' },
-            { bin: '970415', code: 'ICB', name: 'VietinBank' },
-            { bin: '970436', code: 'VCB', name: 'Vietcombank' },
-            { bin: '970418', code: 'BIDV', name: 'BIDV' },
-            { bin: '970405', code: 'VBA', name: 'Agribank' },
-            { bin: '970407', code: 'TCB', name: 'Techcombank' },
-            { bin: '970416', code: 'ACB', name: 'ACB' },
-            { bin: '970432', code: 'VPB', name: 'VPBank' },
-            { bin: '970423', code: 'TPB', name: 'TPBank' },
-            { bin: '970403', code: 'STB', name: 'Sacombank' }
+            { bin: '970422', code: 'MB', name: 'MB Bank', logo: 'https://api.vietqr.io/img/MB.png' },
+            { bin: '970415', code: 'ICB', name: 'VietinBank', logo: 'https://api.vietqr.io/img/ICB.png' },
+            { bin: '970436', code: 'VCB', name: 'Vietcombank', logo: 'https://api.vietqr.io/img/VCB.png' },
+            { bin: '970418', code: 'BIDV', name: 'BIDV', logo: 'https://api.vietqr.io/img/BIDV.png' },
+            { bin: '970405', code: 'VBA', name: 'Agribank', logo: 'https://api.vietqr.io/img/VBA.png' },
+            { bin: '970407', code: 'TCB', name: 'Techcombank', logo: 'https://api.vietqr.io/img/TCB.png' },
+            { bin: '970416', code: 'ACB', name: 'ACB', logo: 'https://api.vietqr.io/img/ACB.png' },
+            { bin: '970432', code: 'VPB', name: 'VPBank', logo: 'https://api.vietqr.io/img/VPB.png' },
+            { bin: '970423', code: 'TPB', name: 'TPBank', logo: 'https://api.vietqr.io/img/TPB.png' },
+            { bin: '970403', code: 'STB', name: 'Sacombank', logo: 'https://api.vietqr.io/img/STB.png' }
         ];
     },
 
@@ -60,9 +61,8 @@ const ToolsPage = {
 
         list.innerHTML = this.banks.map(bank => `
             <div class="bank-option flex items-center gap-3 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer transition-colors"
-                 onclick="ToolsPage.selectBank('${bank.bin}', '${bank.code}', '${bank.name}')">
-                <img src="https://api.vietqr.io/img/${bank.code}.png" alt="${bank.name}" class="w-8 h-8 object-contain"
-                     onerror="this.src='https://api.vietqr.io/img/banks/${bank.code}.png'; this.onerror=null;">
+                 onclick="ToolsPage.selectBank('${bank.bin}', '${bank.logo}', '${bank.name.replace(/'/g, "\\'")}')">
+                <img src="${bank.logo}" alt="${bank.name}" class="w-10 h-10 object-contain rounded">
                 <span class="text-gray-800 dark:text-white">${bank.name}</span>
             </div>
         `).join('');
@@ -71,7 +71,7 @@ const ToolsPage = {
         if (this.banks.length > 0) {
             const firstBank = this.banks[0];
             document.getElementById('qr-bank').value = firstBank.bin;
-            document.getElementById('selected-bank-logo').src = `https://api.vietqr.io/img/${firstBank.code}.png`;
+            document.getElementById('selected-bank-logo').src = firstBank.logo;
             document.getElementById('selected-bank-name').textContent = firstBank.name;
         }
     },
@@ -81,9 +81,9 @@ const ToolsPage = {
         list.classList.toggle('hidden');
     },
 
-    selectBank(bin, code, name) {
+    selectBank(bin, logo, name) {
         document.getElementById('qr-bank').value = bin;
-        document.getElementById('selected-bank-logo').src = `https://api.vietqr.io/img/${code}.png`;
+        document.getElementById('selected-bank-logo').src = logo;
         document.getElementById('selected-bank-name').textContent = name;
         document.getElementById('bank-list').classList.add('hidden');
     },
