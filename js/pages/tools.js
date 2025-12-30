@@ -6,6 +6,7 @@ const ToolsPage = {
     currentTab: '2fa',
     countdownInterval: null,
     banks: [],
+    bankInitialized: false,
 
     init() {
         this.setupTabs();
@@ -55,11 +56,25 @@ const ToolsPage = {
         ];
     },
 
-    renderBankList() {
-        const list = document.getElementById('bank-list');
+    renderBankList(filter = '') {
+        const list = document.getElementById('bank-items');
         if (!list) return;
 
-        list.innerHTML = this.banks.map(bank => `
+        let filteredBanks = this.banks;
+        if (filter) {
+            const q = filter.toLowerCase();
+            filteredBanks = this.banks.filter(bank => 
+                bank.name.toLowerCase().includes(q) || 
+                bank.code.toLowerCase().includes(q)
+            );
+        }
+
+        if (filteredBanks.length === 0) {
+            list.innerHTML = '<p class="text-center text-gray-500 py-4">Không tìm thấy ngân hàng</p>';
+            return;
+        }
+
+        list.innerHTML = filteredBanks.map(bank => `
             <div class="bank-option flex items-center gap-3 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer transition-colors"
                  onclick="ToolsPage.selectBank('${bank.bin}', '${bank.logo}', '${bank.name.replace(/'/g, "\\'")}')">
                 <img src="${bank.logo}" alt="${bank.name}" class="w-10 h-10 object-contain rounded">
@@ -67,18 +82,36 @@ const ToolsPage = {
             </div>
         `).join('');
 
-        // Update selected bank display if banks loaded
-        if (this.banks.length > 0) {
+        // Update selected bank display if banks loaded (only on first render)
+        if (!filter && this.banks.length > 0 && !this.bankInitialized) {
             const firstBank = this.banks[0];
             document.getElementById('qr-bank').value = firstBank.bin;
             document.getElementById('selected-bank-logo').src = firstBank.logo;
             document.getElementById('selected-bank-name').textContent = firstBank.name;
+            this.bankInitialized = true;
         }
+    },
+
+    filterBanks(query) {
+        this.renderBankList(query);
     },
 
     toggleBankDropdown() {
         const list = document.getElementById('bank-list');
+        const isHidden = list.classList.contains('hidden');
         list.classList.toggle('hidden');
+        
+        // Focus search input when opening
+        if (isHidden) {
+            setTimeout(() => {
+                const searchInput = document.getElementById('bank-search');
+                if (searchInput) {
+                    searchInput.value = '';
+                    searchInput.focus();
+                    this.renderBankList(); // Reset filter
+                }
+            }, 100);
+        }
     },
 
     selectBank(bin, logo, name) {
