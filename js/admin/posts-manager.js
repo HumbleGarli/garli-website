@@ -1,6 +1,7 @@
 // ==========================================
 // POSTS-MANAGER.JS - CRUD Blog Posts
 // Tách file: index JSON + markdown files
+// With Quill Rich Text Editor
 // ==========================================
 
 const PostsManager = {
@@ -8,7 +9,8 @@ const PostsManager = {
     categories: [],
     editingId: null,
     editingContent: '',
-    selectedIds: new Set(), // Track selected items for bulk delete
+    selectedIds: new Set(),
+    quillEditor: null, // Quill instance
 
     async init() {
         await this.loadData();
@@ -367,9 +369,10 @@ const PostsManager = {
                             </div>
                         </div>
                         <div class="col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nội dung (Markdown)</label>
-                            <textarea name="content" id="post-content" rows="15" 
-                                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white font-mono text-sm">${this.editingContent}</textarea>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nội dung bài viết</label>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">💡 Nhấn nút 🖼️ trên toolbar để chèn ảnh từ URL</p>
+                            <div id="quill-editor" class="bg-white dark:bg-gray-800 rounded-lg"></div>
+                            <input type="hidden" name="content" id="post-content">
                         </div>
                     </div>
                     <div id="form-error" class="text-red-500 text-sm hidden"></div>
@@ -383,6 +386,9 @@ const PostsManager = {
 
         modal.classList.remove('hidden');
         
+        // Initialize Quill Editor
+        this.initQuillEditor();
+        
         // Auto generate slug from title
         document.getElementById('post-title')?.addEventListener('input', (e) => {
             if (!this.editingId) {
@@ -392,6 +398,131 @@ const PostsManager = {
         
         document.getElementById('post-form').addEventListener('submit', (e) => this.handleSubmit(e));
         document.getElementById('post-image')?.addEventListener('change', (e) => this.handleImageChange(e));
+    },
+
+    initQuillEditor() {
+        // Custom image handler
+        const imageHandler = () => {
+            const url = prompt('Nhập URL hình ảnh:');
+            if (url) {
+                const range = this.quillEditor.getSelection(true);
+                this.quillEditor.insertEmbed(range.index, 'image', url);
+                this.quillEditor.setSelection(range.index + 1);
+            }
+        };
+
+        // Initialize Quill
+        this.quillEditor = new Quill('#quill-editor', {
+            theme: 'snow',
+            placeholder: 'Viết nội dung bài viết tại đây...',
+            modules: {
+                toolbar: {
+                    container: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'indent': '-1'}, { 'indent': '+1' }],
+                        ['blockquote', 'code-block'],
+                        ['link', 'image'],
+                        [{ 'align': [] }],
+                        ['clean']
+                    ],
+                    handlers: {
+                        image: imageHandler
+                    }
+                }
+            }
+        });
+
+        // Load existing content (convert markdown to HTML if needed)
+        if (this.editingContent) {
+            const htmlContent = this.markdownToHtml(this.editingContent);
+            this.quillEditor.root.innerHTML = htmlContent;
+        }
+    },
+
+    // Simple markdown to HTML converter
+    markdownToHtml(md) {
+        let html = md
+            // Headers
+            .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+            .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+            .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+            // Bold & Italic
+            .replace(/\*\*\*(.*?)\*\*\*/gim, '<strong><em>$1</em></strong>')
+            .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+            // Images
+            .replace(/!\[(.*?)\]\((.*?)\)/gim, '<img src="$2" alt="$1">')
+            // Links
+            .replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2">$1</a>')
+            // Code blocks
+            .replace(/```([\s\S]*?)```/gim, '<pre class="ql-syntax">$1</pre>')
+            // Inline code
+            .replace(/`(.*?)`/gim, '<code>$1</code>')
+            // Blockquotes
+            .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
+            // Unordered lists
+            .replace(/^\- (.*$)/gim, '<li>$1</li>')
+            .replace(/^\* (.*$)/gim, '<li>$1</li>')
+            // Line breaks
+            .replace(/\n\n/gim, '</p><p>')
+            .replace(/\n/gim, '<br>');
+        
+        // Wrap in paragraph if not already wrapped
+        if (!html.startsWith('<')) {
+            html = '<p>' + html + '</p>';
+        }
+        
+        return html;
+    },
+
+    // HTML to Markdown converter
+    htmlToMarkdown(html) {
+        let md = html
+            // Remove Quill specific classes
+            .replace(/<p class="ql-[^"]*">/gi, '<p>')
+            .replace(/<span class="ql-[^"]*">/gi, '')
+            .replace(/<\/span>/gi, '')
+            // Headers
+            .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
+            .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
+            .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+            // Bold & Italic
+            .replace(/<strong><em>(.*?)<\/em><\/strong>/gi, '***$1***')
+            .replace(/<strong>(.*?)<\/strong>/gi, '**$1**')
+            .replace(/<b>(.*?)<\/b>/gi, '**$1**')
+            .replace(/<em>(.*?)<\/em>/gi, '*$1*')
+            .replace(/<i>(.*?)<\/i>/gi, '*$1*')
+            // Images
+            .replace(/<img[^>]*src="([^"]*)"[^>]*alt="([^"]*)"[^>]*>/gi, '![$2]($1)')
+            .replace(/<img[^>]*src="([^"]*)"[^>]*>/gi, '![]($1)')
+            // Links
+            .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)')
+            // Code blocks
+            .replace(/<pre[^>]*>([\s\S]*?)<\/pre>/gi, '```\n$1\n```\n\n')
+            // Inline code
+            .replace(/<code>(.*?)<\/code>/gi, '`$1`')
+            // Blockquotes
+            .replace(/<blockquote[^>]*>(.*?)<\/blockquote>/gi, '> $1\n\n')
+            // Lists
+            .replace(/<ul[^>]*>([\s\S]*?)<\/ul>/gi, '$1\n')
+            .replace(/<ol[^>]*>([\s\S]*?)<\/ol>/gi, '$1\n')
+            .replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n')
+            // Paragraphs & line breaks
+            .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+            .replace(/<br\s*\/?>/gi, '\n')
+            // Clean up
+            .replace(/<[^>]+>/g, '') // Remove remaining HTML tags
+            .replace(/&nbsp;/g, ' ')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&')
+            .replace(/\n{3,}/g, '\n\n') // Max 2 newlines
+            .trim();
+        
+        return md;
     },
 
     async handleImageChange(e) {
@@ -438,8 +569,11 @@ const PostsManager = {
         const submitBtn = document.getElementById('post-submit-btn');
         
         const slug = form.slug.value.trim();
-        const content = form.content.value.trim();
         const today = new Date().toISOString().split('T')[0];
+        
+        // Get content from Quill editor and convert to markdown
+        const htmlContent = this.quillEditor.root.innerHTML;
+        const content = this.htmlToMarkdown(htmlContent);
         
         const metadata = {
             title: form.title.value.trim(),
@@ -457,7 +591,7 @@ const PostsManager = {
 
         // Validate
         const errors = Validators.post(metadata);
-        if (!content) errors.push('Nội dung không được trống');
+        if (!content || content === '<p><br></p>') errors.push('Nội dung không được trống');
         if (errors.length) {
             errorEl.textContent = errors.join(', ');
             errorEl.classList.remove('hidden');
@@ -557,6 +691,7 @@ const PostsManager = {
         document.getElementById('post-modal').classList.add('hidden');
         this.editingId = null;
         this.editingContent = '';
+        this.quillEditor = null;
     },
 
     edit(id) {
