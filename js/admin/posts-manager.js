@@ -344,9 +344,10 @@ const PostsManager = {
                                 class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Thời gian đọc (phút)</label>
-                            <input type="number" name="readTime" value="${post?.readTime || 5}" min="1" 
-                                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Thời gian đọc (tự động)</label>
+                            <input type="number" name="readTime" value="${post?.readTime || 1}" min="1" readonly
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white bg-gray-100 dark:bg-gray-600 cursor-not-allowed">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">⏱️ Tự động tính dựa trên nội dung (~200 từ/phút)</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tags</label>
@@ -468,10 +469,30 @@ const PostsManager = {
             }
         });
 
+        // Auto calculate read time when content changes
+        this.quillEditor.on('text-change', () => {
+            this.updateReadTime();
+        });
+
         // Load existing content (convert markdown to HTML if needed)
         if (this.editingContent) {
             const htmlContent = this.markdownToHtml(this.editingContent);
             this.quillEditor.root.innerHTML = htmlContent;
+        }
+        
+        // Initial read time calculation
+        setTimeout(() => this.updateReadTime(), 100);
+    },
+
+    // Calculate read time based on word count (average 200 words per minute)
+    updateReadTime() {
+        const text = this.quillEditor.getText().trim();
+        const wordCount = text.split(/\s+/).filter(w => w.length > 0).length;
+        const readTime = Math.max(1, Math.ceil(wordCount / 200)); // Min 1 minute
+        
+        const readTimeInput = document.querySelector('input[name="readTime"]');
+        if (readTimeInput) {
+            readTimeInput.value = readTime;
         }
     },
 
