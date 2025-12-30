@@ -1,4 +1,4 @@
-# VibeCoding Website
+# Garli Website
 
 Static website với admin panel, deploy trên GitHub Pages.
 
@@ -6,14 +6,13 @@ Static website với admin panel, deploy trên GitHub Pages.
 
 ```bash
 # Clone repo
-git clone https://github.com/username/garli-website.git
+git clone https://github.com/HumbleGarli/garli-website.git
 cd garli-website
 
 # Chạy local server
 npx serve .
 
-# Mở browser
-# http://localhost:3000
+# Mở browser: http://localhost:3000
 ```
 
 ## 📁 Cấu trúc
@@ -32,17 +31,6 @@ npx serve .
 │   └── admin/                           # Admin modules
 └── assets/images/                        # Ảnh
 ```
-
-## 🧪 Test trước khi push
-
-```bash
-npx serve .
-# Mở http://localhost:3000/test-checklist.html
-```
-
-## 📝 Git Workflow
-
-Xem chi tiết: [GIT-WORKFLOW.md](GIT-WORKFLOW.md)
 
 ## 🔐 Admin
 
