@@ -37,7 +37,7 @@ const ToolsPage = {
             { bin: '970426', code: 'MSB', name: 'MSB' },
             { bin: '970454', code: 'VCCB', name: 'VietCapital Bank' },
             { bin: '970429', code: 'SCB', name: 'SCB' },
-            { bin: '970414', code: 'Oceanbank', name: 'OceanBank' },
+            { bin: '970414', code: 'OJB', name: 'OceanBank' },
             { bin: '970438', code: 'BVB', name: 'BaoViet Bank' },
             { bin: '970446', code: 'COOPBANK', name: 'COOP Bank' },
             { bin: '970452', code: 'KLB', name: 'KienLong Bank' },
@@ -51,9 +51,14 @@ const ToolsPage = {
             { bin: '970458', code: 'UOB', name: 'UOB' },
             { bin: '970449', code: 'LPB', name: 'LPBank' },
             { bin: '422589', code: 'CAKE', name: 'CAKE by VPBank' },
-            { bin: '546034', code: 'Ubank', name: 'Ubank by VPBank' },
+            { bin: '546034', code: 'UBANK', name: 'Ubank by VPBank' },
             { bin: '963388', code: 'VIETTELMONEY', name: 'Viettel Money' },
-            { bin: '971005', code: 'VNPTMONEY', name: 'VNPT Money' }
+            { bin: '971005', code: 'VNPTMONEY', name: 'VNPT Money' },
+            { bin: '970457', code: 'WVN', name: 'Woori Bank' },
+            { bin: '970462', code: 'KBHN', name: 'KB Bank' },
+            { bin: '970466', code: 'KEBHANAHCM', name: 'KEB Hana Bank' },
+            { bin: '970463', code: 'SHBVN', name: 'Shinhan Bank' },
+            { bin: '970424', code: 'SHBVN', name: 'Shinhan Bank' }
         ];
 
         this.renderBankList();
