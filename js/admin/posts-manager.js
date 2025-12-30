@@ -371,7 +371,14 @@ const PostsManager = {
                         </div>
                         <div class="col-span-2">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nội dung bài viết</label>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">📷 <strong>Kéo thả ảnh</strong> vào editor hoặc <strong>Ctrl+V</strong> để dán ảnh từ clipboard</p>
+                            <div class="flex gap-2 mb-2">
+                                <input type="file" id="import-docx" accept=".docx,.doc" class="hidden">
+                                <button type="button" onclick="document.getElementById('import-docx').click()" 
+                                    class="px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 flex items-center gap-1">
+                                    📄 Import từ Word
+                                </button>
+                                <span class="text-xs text-gray-500 dark:text-gray-400 self-center">Hỗ trợ file .docx với hình ảnh</span>
+                            </div>
                             <div id="quill-editor" class="bg-white dark:bg-gray-800 rounded-lg"></div>
                             <input type="hidden" name="content" id="post-content">
                         </div>
@@ -397,8 +404,61 @@ const PostsManager = {
             }
         });
         
+        // Setup import Word handler
+        document.getElementById('import-docx')?.addEventListener('change', (e) => this.handleWordImport(e));
+        
         document.getElementById('post-form').addEventListener('submit', (e) => this.handleSubmit(e));
         document.getElementById('post-image')?.addEventListener('change', (e) => this.handleImageChange(e));
+    },
+
+    async handleWordImport(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const btn = e.target.previousElementSibling;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '⏳ Đang import...';
+        btn.disabled = true;
+
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            
+            // Convert Word to HTML with embedded images
+            const result = await mammoth.convertToHtml(
+                { arrayBuffer },
+                {
+                    convertImage: mammoth.images.imgElement(async (image) => {
+                        // Convert image to base64
+                        const imageBuffer = await image.read();
+                        const base64 = btoa(
+                            new Uint8Array(imageBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
+                        );
+                        const mimeType = image.contentType || 'image/png';
+                        return { src: `data:${mimeType};base64,${base64}` };
+                    })
+                }
+            );
+
+            if (result.value) {
+                // Insert HTML into Quill
+                this.quillEditor.root.innerHTML = result.value;
+                this.updateReadTime();
+                
+                // Show warnings if any
+                if (result.messages.length > 0) {
+                    console.warn('Word import warnings:', result.messages);
+                }
+                
+                alert('✅ Import thành công!\n\nHình ảnh được nhúng dạng base64.');
+            }
+        } catch (err) {
+            console.error('Word import error:', err);
+            alert('❌ Lỗi import: ' + err.message + '\n\nĐảm bảo file là .docx (không phải .doc cũ)');
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            e.target.value = ''; // Reset input
+        }
     },
 
     initQuillEditor() {
