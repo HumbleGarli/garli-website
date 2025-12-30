@@ -65,8 +65,20 @@ const ToolsPage = {
                     key = parts[parts.length - 1].trim();
                 }
 
-                // Remove spaces from key
+                // Remove spaces and convert to uppercase
                 key = key.replace(/\s+/g, '').toUpperCase();
+                
+                // Remove invalid Base32 characters (keep only A-Z and 2-7)
+                key = key.replace(/[^A-Z2-7]/g, '');
+                
+                // Pad key if needed (Base32 requires length divisible by 8)
+                while (key.length % 8 !== 0) {
+                    key += '=';
+                }
+
+                if (key.length < 16) {
+                    throw new Error('Key too short');
+                }
 
                 // Generate TOTP
                 const totp = new OTPAuth.TOTP({
@@ -78,13 +90,16 @@ const ToolsPage = {
                 const code = totp.generate();
                 results.push({ key: key.substring(0, 8) + '...', code, success: true });
             } catch (e) {
-                results.push({ key: line.substring(0, 20) + '...', code: 'Lỗi', success: false });
+                results.push({ key: line.substring(0, 20) + '...', code: 'Lỗi', success: false, error: e.message });
             }
         });
 
         this.display2FAResults(results);
         this.startCountdown();
     },
+
+    // Store current keys for auto-refresh
+    currentKeys: '',
 
     display2FAResults(results) {
         const container = document.getElementById('2fa-results');
@@ -109,13 +124,28 @@ const ToolsPage = {
 
     startCountdown() {
         if (this.countdownInterval) clearInterval(this.countdownInterval);
+        
+        // Store current input for auto-refresh
+        this.currentKeys = document.getElementById('input-2fa-keys').value.trim();
 
+        const countdownEl = document.getElementById('2fa-countdown');
+        
         const update = () => {
-            const remaining = 30 - (Math.floor(Date.now() / 1000) % 30);
-            document.getElementById('2fa-countdown').textContent = `Còn ${remaining}s`;
+            const now = Math.floor(Date.now() / 1000);
+            const remaining = 30 - (now % 30);
+            countdownEl.textContent = `Còn ${remaining}s`;
+            
+            // Change color when time is running low
+            if (remaining <= 5) {
+                countdownEl.classList.add('text-red-500');
+                countdownEl.classList.remove('text-gray-500', 'dark:text-gray-400');
+            } else {
+                countdownEl.classList.remove('text-red-500');
+                countdownEl.classList.add('text-gray-500', 'dark:text-gray-400');
+            }
 
-            if (remaining === 30) {
-                // Auto refresh
+            // Auto refresh when new period starts
+            if (remaining === 30 && this.currentKeys) {
                 this.generate2FA();
             }
         };
