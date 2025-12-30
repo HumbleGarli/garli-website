@@ -22,15 +22,12 @@
             <!-- Tab Navigation -->
             <div class="flex justify-center mb-8">
                 <div class="inline-flex bg-gray-200 dark:bg-gray-700 rounded-full p-1 relative">
-                    <div id="tools-tab-indicator" class="absolute h-[calc(100%-8px)] bg-[#0d544c] rounded-full transition-all duration-300" style="width: 33.33%; left: 4px;"></div>
+                    <div id="tools-tab-indicator" class="absolute h-[calc(100%-8px)] bg-[#0d544c] rounded-full transition-all duration-300" style="width: 50%; left: 4px;"></div>
                     <button data-tab="2fa" class="tools-tab active relative z-10 px-6 py-2 rounded-full font-medium text-white transition-colors">
                         🔐 2FA Code
                     </button>
                     <button data-tab="vietqr" class="tools-tab relative z-10 px-6 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors">
                         📱 VietQR
-                    </button>
-                    <button data-tab="bookmarks" class="tools-tab relative z-10 px-6 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors">
-                        🔖 Bookmarks
                     </button>
                 </div>
             </div>
@@ -167,90 +164,9 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Bookmarks Tab -->
-                <div id="tab-bookmarks" class="tab-panel hidden">
-                    <div class="max-w-6xl mx-auto">
-                        <!-- Actions -->
-                        <div class="flex flex-wrap gap-4 items-center justify-between mb-6">
-                            <div class="flex gap-2">
-                                <button onclick="ToolsPage.showAddBookmark()" 
-                                    class="px-4 py-2 bg-[#0d544c] text-white rounded-lg hover:bg-[#0a443e] transition-colors">
-                                    + Thêm bookmark
-                                </button>
-                                <button onclick="ToolsPage.showAddGroup()" 
-                                    class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white transition-colors">
-                                    📁 Thêm nhóm
-                                </button>
-                            </div>
-                            <div class="flex gap-2">
-                                <button onclick="ToolsPage.exportBookmarks()" 
-                                    class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white transition-colors">
-                                    📤 Xuất JSON
-                                </button>
-                                <label class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white transition-colors cursor-pointer">
-                                    📥 Nhập JSON
-                                    <input type="file" accept=".json" onchange="ToolsPage.importBookmarks(event)" class="hidden">
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Bookmarks Grid -->
-                        <div id="bookmarks-container" class="space-y-6"></div>
-                    </div>
-                </div>
             </div>
         </div>
     </main>
-
-    <!-- Add/Edit Bookmark Modal -->
-    <div id="bookmark-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="bookmark-modal-title" class="text-xl font-bold text-gray-800 dark:text-white">Thêm bookmark</h3>
-                <button onclick="ToolsPage.closeModal('bookmark-modal')" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-2xl">&times;</button>
-            </div>
-            <form id="bookmark-form" class="space-y-4">
-                <input type="hidden" id="bookmark-edit-id">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tên</label>
-                    <input type="text" id="bookmark-title" required class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL</label>
-                    <input type="url" id="bookmark-url" required class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white" placeholder="https://...">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nhóm</label>
-                    <select id="bookmark-group" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"></select>
-                </div>
-                <div class="flex gap-3 justify-end pt-4">
-                    <button type="button" onclick="ToolsPage.closeModal('bookmark-modal')" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:text-white">Hủy</button>
-                    <button type="submit" class="px-4 py-2 bg-[#0d544c] text-white rounded-lg hover:bg-[#0a443e]">Lưu</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Add Group Modal -->
-    <div id="group-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-gray-800 dark:text-white">Thêm nhóm</h3>
-                <button onclick="ToolsPage.closeModal('group-modal')" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-2xl">&times;</button>
-            </div>
-            <form id="group-form" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tên nhóm</label>
-                    <input type="text" id="group-name" required class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
-                </div>
-                <div class="flex gap-3 justify-end pt-4">
-                    <button type="button" onclick="ToolsPage.closeModal('group-modal')" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:text-white">Hủy</button>
-                    <button type="submit" class="px-4 py-2 bg-[#0d544c] text-white rounded-lg hover:bg-[#0a443e]">Thêm</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <div id="footer-placeholder"></div>
 
