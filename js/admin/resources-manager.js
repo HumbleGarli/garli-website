@@ -83,7 +83,6 @@ const ResourcesManager = {
                     <p class="text-sm text-gray-500 dark:text-gray-400">${r.type} • ${r.format.toUpperCase()} • ${r.downloadCount.toLocaleString()} downloads</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="px-2 py-1 text-xs rounded ${r.free ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'}">${r.free ? 'Free' : 'Premium'}</span>
                     <button onclick="ResourcesManager.edit(${r.id})" class="p-2 text-blue-600 hover:bg-blue-50 rounded">✏️</button>
                     <button onclick="ResourcesManager.delete(${r.id})" class="p-2 text-red-600 hover:bg-red-50 rounded">🗑️</button>
                 </div>
@@ -305,16 +304,9 @@ const ResourcesManager = {
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Mô tả</label>
                             <textarea name="description" rows="2" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">${resource?.description || ''}</textarea>
                         </div>
-                        <div>
+                        <div class="col-span-2">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tags</label>
                             <input type="text" name="tags" value="${resource?.tags?.join(', ') || ''}" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Miễn phí?</label>
-                            <select name="free" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
-                                <option value="true" ${resource?.free !== false ? 'selected' : ''}>Miễn phí</option>
-                                <option value="false" ${resource?.free === false ? 'selected' : ''}>Premium</option>
-                            </select>
                         </div>
                     </div>
                     <div id="form-error" class="text-red-500 text-sm hidden"></div>
@@ -342,7 +334,7 @@ const ResourcesManager = {
             format: form.format.value,
             url: form.url.value.trim(),
             tags: form.tags.value.split(',').map(t => t.trim()).filter(Boolean),
-            free: form.free.value === 'true'
+            free: true // Tất cả tài nguyên đều miễn phí
         };
 
         const errors = Validators.resource(data);
