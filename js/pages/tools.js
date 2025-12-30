@@ -5,9 +5,92 @@
 const ToolsPage = {
     currentTab: '2fa',
     countdownInterval: null,
+    banks: [],
 
     init() {
         this.setupTabs();
+        this.loadBanks();
+        this.setupClickOutside();
+    },
+
+    // ==========================================
+    // BANK DROPDOWN WITH LOGO
+    // ==========================================
+    async loadBanks() {
+        // Bank list with VietQR codes
+        this.banks = [
+            { bin: '970422', code: 'MB', name: 'MB Bank' },
+            { bin: '970415', code: 'ICB', name: 'VietinBank' },
+            { bin: '970436', code: 'VCB', name: 'Vietcombank' },
+            { bin: '970418', code: 'BIDV', name: 'BIDV' },
+            { bin: '970405', code: 'VBA', name: 'Agribank' },
+            { bin: '970407', code: 'TCB', name: 'Techcombank' },
+            { bin: '970416', code: 'ACB', name: 'ACB' },
+            { bin: '970432', code: 'VPB', name: 'VPBank' },
+            { bin: '970423', code: 'TPB', name: 'TPBank' },
+            { bin: '970403', code: 'STB', name: 'Sacombank' },
+            { bin: '970448', code: 'OCB', name: 'OCB' },
+            { bin: '970437', code: 'HDB', name: 'HDBank' },
+            { bin: '970441', code: 'VIB', name: 'VIB' },
+            { bin: '970443', code: 'SHB', name: 'SHB' },
+            { bin: '970431', code: 'EIB', name: 'Eximbank' },
+            { bin: '970426', code: 'MSB', name: 'MSB' },
+            { bin: '970454', code: 'VCCB', name: 'VietCapital Bank' },
+            { bin: '970429', code: 'SCB', name: 'SCB' },
+            { bin: '970414', code: 'Oceanbank', name: 'OceanBank' },
+            { bin: '970438', code: 'BVB', name: 'BaoViet Bank' },
+            { bin: '970446', code: 'COOPBANK', name: 'COOP Bank' },
+            { bin: '970452', code: 'KLB', name: 'KienLong Bank' },
+            { bin: '970430', code: 'PGB', name: 'PGBank' },
+            { bin: '970400', code: 'SGICB', name: 'SaigonBank' },
+            { bin: '970425', code: 'ABB', name: 'ABBank' },
+            { bin: '970427', code: 'VAB', name: 'VietABank' },
+            { bin: '970433', code: 'VIETBANK', name: 'VietBank' },
+            { bin: '970439', code: 'NCB', name: 'NCB' },
+            { bin: '970440', code: 'SEAB', name: 'SeABank' },
+            { bin: '970458', code: 'UOB', name: 'UOB' },
+            { bin: '970449', code: 'LPB', name: 'LPBank' },
+            { bin: '422589', code: 'CAKE', name: 'CAKE by VPBank' },
+            { bin: '546034', code: 'Ubank', name: 'Ubank by VPBank' },
+            { bin: '963388', code: 'VIETTELMONEY', name: 'Viettel Money' },
+            { bin: '971005', code: 'VNPTMONEY', name: 'VNPT Money' }
+        ];
+
+        this.renderBankList();
+    },
+
+    renderBankList() {
+        const list = document.getElementById('bank-list');
+        if (!list) return;
+
+        list.innerHTML = this.banks.map(bank => `
+            <div class="bank-option flex items-center gap-3 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer transition-colors"
+                 onclick="ToolsPage.selectBank('${bank.bin}', '${bank.code}', '${bank.name}')">
+                <img src="https://api.vietqr.io/img/${bank.code}.png" alt="${bank.name}" class="w-8 h-8 object-contain">
+                <span class="text-gray-800 dark:text-white">${bank.name}</span>
+            </div>
+        `).join('');
+    },
+
+    toggleBankDropdown() {
+        const list = document.getElementById('bank-list');
+        list.classList.toggle('hidden');
+    },
+
+    selectBank(bin, code, name) {
+        document.getElementById('qr-bank').value = bin;
+        document.getElementById('selected-bank-logo').src = `https://api.vietqr.io/img/${code}.png`;
+        document.getElementById('selected-bank-name').textContent = name;
+        document.getElementById('bank-list').classList.add('hidden');
+    },
+
+    setupClickOutside() {
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('bank-dropdown');
+            if (dropdown && !dropdown.contains(e.target)) {
+                document.getElementById('bank-list')?.classList.add('hidden');
+            }
+        });
     },
 
     // ==========================================

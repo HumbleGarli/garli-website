@@ -83,43 +83,22 @@
                                 <div class="space-y-4">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Ngân hàng</label>
-                                        <select id="qr-bank" class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
-                                            <option value="970422">MB Bank</option>
-                                            <option value="970415">VietinBank</option>
-                                            <option value="970436">Vietcombank</option>
-                                            <option value="970418">BIDV</option>
-                                            <option value="970405">Agribank</option>
-                                            <option value="970407">Techcombank</option>
-                                            <option value="970416">ACB</option>
-                                            <option value="970432">VPBank</option>
-                                            <option value="970423">TPBank</option>
-                                            <option value="970403">Sacombank</option>
-                                            <option value="970448">OCB</option>
-                                            <option value="970437">HDBank</option>
-                                            <option value="970441">VIB</option>
-                                            <option value="970443">SHB</option>
-                                            <option value="970431">Eximbank</option>
-                                            <option value="970426">MSB</option>
-                                            <option value="970454">VietCapital Bank</option>
-                                            <option value="970429">SCB</option>
-                                            <option value="970414">OceanBank</option>
-                                            <option value="970438">BaoViet Bank</option>
-                                            <option value="970446">COOP Bank</option>
-                                            <option value="970452">KienLong Bank</option>
-                                            <option value="970430">PGBank</option>
-                                            <option value="970400">SaigonBank</option>
-                                            <option value="970425">ABBank</option>
-                                            <option value="970427">VietABank</option>
-                                            <option value="970433">VietBank</option>
-                                            <option value="970439">NCB</option>
-                                            <option value="970440">SeABank</option>
-                                            <option value="970458">UOB</option>
-                                            <option value="970449">LPBank</option>
-                                            <option value="422589">CAKE</option>
-                                            <option value="546034">Ubank</option>
-                                            <option value="963388">Viettel Money</option>
-                                            <option value="971005">VNPTMoney</option>
-                                        </select>
+                                        <!-- Custom Bank Dropdown with Logo -->
+                                        <div class="relative" id="bank-dropdown">
+                                            <button type="button" onclick="ToolsPage.toggleBankDropdown()" 
+                                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white flex items-center gap-3 text-left">
+                                                <img id="selected-bank-logo" src="https://api.vietqr.io/img/MB.png" alt="" class="w-8 h-8 object-contain">
+                                                <span id="selected-bank-name">MB Bank</span>
+                                                <svg class="w-5 h-5 ml-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                                </svg>
+                                            </button>
+                                            <input type="hidden" id="qr-bank" value="970422">
+                                            <div id="bank-list" class="hidden absolute z-50 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl shadow-lg max-h-64 overflow-y-auto">
+                                                <!-- Banks will be loaded here -->
+                                            </div>
+                                        </div>
+                                    </div>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Số tài khoản</label>
