@@ -371,7 +371,7 @@ const PostsManager = {
                         </div>
                         <div class="col-span-2">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nội dung bài viết</label>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">💡 Nhấn nút 🖼️ trên toolbar để chọn và upload ảnh từ máy tính</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">💡 Nhấn nút 🖼️ để chèn ảnh (upload từ máy hoặc nhập URL)</p>
                             <div id="quill-editor" class="bg-white dark:bg-gray-800 rounded-lg"></div>
                             <input type="hidden" name="content" id="post-content">
                         </div>
@@ -402,47 +402,60 @@ const PostsManager = {
     },
 
     initQuillEditor() {
-        // Custom image handler - upload from local file
+        // Custom image handler - upload from local file or paste URL
         const imageHandler = async () => {
-            const input = document.createElement('input');
-            input.setAttribute('type', 'file');
-            input.setAttribute('accept', 'image/*');
-            input.click();
+            // Ask user to choose method
+            const choice = confirm('Chọn cách chèn ảnh:\n\nOK = Upload từ máy tính\nCancel = Nhập URL ảnh');
+            
+            if (choice) {
+                // Upload from local
+                const input = document.createElement('input');
+                input.setAttribute('type', 'file');
+                input.setAttribute('accept', 'image/*');
+                input.click();
 
-            input.onchange = async () => {
-                const file = input.files[0];
-                if (!file) return;
+                input.onchange = async () => {
+                    const file = input.files[0];
+                    if (!file) return;
 
-                try {
-                    // Show loading
                     const range = this.quillEditor.getSelection(true);
-                    this.quillEditor.insertText(range.index, '⏳ Đang upload ảnh...', { italic: true });
-
-                    // Compress image
-                    const result = await ImageTools.compress(file, {
-                        maxWidth: 1200,
-                        maxHeight: 800,
-                        quality: 0.85
-                    });
-
-                    // Upload to GitHub
-                    const uploadResult = await GitHubAPI.uploadImage(result.file, 'assets/images/posts');
                     
-                    // Remove loading text and insert image
-                    this.quillEditor.deleteText(range.index, '⏳ Đang upload ảnh...'.length);
-                    this.quillEditor.insertEmbed(range.index, 'image', uploadResult.path);
-                    this.quillEditor.setSelection(range.index + 1);
+                    try {
+                        // Compress image
+                        const result = await ImageTools.compress(file, {
+                            maxWidth: 1200,
+                            maxHeight: 800,
+                            quality: 0.85
+                        });
 
-                } catch (err) {
-                    alert('Lỗi upload ảnh: ' + err.message);
-                    // Remove loading text
-                    const content = this.quillEditor.getText();
-                    const loadingIdx = content.indexOf('⏳ Đang upload ảnh...');
-                    if (loadingIdx !== -1) {
-                        this.quillEditor.deleteText(loadingIdx, '⏳ Đang upload ảnh...'.length);
+                        // Upload to GitHub
+                        const uploadResult = await GitHubAPI.uploadImage(result.file, 'assets/images/posts');
+                        
+                        // Insert image
+                        this.quillEditor.insertEmbed(range.index, 'image', uploadResult.path);
+                        this.quillEditor.setSelection(range.index + 1);
+                        
+                    } catch (err) {
+                        console.error('Upload error:', err);
+                        // Fallback: convert to base64 and embed directly
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            this.quillEditor.insertEmbed(range.index, 'image', e.target.result);
+                            this.quillEditor.setSelection(range.index + 1);
+                        };
+                        reader.readAsDataURL(file);
+                        alert('⚠️ Upload GitHub thất bại, ảnh được nhúng trực tiếp (base64).\nLỗi: ' + err.message);
                     }
+                };
+            } else {
+                // Paste URL
+                const url = prompt('Nhập URL hình ảnh:');
+                if (url && url.trim()) {
+                    const range = this.quillEditor.getSelection(true);
+                    this.quillEditor.insertEmbed(range.index, 'image', url.trim());
+                    this.quillEditor.setSelection(range.index + 1);
                 }
-            };
+            }
         };
 
         // Initialize Quill
