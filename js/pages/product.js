@@ -84,18 +84,6 @@ const ProductPage = {
                     <div class="flex flex-col">
                         <span class="text-sm text-blue-600 dark:text-blue-400 uppercase font-medium">${category?.name || p.category}</span>
                         <h1 class="text-2xl lg:text-3xl font-bold text-gray-800 dark:text-white mt-2">${p.name}</h1>
-                        
-                        <!-- Rating -->
-                        <div class="flex items-center gap-4 mt-4">
-                            <div class="flex items-center">
-                                ${this.renderStars(p.rating)}
-                                <span class="ml-2 text-gray-600 dark:text-gray-400">${p.rating}</span>
-                            </div>
-                            <span class="text-gray-400">|</span>
-                            <span class="text-gray-600 dark:text-gray-400">${p.reviewCount} đánh giá</span>
-                            <span class="text-gray-400">|</span>
-                            <span class="text-gray-600 dark:text-gray-400">Đã bán ${p.sold}</span>
-                        </div>
 
                         <!-- Price -->
                         <div class="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">

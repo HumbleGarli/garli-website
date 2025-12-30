@@ -147,12 +147,6 @@ const HomePage = {
                             <span class="text-sm text-gray-400 line-through">${p.originalPrice.toLocaleString('vi-VN')}đ</span>
                             <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded">-${discount}%</span>
                         </div>
-                        <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                            <span class="text-yellow-500">★</span>
-                            <span class="ml-1">${p.rating}</span>
-                            <span class="mx-2">•</span>
-                            <span>Đã bán ${p.sold}</span>
-                        </div>
                     </div>
                 </div>
             </a>

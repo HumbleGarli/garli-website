@@ -120,14 +120,6 @@ const ShopPage = {
                             <span class="text-xl font-bold text-blue-600 dark:text-blue-400">${p.price.toLocaleString('vi-VN')}đ</span>
                             <span class="text-sm text-gray-400 line-through">${p.originalPrice.toLocaleString('vi-VN')}đ</span>
                         </div>
-                        <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
-                            <div class="flex items-center">
-                                <span class="text-yellow-500">★</span>
-                                <span class="ml-1">${p.rating}</span>
-                                <span class="ml-1">(${p.reviewCount})</span>
-                            </div>
-                            <span>Đã bán ${p.sold}</span>
-                        </div>
                         <span class="block w-full py-2 bg-blue-600 text-white rounded-lg text-center group-hover:bg-blue-700 transition-colors">Xem chi tiết</span>
                     </div>
                 </div>
