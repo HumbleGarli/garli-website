@@ -114,7 +114,6 @@ const ResourcesPage = {
                     <div class="flex items-center gap-2 mb-2">
                         <span class="text-xs px-2 py-1 rounded ${formatColors[r.format] || 'bg-gray-100 text-gray-600'}">${r.format.toUpperCase()}</span>
                         <span class="text-xs text-gray-500 dark:text-gray-400">${typeInfo.name}</span>
-                        ${r.free ? '<span class="text-xs bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400 px-2 py-1 rounded">Miễn phí</span>' : '<span class="text-xs bg-yellow-100 text-yellow-600 px-2 py-1 rounded">Premium</span>'}
                     </div>
                     <h3 class="font-semibold text-gray-800 dark:text-white mb-2">${r.title}</h3>
                     <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">${r.description}</p>
