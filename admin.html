@@ -24,6 +24,24 @@
         .dark .ql-toolbar .ql-picker { color: #d1d5db; }
         .dark .ql-toolbar .ql-picker-options { background: #374151; }
         .ql-editor img { max-width: 100%; height: auto; border-radius: 8px; margin: 1em 0; }
+        /* Drag & Drop styles */
+        #quill-editor.drag-over { 
+            outline: 3px dashed #0d544c; 
+            outline-offset: -3px;
+            background: rgba(13, 84, 76, 0.05);
+        }
+        #quill-editor.drag-over .ql-editor::before {
+            content: '📷 Thả ảnh vào đây...';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            color: #0d544c;
+            font-weight: 600;
+            pointer-events: none;
+            z-index: 10;
+        }
     </style>
 </head>
 <body class="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors">
@@ -126,15 +144,15 @@
         </main>
     </div>
 
-    <script src="js/api/github-api.js?v=6"></script>
-    <script src="js/admin/image-tools.js?v=6"></script>
-    <script src="js/admin/validators.js?v=6"></script>
-    <script src="js/admin/products-manager.js?v=6"></script>
-    <script src="js/admin/resources-manager.js?v=6"></script>
-    <script src="js/admin/posts-manager.js?v=6"></script>
-    <script src="js/admin/about-manager.js?v=6"></script>
-    <script src="js/admin/donate-manager.js?v=6"></script>
-    <script src="js/admin/config-manager.js?v=6"></script>
-    <script src="js/admin/admin.js?v=6"></script>
+    <script src="js/api/github-api.js?v=7"></script>
+    <script src="js/admin/image-tools.js?v=7"></script>
+    <script src="js/admin/validators.js?v=7"></script>
+    <script src="js/admin/products-manager.js?v=7"></script>
+    <script src="js/admin/resources-manager.js?v=7"></script>
+    <script src="js/admin/posts-manager.js?v=7"></script>
+    <script src="js/admin/about-manager.js?v=7"></script>
+    <script src="js/admin/donate-manager.js?v=7"></script>
+    <script src="js/admin/config-manager.js?v=7"></script>
+    <script src="js/admin/admin.js?v=7"></script>
 </body>
 </html>

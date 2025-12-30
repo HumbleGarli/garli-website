@@ -371,7 +371,7 @@ const PostsManager = {
                         </div>
                         <div class="col-span-2">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nội dung bài viết</label>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">💡 Nhấn nút 🖼️ để chèn ảnh (upload từ máy hoặc nhập URL)</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">📷 <strong>Kéo thả ảnh</strong> vào editor hoặc <strong>Ctrl+V</strong> để dán ảnh từ clipboard</p>
                             <div id="quill-editor" class="bg-white dark:bg-gray-800 rounded-lg"></div>
                             <input type="hidden" name="content" id="post-content">
                         </div>
@@ -402,85 +402,27 @@ const PostsManager = {
     },
 
     initQuillEditor() {
-        // Custom image handler - upload from local file or paste URL
-        const imageHandler = async () => {
-            // Ask user to choose method
-            const choice = confirm('Chọn cách chèn ảnh:\n\nOK = Upload từ máy tính\nCancel = Nhập URL ảnh');
-            
-            if (choice) {
-                // Upload from local
-                const input = document.createElement('input');
-                input.setAttribute('type', 'file');
-                input.setAttribute('accept', 'image/*');
-                input.click();
-
-                input.onchange = async () => {
-                    const file = input.files[0];
-                    if (!file) return;
-
-                    const range = this.quillEditor.getSelection(true);
-                    
-                    try {
-                        // Compress image
-                        const result = await ImageTools.compress(file, {
-                            maxWidth: 1200,
-                            maxHeight: 800,
-                            quality: 0.85
-                        });
-
-                        // Upload to GitHub
-                        const uploadResult = await GitHubAPI.uploadImage(result.file, 'assets/images/posts');
-                        
-                        // Insert image
-                        this.quillEditor.insertEmbed(range.index, 'image', uploadResult.path);
-                        this.quillEditor.setSelection(range.index + 1);
-                        
-                    } catch (err) {
-                        console.error('Upload error:', err);
-                        // Fallback: convert to base64 and embed directly
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            this.quillEditor.insertEmbed(range.index, 'image', e.target.result);
-                            this.quillEditor.setSelection(range.index + 1);
-                        };
-                        reader.readAsDataURL(file);
-                        alert('⚠️ Upload GitHub thất bại, ảnh được nhúng trực tiếp (base64).\nLỗi: ' + err.message);
-                    }
-                };
-            } else {
-                // Paste URL
-                const url = prompt('Nhập URL hình ảnh:');
-                if (url && url.trim()) {
-                    const range = this.quillEditor.getSelection(true);
-                    this.quillEditor.insertEmbed(range.index, 'image', url.trim());
-                    this.quillEditor.setSelection(range.index + 1);
-                }
-            }
-        };
-
         // Initialize Quill
         this.quillEditor = new Quill('#quill-editor', {
             theme: 'snow',
-            placeholder: 'Viết nội dung bài viết tại đây...',
+            placeholder: 'Viết nội dung bài viết tại đây...\n\n💡 Kéo thả ảnh vào đây hoặc Ctrl+V để dán ảnh',
             modules: {
-                toolbar: {
-                    container: [
-                        [{ 'header': [1, 2, 3, false] }],
-                        ['bold', 'italic', 'underline', 'strike'],
-                        [{ 'color': [] }, { 'background': [] }],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                        [{ 'indent': '-1'}, { 'indent': '+1' }],
-                        ['blockquote', 'code-block'],
-                        ['link', 'image'],
-                        [{ 'align': [] }],
-                        ['clean']
-                    ],
-                    handlers: {
-                        image: imageHandler
-                    }
-                }
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'indent': '-1'}, { 'indent': '+1' }],
+                    ['blockquote', 'code-block'],
+                    ['link', 'image'],
+                    [{ 'align': [] }],
+                    ['clean']
+                ]
             }
         });
+
+        // Setup drag & drop and paste handlers
+        this.setupImageHandlers();
 
         // Auto calculate read time when content changes
         this.quillEditor.on('text-change', () => {
@@ -495,6 +437,143 @@ const PostsManager = {
         
         // Initial read time calculation
         setTimeout(() => this.updateReadTime(), 100);
+    },
+
+    setupImageHandlers() {
+        const editorContainer = document.querySelector('#quill-editor');
+        const editor = this.quillEditor;
+
+        // Drag & Drop handler
+        editorContainer.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            editorContainer.classList.add('drag-over');
+        });
+
+        editorContainer.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            editorContainer.classList.remove('drag-over');
+        });
+
+        editorContainer.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            editorContainer.classList.remove('drag-over');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                for (const file of files) {
+                    if (file.type.startsWith('image/')) {
+                        await this.insertImageFile(file);
+                    }
+                }
+            }
+        });
+
+        // Paste handler (Ctrl+V)
+        editorContainer.addEventListener('paste', async (e) => {
+            const items = e.clipboardData?.items;
+            if (!items) return;
+
+            for (const item of items) {
+                if (item.type.startsWith('image/')) {
+                    e.preventDefault();
+                    const file = item.getAsFile();
+                    if (file) {
+                        await this.insertImageFile(file);
+                    }
+                    break;
+                }
+            }
+        });
+
+        // Override default image button to open file picker
+        const toolbar = this.quillEditor.getModule('toolbar');
+        toolbar.addHandler('image', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = async () => {
+                if (input.files[0]) {
+                    await this.insertImageFile(input.files[0]);
+                }
+            };
+            input.click();
+        });
+    },
+
+    async insertImageFile(file) {
+        const range = this.quillEditor.getSelection(true);
+        const index = range ? range.index : this.quillEditor.getLength();
+
+        // Show loading placeholder
+        const loadingId = 'loading-' + Date.now();
+        this.quillEditor.insertText(index, '\n', Quill.sources.USER);
+        this.quillEditor.insertEmbed(index + 1, 'image', 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNjQ3NDhiIiBmb250LXNpemU9IjE0Ij7im7Mg4buQcGxvYWRpbmcuLi48L3RleHQ+PC9zdmc+');
+
+        try {
+            // Compress image
+            const result = await ImageTools.compress(file, {
+                maxWidth: 1200,
+                maxHeight: 800,
+                quality: 0.85
+            });
+
+            // Try upload to GitHub first
+            let imageUrl;
+            try {
+                const uploadResult = await GitHubAPI.uploadImage(result.file, 'assets/images/posts');
+                imageUrl = uploadResult.path;
+            } catch (uploadErr) {
+                console.warn('GitHub upload failed, using base64:', uploadErr);
+                // Fallback to base64
+                imageUrl = await this.fileToBase64(result.file);
+            }
+
+            // Replace loading with actual image
+            // Find and remove loading placeholder
+            const delta = this.quillEditor.getContents();
+            let loadingIndex = -1;
+            let currentIndex = 0;
+            
+            for (const op of delta.ops) {
+                if (op.insert && op.insert.image && op.insert.image.includes('PHN2ZyB3aWR0aD0i')) {
+                    loadingIndex = currentIndex;
+                    break;
+                }
+                currentIndex += typeof op.insert === 'string' ? op.insert.length : 1;
+            }
+
+            if (loadingIndex !== -1) {
+                this.quillEditor.deleteText(loadingIndex, 2); // Delete loading image + newline
+                this.quillEditor.insertEmbed(loadingIndex, 'image', imageUrl);
+                this.quillEditor.insertText(loadingIndex + 1, '\n');
+                this.quillEditor.setSelection(loadingIndex + 2);
+            } else {
+                // Fallback: just insert at end
+                const len = this.quillEditor.getLength();
+                this.quillEditor.insertEmbed(len - 1, 'image', imageUrl);
+                this.quillEditor.insertText(len, '\n');
+            }
+
+        } catch (err) {
+            console.error('Image insert error:', err);
+            alert('Lỗi chèn ảnh: ' + err.message);
+            
+            // Remove loading placeholder on error
+            const content = this.quillEditor.root.innerHTML;
+            this.quillEditor.root.innerHTML = content.replace(/<img[^>]*PHN2ZyB3aWR0aD0i[^>]*>/g, '');
+        }
+    },
+
+    fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
     },
 
     // Calculate read time based on word count (average 200 words per minute)
