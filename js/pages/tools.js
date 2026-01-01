@@ -317,17 +317,15 @@ const ToolsPage = {
         const preview = document.getElementById('qr-preview');
         preview.innerHTML = `<img src="${url}" alt="VietQR" class="w-full h-full object-contain rounded-xl" id="qr-image">`;
         
-        document.getElementById('qr-download-btn').classList.remove('hidden');
+        // Update download link
+        const downloadBtn = document.getElementById('qr-download-btn');
+        downloadBtn.href = url;
+        downloadBtn.classList.remove('hidden');
         this.currentQRUrl = url;
     },
 
     downloadQR() {
-        if (!this.currentQRUrl) return;
-        
-        const link = document.createElement('a');
-        link.href = this.currentQRUrl;
-        link.download = 'vietqr.png';
-        link.click();
+        // Not used anymore - using <a> tag with target="_blank"
     }
 };
 
