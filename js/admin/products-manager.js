@@ -8,6 +8,7 @@ const ProductsManager = {
     currentSha: null,
     editingId: null,
     selectedIds: new Set(), // Track selected items for bulk delete
+    tempPackages: [], // Temporary packages for editing
 
     async init() {
         await this.loadData();
@@ -451,6 +452,7 @@ const ProductsManager = {
 
     showForm(product = null) {
         this.editingId = product?.id || null;
+        this.tempPackages = product?.packages ? [...product.packages] : [];
         const modal = document.getElementById('product-modal');
         const content = modal.querySelector('div');
         
@@ -464,7 +466,7 @@ const ProductsManager = {
                             <input type="text" name="name" value="${product?.name || ''}" required class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Giá (VND)</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Giá mặc định (VND)</label>
                             <input type="number" name="price" value="${product?.price || ''}" required class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                         </div>
                         <div>
@@ -491,6 +493,17 @@ const ProductsManager = {
                                 <option value="true" ${product?.featured ? 'selected' : ''}>Có - Hiện ở trang chủ</option>
                             </select>
                         </div>
+                        
+                        <!-- Packages Section -->
+                        <div class="col-span-2 border-t border-gray-200 dark:border-gray-700 pt-4 mt-2">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">📦 Các gói giá (tùy chọn)</label>
+                                <button type="button" onclick="ProductsManager.addPackage()" class="text-sm px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700">+ Thêm gói</button>
+                            </div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Thêm các gói giá khác nhau (VD: 1 tháng, 3 tháng, 1 năm). Nếu không có gói nào, giá mặc định sẽ được hiển thị.</p>
+                            <div id="packages-list" class="space-y-2"></div>
+                        </div>
+
                         <div class="col-span-2">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Mô tả ngắn (hiển thị ở danh sách)</label>
                             <textarea name="description" rows="2" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">${product?.description || ''}</textarea>
@@ -522,8 +535,66 @@ const ProductsManager = {
         `;
 
         modal.classList.remove('hidden');
+        this.renderPackagesList();
         document.getElementById('product-form').addEventListener('submit', (e) => this.handleSubmit(e));
         document.getElementById('product-image')?.addEventListener('change', (e) => this.handleImageChange(e));
+    },
+
+    // ==========================================
+    // PACKAGES MANAGEMENT
+    // ==========================================
+    renderPackagesList() {
+        const list = document.getElementById('packages-list');
+        if (!list) return;
+
+        if (this.tempPackages.length === 0) {
+            list.innerHTML = '<p class="text-sm text-gray-400 dark:text-gray-500 italic">Chưa có gói nào. Nhấn "Thêm gói" để tạo.</p>';
+            return;
+        }
+
+        list.innerHTML = this.tempPackages.map((pkg, idx) => `
+            <div class="flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div class="flex-1 grid grid-cols-4 gap-2">
+                    <input type="text" value="${pkg.name}" placeholder="Tên gói (VD: 1 tháng)" 
+                        onchange="ProductsManager.updatePackage(${idx}, 'name', this.value)"
+                        class="px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-600 dark:text-white">
+                    <input type="number" value="${pkg.price}" placeholder="Giá" 
+                        onchange="ProductsManager.updatePackage(${idx}, 'price', this.value)"
+                        class="px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-600 dark:text-white">
+                    <input type="number" value="${pkg.originalPrice || ''}" placeholder="Giá gốc" 
+                        onchange="ProductsManager.updatePackage(${idx}, 'originalPrice', this.value)"
+                        class="px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-600 dark:text-white">
+                    <input type="text" value="${pkg.description || ''}" placeholder="Mô tả ngắn" 
+                        onchange="ProductsManager.updatePackage(${idx}, 'description', this.value)"
+                        class="px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-600 dark:text-white">
+                </div>
+                <button type="button" onclick="ProductsManager.removePackage(${idx})" class="p-1 text-red-500 hover:text-red-700" title="Xóa gói">🗑️</button>
+            </div>
+        `).join('');
+    },
+
+    addPackage() {
+        this.tempPackages.push({
+            name: '',
+            price: 0,
+            originalPrice: 0,
+            description: ''
+        });
+        this.renderPackagesList();
+    },
+
+    updatePackage(index, field, value) {
+        if (!this.tempPackages[index]) return;
+        if (field === 'price' || field === 'originalPrice') {
+            this.tempPackages[index][field] = parseInt(value) || 0;
+        } else {
+            this.tempPackages[index][field] = value;
+        }
+    },
+
+    removePackage(index) {
+        this.tempPackages.splice(index, 1);
+        this.renderPackagesList();
     },
 
     async handleImageChange(e) {
@@ -582,7 +653,8 @@ const ProductsManager = {
             category: form.category.value,
             tags: form.tags.value.split(',').map(t => t.trim()).filter(Boolean),
             active: form.active.value === 'true',
-            featured: form.featured.value === 'true'
+            featured: form.featured.value === 'true',
+            packages: this.tempPackages.filter(pkg => pkg.name && pkg.price > 0) // Only save valid packages
         };
 
         // Validate
@@ -615,6 +687,10 @@ const ProductsManager = {
                     data.sold = this.products[idx].sold || 0;
                     data.image = data.image || this.products[idx].image;
                     data.content = data.content || this.products[idx].content || '';
+                    // Keep packages if not modified
+                    if (!data.packages || data.packages.length === 0) {
+                        data.packages = this.products[idx].packages || [];
+                    }
                     this.products[idx] = data;
                 }
             } else {
@@ -654,6 +730,7 @@ const ProductsManager = {
         document.getElementById('product-modal').classList.add('hidden');
         this.editingId = null;
         this.pendingImage = null;
+        this.tempPackages = [];
     },
 
     edit(id) {

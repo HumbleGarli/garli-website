@@ -6,6 +6,7 @@ const ProductPage = {
     product: null,
     categories: [],
     config: null,
+    selectedPackage: null,
 
     async init() {
         const slug = new URLSearchParams(window.location.search).get('slug');
@@ -53,6 +54,19 @@ const ProductPage = {
         const discount = Math.round((1 - p.price / p.originalPrice) * 100);
         const category = this.categories.find(c => c.id === p.category);
         const hasImage = p.image && !p.image.includes('default');
+        const hasPackages = p.packages && p.packages.length > 0;
+
+        // Set default selected package
+        if (hasPackages && !this.selectedPackage) {
+            this.selectedPackage = p.packages[0];
+        }
+
+        // Get display price (from selected package or default)
+        const displayPrice = this.selectedPackage ? this.selectedPackage.price : p.price;
+        const displayOriginalPrice = this.selectedPackage ? this.selectedPackage.originalPrice : p.originalPrice;
+        const displayDiscount = displayOriginalPrice > displayPrice 
+            ? Math.round((1 - displayPrice / displayOriginalPrice) * 100) 
+            : 0;
 
         container.innerHTML = `
             <!-- Breadcrumb -->
@@ -77,7 +91,7 @@ const ProductPage = {
                             }
                         </div>
                         ${p.featured ? '<span class="absolute top-4 left-4 bg-yellow-500 text-white text-sm px-3 py-1 rounded-lg font-medium">HOT</span>' : ''}
-                        ${discount > 0 ? `<span class="absolute top-4 right-4 bg-red-500 text-white text-sm px-3 py-1 rounded-lg font-medium">-${discount}%</span>` : ''}
+                        ${displayDiscount > 0 ? `<span class="absolute top-4 right-4 bg-red-500 text-white text-sm px-3 py-1 rounded-lg font-medium">-${displayDiscount}%</span>` : ''}
                     </div>
 
                     <!-- Info -->
@@ -85,13 +99,33 @@ const ProductPage = {
                         <span class="text-sm text-blue-600 dark:text-blue-400 uppercase font-medium">${category?.name || p.category}</span>
                         <h1 class="text-2xl lg:text-3xl font-bold text-gray-800 dark:text-white mt-2">${p.name}</h1>
 
-                        <!-- Price -->
-                        <div class="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
-                            <div class="flex items-baseline gap-3">
-                                <span class="text-3xl font-bold text-blue-600 dark:text-blue-400">${p.price.toLocaleString('vi-VN')}đ</span>
-                                ${p.originalPrice > p.price ? `<span class="text-xl text-gray-400 line-through">${p.originalPrice.toLocaleString('vi-VN')}đ</span>` : ''}
+                        <!-- Packages Selection -->
+                        ${hasPackages ? `
+                        <div class="mt-4">
+                            <h3 class="font-semibold text-gray-800 dark:text-white mb-3">Chọn gói</h3>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="packages-container">
+                                ${p.packages.map((pkg, idx) => `
+                                    <button onclick="ProductPage.selectPackage(${idx})" 
+                                        class="package-btn p-3 rounded-xl border-2 transition-all text-left ${this.selectedPackage?.name === pkg.name 
+                                            ? 'border-[#0d544c] bg-[#0d544c]/10 dark:bg-[#0d544c]/20' 
+                                            : 'border-gray-200 dark:border-gray-600 hover:border-[#0d544c]/50'}">
+                                        <div class="font-medium text-gray-800 dark:text-white text-sm">${pkg.name}</div>
+                                        <div class="text-[#0d544c] dark:text-[#4ade80] font-bold">${pkg.price.toLocaleString('vi-VN')}đ</div>
+                                        ${pkg.originalPrice > pkg.price ? `<div class="text-xs text-gray-400 line-through">${pkg.originalPrice.toLocaleString('vi-VN')}đ</div>` : ''}
+                                    </button>
+                                `).join('')}
                             </div>
-                            ${discount > 0 ? `<p class="text-sm text-green-600 mt-1">Tiết kiệm ${(p.originalPrice - p.price).toLocaleString('vi-VN')}đ (${discount}%)</p>` : ''}
+                        </div>
+                        ` : ''}
+
+                        <!-- Price -->
+                        <div class="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl" id="price-display">
+                            <div class="flex items-baseline gap-3">
+                                <span class="text-3xl font-bold text-[#0d544c] dark:text-[#4ade80]">${displayPrice.toLocaleString('vi-VN')}đ</span>
+                                ${displayOriginalPrice > displayPrice ? `<span class="text-xl text-gray-400 line-through">${displayOriginalPrice.toLocaleString('vi-VN')}đ</span>` : ''}
+                            </div>
+                            ${displayDiscount > 0 ? `<p class="text-sm text-green-600 mt-1">Tiết kiệm ${(displayOriginalPrice - displayPrice).toLocaleString('vi-VN')}đ (${displayDiscount}%)</p>` : ''}
+                            ${this.selectedPackage?.description ? `<p class="text-sm text-gray-600 dark:text-gray-400 mt-2">${this.selectedPackage.description}</p>` : ''}
                         </div>
 
                         <!-- Description -->
@@ -120,7 +154,7 @@ const ProductPage = {
                         <!-- Actions -->
                         <div class="mt-auto pt-6 space-y-3">
                             <a href="${this.config?.socialLinks?.zalo || 'https://zalo.me/0868074935'}" target="_blank" rel="noopener noreferrer"
-                                class="flex items-center justify-center gap-2 w-full py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors">
+                                class="flex items-center justify-center gap-2 w-full py-3 bg-[#0d544c] text-white rounded-xl font-semibold hover:bg-[#0a443e] transition-colors">
                                 <svg class="w-6 h-6" viewBox="0 0 48 48" fill="currentColor">
                                     <path d="M12.5 42C8.08 42 4.5 38.42 4.5 34V14C4.5 9.58 8.08 6 12.5 6H35.5C39.92 6 43.5 9.58 43.5 14V34C43.5 38.42 39.92 42 35.5 42H12.5ZM15.5 18C14.67 18 14 18.67 14 19.5C14 20.33 14.67 21 15.5 21H20.5V31.5C20.5 32.33 21.17 33 22 33C22.83 33 23.5 32.33 23.5 31.5V21H28.5C29.33 21 30 20.33 30 19.5C30 18.67 29.33 18 28.5 18H15.5ZM32 18C31.17 18 30.5 18.67 30.5 19.5V31.5C30.5 32.33 31.17 33 32 33C32.83 33 33.5 32.33 33.5 31.5V19.5C33.5 18.67 32.83 18 32 18Z"/>
                                 </svg>
@@ -152,7 +186,7 @@ const ProductPage = {
 
             <!-- Back button -->
             <div class="mt-6">
-                <a href="shop.html" class="inline-flex items-center text-blue-600 hover:text-blue-700">
+                <a href="shop.html" class="inline-flex items-center text-[#0d544c] dark:text-[#4ade80] hover:underline">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                     </svg>
@@ -160,6 +194,12 @@ const ProductPage = {
                 </a>
             </div>
         `;
+    },
+
+    selectPackage(index) {
+        if (!this.product?.packages?.[index]) return;
+        this.selectedPackage = this.product.packages[index];
+        this.render();
     },
 
     renderStars(rating) {
