@@ -65,6 +65,9 @@
                     <button data-tab="qrreader" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
                         📸 Đọc QR
                     </button>
+                    <button data-tab="percent" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
+                        🔢 Phần trăm
+                    </button>
                 </div>
             </div>
 
@@ -1477,6 +1480,143 @@ Vũ Thị F</textarea>
                                         <div id="qrreader-history-list" class="space-y-2 max-h-40 overflow-y-auto"></div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Percentage Calculator Tab -->
+                <div id="tab-percent" class="tab-panel hidden">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Máy Tính Phần Trăm</h2>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Tính toán phần trăm dễ dàng. Tìm phần trăm của một giá trị so với giá trị khác, tính phần trăm của một giá trị, tìm giá trị gốc, hoặc tính phần trăm tăng/giảm.</p>
+                        </div>
+
+                        <!-- Info box -->
+                        <div class="p-3 bg-[#0d544c]/10 dark:bg-[#0d544c]/20 rounded-xl mb-6 flex items-start gap-2">
+                            <span class="text-[#0d544c] dark:text-[#4ade80]">ℹ️</span>
+                            <p class="text-sm text-[#0d544c] dark:text-[#4ade80]">Tất cả các phép tính được thực hiện hoàn toàn trong trình duyệt của bạn. Dữ liệu của bạn không bao giờ được gửi đến máy chủ và không được lưu trữ.</p>
+                        </div>
+
+                        <div class="space-y-6">
+                            <!-- Calculator 1: X% của Y là bao nhiêu? -->
+                            <div class="glass-card rounded-2xl p-6">
+                                <h3 class="text-base font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                    🔢 X% của Y là bao nhiêu?
+                                </h3>
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <div class="flex-1 min-w-[150px]">
+                                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Phần Trăm (X%)</label>
+                                        <input type="number" id="percent-calc1-x" placeholder="Nhập phần trăm" oninput="PercentCalc.calc1()"
+                                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                    </div>
+                                    <span class="text-gray-500 dark:text-gray-400 font-medium pt-5">của</span>
+                                    <div class="flex-1 min-w-[150px]">
+                                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Giá Trị Cơ Sở (Y)</label>
+                                        <input type="number" id="percent-calc1-y" placeholder="Nhập giá trị cơ sở" oninput="PercentCalc.calc1()"
+                                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                    </div>
+                                    <span class="text-gray-500 dark:text-gray-400 font-medium pt-5">=</span>
+                                    <div class="flex-1 min-w-[100px]">
+                                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Kết Quả</label>
+                                        <div id="percent-result1" class="px-4 py-3 rounded-xl bg-[#0d544c]/10 dark:bg-[#0d544c]/20 text-[#0d544c] dark:text-[#4ade80] font-bold text-center">—</div>
+                                    </div>
+                                    <button onclick="PercentCalc.clear1()" class="pt-5 text-gray-400 hover:text-red-500 transition-colors" title="Xóa">
+                                        🗑️ Xóa
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Calculator 2: X là bao nhiêu phần trăm của Y? -->
+                            <div class="glass-card rounded-2xl p-6">
+                                <h3 class="text-base font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                    📊 X là bao nhiêu phần trăm của Y?
+                                </h3>
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <div class="flex-1 min-w-[150px]">
+                                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Giá Trị (X)</label>
+                                        <input type="number" id="percent-calc2-x" placeholder="Nhập giá trị" oninput="PercentCalc.calc2()"
+                                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                    </div>
+                                    <span class="text-gray-500 dark:text-gray-400 font-medium pt-5">là bao nhiêu phần trăm của</span>
+                                    <div class="flex-1 min-w-[150px]">
+                                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Giá Trị Cơ Sở (Y)</label>
+                                        <input type="number" id="percent-calc2-y" placeholder="Nhập giá trị cơ sở" oninput="PercentCalc.calc2()"
+                                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                    </div>
+                                    <span class="text-gray-500 dark:text-gray-400 font-medium pt-5">=</span>
+                                    <div class="flex-1 min-w-[100px]">
+                                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Kết Quả</label>
+                                        <div id="percent-result2" class="px-4 py-3 rounded-xl bg-[#0d544c]/10 dark:bg-[#0d544c]/20 text-[#0d544c] dark:text-[#4ade80] font-bold text-center">—</div>
+                                    </div>
+                                    <button onclick="PercentCalc.clear2()" class="pt-5 text-gray-400 hover:text-red-500 transition-colors" title="Xóa">
+                                        🗑️ Xóa
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Calculator 3: X là Y% của số nào? -->
+                            <div class="glass-card rounded-2xl p-6">
+                                <h3 class="text-base font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                    🔍 X là Y% của số nào?
+                                </h3>
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <div class="flex-1 min-w-[150px]">
+                                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Giá Trị (X)</label>
+                                        <input type="number" id="percent-calc3-x" placeholder="Nhập giá trị" oninput="PercentCalc.calc3()"
+                                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                    </div>
+                                    <span class="text-gray-500 dark:text-gray-400 font-medium pt-5">là</span>
+                                    <div class="flex-1 min-w-[150px]">
+                                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Phần Trăm (Y%)</label>
+                                        <input type="number" id="percent-calc3-y" placeholder="Nhập phần trăm" oninput="PercentCalc.calc3()"
+                                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                    </div>
+                                    <span class="text-gray-500 dark:text-gray-400 font-medium pt-5">của số nào? =</span>
+                                    <div class="flex-1 min-w-[100px]">
+                                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Kết Quả</label>
+                                        <div id="percent-result3" class="px-4 py-3 rounded-xl bg-[#0d544c]/10 dark:bg-[#0d544c]/20 text-[#0d544c] dark:text-[#4ade80] font-bold text-center">—</div>
+                                    </div>
+                                    <button onclick="PercentCalc.clear3()" class="pt-5 text-gray-400 hover:text-red-500 transition-colors" title="Xóa">
+                                        🗑️ Xóa
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Calculator 4: Phần trăm tăng/giảm -->
+                            <div class="glass-card rounded-2xl p-6">
+                                <h3 class="text-base font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                    📈 Phần trăm tăng/giảm là bao nhiêu?
+                                </h3>
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <div class="flex-1 min-w-[150px]">
+                                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Từ</label>
+                                        <input type="number" id="percent-calc4-from" placeholder="Nhập giá trị ban đầu" oninput="PercentCalc.calc4()"
+                                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                    </div>
+                                    <span class="text-gray-500 dark:text-gray-400 font-medium pt-5">→</span>
+                                    <div class="flex-1 min-w-[150px]">
+                                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Đến</label>
+                                        <input type="number" id="percent-calc4-to" placeholder="Nhập giá trị cuối" oninput="PercentCalc.calc4()"
+                                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                    </div>
+                                    <span class="text-gray-500 dark:text-gray-400 font-medium pt-5">=</span>
+                                    <div class="flex-1 min-w-[120px]">
+                                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Kết Quả</label>
+                                        <div id="percent-result4" class="px-4 py-3 rounded-xl bg-[#0d544c]/10 dark:bg-[#0d544c]/20 text-[#0d544c] dark:text-[#4ade80] font-bold text-center">—</div>
+                                    </div>
+                                    <button onclick="PercentCalc.clear4()" class="pt-5 text-gray-400 hover:text-red-500 transition-colors" title="Xóa">
+                                        🗑️ Xóa
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Clear All Button -->
+                            <div class="text-center">
+                                <button onclick="PercentCalc.clearAll()" class="px-6 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors inline-flex items-center gap-2">
+                                    🗑️ Xóa Tất Cả
+                                </button>
                             </div>
                         </div>
                     </div>

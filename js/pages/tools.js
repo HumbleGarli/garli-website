@@ -2514,3 +2514,117 @@ document.addEventListener('paste', (e) => {
         }
     }
 });
+
+
+// ==========================================
+// PERCENTAGE CALCULATOR
+// ==========================================
+const PercentCalc = {
+    // Calculator 1: X% của Y là bao nhiêu?
+    calc1() {
+        const x = parseFloat(document.getElementById('percent-calc1-x').value);
+        const y = parseFloat(document.getElementById('percent-calc1-y').value);
+        const resultEl = document.getElementById('percent-result1');
+        
+        if (!isNaN(x) && !isNaN(y)) {
+            const result = (x / 100) * y;
+            resultEl.textContent = this.formatNumber(result);
+        } else {
+            resultEl.textContent = '—';
+        }
+    },
+
+    clear1() {
+        document.getElementById('percent-calc1-x').value = '';
+        document.getElementById('percent-calc1-y').value = '';
+        document.getElementById('percent-result1').textContent = '—';
+    },
+
+    // Calculator 2: X là bao nhiêu phần trăm của Y?
+    calc2() {
+        const x = parseFloat(document.getElementById('percent-calc2-x').value);
+        const y = parseFloat(document.getElementById('percent-calc2-y').value);
+        const resultEl = document.getElementById('percent-result2');
+        
+        if (!isNaN(x) && !isNaN(y) && y !== 0) {
+            const result = (x / y) * 100;
+            resultEl.textContent = this.formatNumber(result) + '%';
+        } else {
+            resultEl.textContent = '—';
+        }
+    },
+
+    clear2() {
+        document.getElementById('percent-calc2-x').value = '';
+        document.getElementById('percent-calc2-y').value = '';
+        document.getElementById('percent-result2').textContent = '—';
+    },
+
+    // Calculator 3: X là Y% của số nào?
+    calc3() {
+        const x = parseFloat(document.getElementById('percent-calc3-x').value);
+        const y = parseFloat(document.getElementById('percent-calc3-y').value);
+        const resultEl = document.getElementById('percent-result3');
+        
+        if (!isNaN(x) && !isNaN(y) && y !== 0) {
+            const result = (x * 100) / y;
+            resultEl.textContent = this.formatNumber(result);
+        } else {
+            resultEl.textContent = '—';
+        }
+    },
+
+    clear3() {
+        document.getElementById('percent-calc3-x').value = '';
+        document.getElementById('percent-calc3-y').value = '';
+        document.getElementById('percent-result3').textContent = '—';
+    },
+
+    // Calculator 4: Phần trăm tăng/giảm
+    calc4() {
+        const from = parseFloat(document.getElementById('percent-calc4-from').value);
+        const to = parseFloat(document.getElementById('percent-calc4-to').value);
+        const resultEl = document.getElementById('percent-result4');
+        
+        if (!isNaN(from) && !isNaN(to) && from !== 0) {
+            const change = ((to - from) / Math.abs(from)) * 100;
+            const sign = change >= 0 ? '+' : '';
+            resultEl.textContent = sign + this.formatNumber(change) + '%';
+            
+            // Color based on increase/decrease
+            if (change > 0) {
+                resultEl.classList.remove('text-red-500');
+                resultEl.classList.add('text-[#0d544c]', 'dark:text-[#4ade80]');
+            } else if (change < 0) {
+                resultEl.classList.remove('text-[#0d544c]', 'dark:text-[#4ade80]');
+                resultEl.classList.add('text-red-500');
+            }
+        } else {
+            resultEl.textContent = '—';
+            resultEl.classList.remove('text-red-500');
+            resultEl.classList.add('text-[#0d544c]', 'dark:text-[#4ade80]');
+        }
+    },
+
+    clear4() {
+        document.getElementById('percent-calc4-from').value = '';
+        document.getElementById('percent-calc4-to').value = '';
+        const resultEl = document.getElementById('percent-result4');
+        resultEl.textContent = '—';
+        resultEl.classList.remove('text-red-500');
+        resultEl.classList.add('text-[#0d544c]', 'dark:text-[#4ade80]');
+    },
+
+    clearAll() {
+        this.clear1();
+        this.clear2();
+        this.clear3();
+        this.clear4();
+    },
+
+    formatNumber(num) {
+        // Round to max 4 decimal places and remove trailing zeros
+        const rounded = Math.round(num * 10000) / 10000;
+        return rounded.toLocaleString('vi-VN', { maximumFractionDigits: 4 });
+    }
+};
