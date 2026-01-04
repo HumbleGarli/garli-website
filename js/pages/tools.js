@@ -585,61 +585,6 @@ const QRGenerator = {
         } catch (e) {
             alert('Không thể sao chép. Trình duyệt không hỗ trợ.');
         }
-    },
-
-    async generateBatch() {
-        const data = document.getElementById('qrgen-batch-data')?.value.trim();
-        const filename = document.getElementById('qrgen-batch-filename')?.value || 'qrcode';
-        
-        if (!data) {
-            alert('Vui lòng nhập danh sách dữ liệu');
-            return;
-        }
-
-        const lines = data.split('\n').filter(l => l.trim()).slice(0, 100);
-        
-        if (lines.length === 0) {
-            alert('Không có dữ liệu hợp lệ');
-            return;
-        }
-
-        const size = parseInt(document.getElementById('qrgen-size')?.value || 300);
-        const color = document.getElementById('qrgen-color')?.value || '#000000';
-        const bgColor = document.getElementById('qrgen-bgcolor')?.value || '#FFFFFF';
-        const correction = document.getElementById('qrgen-correction')?.value || 'M';
-
-        // Generate and download each QR
-        for (let i = 0; i < lines.length; i++) {
-            const tempDiv = document.createElement('div');
-            tempDiv.style.display = 'none';
-            document.body.appendChild(tempDiv);
-
-            new QRCode(tempDiv, {
-                text: lines[i].trim(),
-                width: size,
-                height: size,
-                colorDark: color,
-                colorLight: bgColor,
-                correctLevel: QRCode.CorrectLevel[correction]
-            });
-
-            // Wait for QR to render
-            await new Promise(resolve => setTimeout(resolve, 150));
-
-            const canvas = tempDiv.querySelector('canvas');
-            if (canvas) {
-                const dataUrl = canvas.toDataURL('image/png');
-                // Open in new tab instead of auto-download
-                window.open(dataUrl, '_blank');
-            }
-
-            document.body.removeChild(tempDiv);
-            
-            // Small delay between downloads
-            await new Promise(resolve => setTimeout(resolve, 300));
-        }
-
-        alert(`Đã tạo ${lines.length} mã QR!`);
     }
 };
 

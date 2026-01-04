@@ -410,33 +410,6 @@
                                         </button>
                                     </div>
                                 </div>
-
-                                <!-- Batch Generation -->
-                                <div class="glass-card rounded-2xl p-6">
-                                    <details>
-                                        <summary class="text-lg font-bold text-gray-800 dark:text-white cursor-pointer flex items-center gap-2">
-                                            <span>📦</span> Tạo Hàng Loạt
-                                        </summary>
-                                        <div class="mt-4 space-y-4">
-                                            <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 text-sm text-blue-700 dark:text-blue-300">
-                                                ℹ️ Tạo nhiều mã QR cùng lúc. Nhập mỗi dữ liệu trên một dòng (tối đa 100).
-                                            </div>
-                                            <div>
-                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Danh Sách Dữ Liệu</label>
-                                                <textarea id="qrgen-batch-data" rows="5" placeholder="Nhập một mục dữ liệu mỗi dòng"
-                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white resize-none"></textarea>
-                                            </div>
-                                            <div>
-                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tên File Gốc</label>
-                                                <input type="text" id="qrgen-batch-filename" value="qrcode" placeholder="qrcode"
-                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
-                                            </div>
-                                            <button onclick="QRGenerator.generateBatch()" class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#0d544c] text-white rounded-xl hover:bg-[#0a443e] transition-colors font-medium">
-                                                ⚡ Tạo Tất Cả
-                                            </button>
-                                        </div>
-                                    </details>
-                                </div>
                             </div>
 
                             <!-- Right Column - Preview & Download -->
