@@ -687,10 +687,8 @@ const ProductsManager = {
                     data.sold = this.products[idx].sold || 0;
                     data.image = data.image || this.products[idx].image;
                     data.content = data.content || this.products[idx].content || '';
-                    // Keep packages if not modified
-                    if (!data.packages || data.packages.length === 0) {
-                        data.packages = this.products[idx].packages || [];
-                    }
+                    // Always use tempPackages (even if empty - user may want to remove all packages)
+                    data.packages = this.tempPackages.filter(pkg => pkg.name && pkg.price > 0);
                     this.products[idx] = data;
                 }
             } else {

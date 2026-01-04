@@ -82,41 +82,44 @@ const ProductPage = {
 
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm overflow-hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 lg:p-8">
-                    <!-- Image -->
-                    <div class="relative">
-                        <div class="aspect-[920/430] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 rounded-xl overflow-hidden flex items-center justify-center">
-                            ${hasImage 
-                                ? `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover">` 
-                                : '<span class="text-8xl">📦</span>'
-                            }
+                    <!-- Left Column: Image + Packages -->
+                    <div>
+                        <!-- Image -->
+                        <div class="relative">
+                            <div class="aspect-[920/430] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 rounded-xl overflow-hidden flex items-center justify-center">
+                                ${hasImage 
+                                    ? `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover">` 
+                                    : '<span class="text-8xl">📦</span>'
+                                }
+                            </div>
+                            ${p.featured ? '<span class="absolute top-4 left-4 bg-yellow-500 text-white text-sm px-3 py-1 rounded-lg font-medium">HOT</span>' : ''}
+                            ${displayDiscount > 0 ? `<span class="absolute top-4 right-4 bg-red-500 text-white text-sm px-3 py-1 rounded-lg font-medium">-${displayDiscount}%</span>` : ''}
                         </div>
-                        ${p.featured ? '<span class="absolute top-4 left-4 bg-yellow-500 text-white text-sm px-3 py-1 rounded-lg font-medium">HOT</span>' : ''}
-                        ${displayDiscount > 0 ? `<span class="absolute top-4 right-4 bg-red-500 text-white text-sm px-3 py-1 rounded-lg font-medium">-${displayDiscount}%</span>` : ''}
-                    </div>
 
-                    <!-- Info -->
-                    <div class="flex flex-col">
-                        <span class="text-sm text-blue-600 dark:text-blue-400 uppercase font-medium">${category?.name || p.category}</span>
-                        <h1 class="text-2xl lg:text-3xl font-bold text-gray-800 dark:text-white mt-2">${p.name}</h1>
-
-                        <!-- Packages Selection -->
+                        <!-- Packages Selection (below image, smaller) -->
                         ${hasPackages ? `
                         <div class="mt-4">
-                            <h3 class="font-semibold text-gray-800 dark:text-white mb-3">Chọn gói</h3>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="packages-container">
+                            <h3 class="text-sm font-semibold text-gray-800 dark:text-white mb-2">Chọn gói</h3>
+                            <div class="flex flex-wrap gap-2" id="packages-container">
                                 ${p.packages.map((pkg, idx) => `
                                     <button onclick="ProductPage.selectPackage(${idx})" 
-                                        class="package-btn p-3 rounded-xl border-2 transition-all text-left ${this.selectedPackage?.name === pkg.name 
+                                        class="package-btn px-3 py-2 rounded-lg border-2 transition-all text-left ${this.selectedPackage?.name === pkg.name 
                                             ? 'border-[#0d544c] bg-[#0d544c]/10 dark:bg-[#0d544c]/20' 
                                             : 'border-gray-200 dark:border-gray-600 hover:border-[#0d544c]/50'}">
-                                        <div class="font-medium text-gray-800 dark:text-white text-sm">${pkg.name}</div>
-                                        <div class="text-[#0d544c] dark:text-[#4ade80] font-bold">${pkg.price.toLocaleString('vi-VN')}đ</div>
-                                        ${pkg.originalPrice > pkg.price ? `<div class="text-xs text-gray-400 line-through">${pkg.originalPrice.toLocaleString('vi-VN')}đ</div>` : ''}
+                                        <div class="font-medium text-gray-800 dark:text-white text-xs">${pkg.name}</div>
+                                        <div class="text-[#0d544c] dark:text-[#4ade80] font-bold text-sm">${pkg.price.toLocaleString('vi-VN')}đ</div>
+                                        ${pkg.originalPrice > pkg.price ? `<div class="text-[10px] text-gray-400 line-through">${pkg.originalPrice.toLocaleString('vi-VN')}đ</div>` : ''}
                                     </button>
                                 `).join('')}
                             </div>
                         </div>
                         ` : ''}
+                    </div>
+
+                    <!-- Right Column: Info -->
+                    <div class="flex flex-col">
+                        <span class="text-sm text-blue-600 dark:text-blue-400 uppercase font-medium">${category?.name || p.category}</span>
+                        <h1 class="text-2xl lg:text-3xl font-bold text-gray-800 dark:text-white mt-2">${p.name}</h1>
 
                         <!-- Price -->
                         <div class="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl" id="price-display">
