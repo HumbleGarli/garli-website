@@ -439,13 +439,14 @@ const QRGenerator = {
         // Clear previous QR
         preview.innerHTML = '';
         
-        // Create container with margin
+        // Create container with margin and relative positioning for logo overlay
         const container = document.createElement('div');
         container.id = 'qrgen-container';
         container.style.padding = `${margin * 4}px`;
         container.style.backgroundColor = bgColor;
         container.style.display = 'inline-block';
         container.style.borderRadius = '8px';
+        container.style.position = 'relative';
         preview.appendChild(container);
         
         // Create new QR
@@ -460,45 +461,47 @@ const QRGenerator = {
 
         // Add logo if exists
         if (this.logoData) {
-            // Wait longer and use interval to ensure canvas is ready
-            let attempts = 0;
-            const tryAddLogo = setInterval(() => {
-                attempts++;
-                const canvas = container.querySelector('canvas');
-                if (canvas && canvas.width > 0) {
-                    clearInterval(tryAddLogo);
-                    // Hide img element created by QRCode.js
-                    const img = container.querySelector('img');
-                    if (img) img.style.display = 'none';
-                    this.addLogoToQR(canvas);
-                } else if (attempts > 20) {
-                    clearInterval(tryAddLogo);
-                }
-            }, 50);
+            setTimeout(() => this.addLogoOverlay(size), 200);
         }
     },
 
-    addLogoToQR(canvas) {
-        if (!canvas || !this.logoData) return;
+    addLogoOverlay(qrSize) {
+        const container = document.getElementById('qrgen-container');
+        if (!container || !this.logoData) return;
 
-        const ctx = canvas.getContext('2d');
-        const logoImg = new Image();
-        
-        logoImg.onload = () => {
-            const logoSize = canvas.width * 0.25;
-            const x = (canvas.width - logoSize) / 2;
-            const y = (canvas.height - logoSize) / 2;
-            
-            // Draw white background for logo
-            const padding = 8;
-            ctx.fillStyle = '#FFFFFF';
-            ctx.fillRect(x - padding, y - padding, logoSize + padding * 2, logoSize + padding * 2);
-            
-            // Draw logo
-            ctx.drawImage(logoImg, x, y, logoSize, logoSize);
-        };
-        
+        // Remove existing logo overlay
+        const existingOverlay = container.querySelector('.logo-overlay');
+        if (existingOverlay) existingOverlay.remove();
+
+        // Create logo overlay div
+        const logoOverlay = document.createElement('div');
+        logoOverlay.className = 'logo-overlay';
+        logoOverlay.style.cssText = `
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        `;
+
+        const logoImg = document.createElement('img');
         logoImg.src = this.logoData;
+        logoImg.style.cssText = `
+            width: ${qrSize * 0.2}px;
+            height: ${qrSize * 0.2}px;
+            object-fit: contain;
+            display: block;
+        `;
+
+        logoOverlay.appendChild(logoImg);
+        container.appendChild(logoOverlay);
+    },
+
+    addLogoToQR(canvas) {
+        // Legacy function - not used anymore
     },
 
     handleLogo(input) {
@@ -557,29 +560,70 @@ const QRGenerator = {
 
     download(format) {
         const container = document.getElementById('qrgen-container');
-        const canvas = container?.querySelector('canvas');
-        if (!canvas) {
+        if (!container) {
             alert('Vui lòng tạo mã QR trước');
             return;
         }
 
+        const qrCanvas = container.querySelector('canvas');
+        const qrImg = container.querySelector('img:not(.logo-overlay img)');
+        
+        if (!qrCanvas && !qrImg) {
+            alert('Không tìm thấy mã QR');
+            return;
+        }
+
+        // Create a new canvas to combine QR + logo
+        const finalCanvas = document.createElement('canvas');
+        const margin = parseInt(document.getElementById('qrgen-margin')?.value || 4) * 4;
+        const size = parseInt(document.getElementById('qrgen-size')?.value || 300);
+        finalCanvas.width = size + margin * 2;
+        finalCanvas.height = size + margin * 2;
+        
+        const ctx = finalCanvas.getContext('2d');
+        
+        // Fill background
+        ctx.fillStyle = document.getElementById('qrgen-bgcolor')?.value || '#FFFFFF';
+        ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+        
+        // Draw QR code
+        const source = qrCanvas || qrImg;
+        ctx.drawImage(source, margin, margin, size, size);
+        
+        // Draw logo if exists
+        if (this.logoData) {
+            const logoImg = new Image();
+            logoImg.onload = () => {
+                const logoSize = size * 0.2;
+                const x = (finalCanvas.width - logoSize) / 2;
+                const y = (finalCanvas.height - logoSize) / 2;
+                
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(x - 8, y - 8, logoSize + 16, logoSize + 16);
+                ctx.drawImage(logoImg, x, y, logoSize, logoSize);
+                
+                this.exportCanvas(finalCanvas, format);
+            };
+            logoImg.src = this.logoData;
+        } else {
+            this.exportCanvas(finalCanvas, format);
+        }
+    },
+
+    exportCanvas(canvas, format) {
         let dataUrl;
         if (format === 'png') {
             dataUrl = canvas.toDataURL('image/png');
         } else if (format === 'jpeg') {
             dataUrl = canvas.toDataURL('image/jpeg', 0.9);
         } else if (format === 'svg') {
-            // For SVG, we need to create it manually
-            const size = canvas.width;
             const imgData = canvas.toDataURL('image/png');
-            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}">
-                <image href="${imgData}" width="${size}" height="${size}"/>
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${canvas.width}" height="${canvas.height}">
+                <image href="${imgData}" width="${canvas.width}" height="${canvas.height}"/>
             </svg>`;
             const blob = new Blob([svg], { type: 'image/svg+xml' });
             dataUrl = URL.createObjectURL(blob);
         }
-
-        // Open in new tab
         window.open(dataUrl, '_blank');
     },
 
