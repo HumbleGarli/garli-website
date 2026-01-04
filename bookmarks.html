@@ -48,6 +48,9 @@
                     <button data-tab="bmi" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
                         ⚖️ BMI
                     </button>
+                    <button data-tab="sleep" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
+                        😴 Giấc ngủ
+                    </button>
                 </div>
             </div>
 
@@ -889,6 +892,118 @@ Vũ Thị F</textarea>
                                         </div>
                                         <p class="text-sm text-gray-600 dark:text-gray-400">Làm việc với chuyên gia y tế để có kế hoạch phù hợp kết hợp dinh dưỡng, vận động và nghỉ ngơi.</p>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sleep Calculator Tab -->
+                <div id="tab-sleep" class="tab-panel hidden">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="grid lg:grid-cols-2 gap-6">
+                            <!-- Left Column - Calculator -->
+                            <div class="space-y-6">
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-2 flex items-center gap-2">
+                                        <span>🌙</span> Máy Tính Giấc Ngủ
+                                    </h2>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Tính thời gian đi ngủ hoặc thức dậy tối ưu dựa trên chu kỳ giấc ngủ 90 phút.</p>
+                                    
+                                    <!-- Mode Selection -->
+                                    <div class="mb-6">
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Chế độ tính</label>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <button onclick="SleepCalculator.setMode('bedtime')" id="sleep-mode-bedtime" class="px-4 py-3 rounded-xl font-medium transition-all bg-[#0d544c] text-white text-sm">
+                                                🛏️ Tính giờ đi ngủ
+                                            </button>
+                                            <button onclick="SleepCalculator.setMode('waketime')" id="sleep-mode-waketime" class="px-4 py-3 rounded-xl font-medium transition-all border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm">
+                                                ⏰ Tính giờ thức dậy
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Bedtime Mode Input -->
+                                    <div id="sleep-bedtime-input">
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bạn muốn thức dậy lúc mấy giờ?</label>
+                                        <input type="time" id="sleep-wakeup-time" value="07:00" onchange="SleepCalculator.calculate()"
+                                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-lg">
+                                    </div>
+
+                                    <!-- Waketime Mode Input -->
+                                    <div id="sleep-waketime-input" class="hidden">
+                                        <p class="text-center text-gray-600 dark:text-gray-400 py-4">
+                                            Nếu bạn đi ngủ <span class="font-bold text-[#0d544c] dark:text-[#10b981]">NGAY BÂY GIỜ</span>, bạn nên thức dậy vào các thời điểm sau:
+                                        </p>
+                                    </div>
+
+                                    <!-- Calculate Button (for bedtime mode) -->
+                                    <button onclick="SleepCalculator.calculate()" id="sleep-calc-btn" class="w-full mt-4 px-6 py-3 bg-[#0d544c] text-white rounded-xl hover:bg-[#0a443e] transition-colors font-medium">
+                                        🧮 Tính toán
+                                    </button>
+                                </div>
+
+                                <!-- Results -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        <span>✨</span> <span id="sleep-result-title">Thời gian đi ngủ gợi ý</span>
+                                    </h2>
+                                    <div id="sleep-results" class="space-y-3">
+                                        <p class="text-gray-400 text-center py-4">Chọn thời gian và nhấn Tính toán</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column - Info -->
+                            <div class="space-y-6">
+                                <!-- About Sleep Cycles -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        <span>💤</span> Về Chu Kỳ Giấc Ngủ
+                                    </h2>
+                                    <div class="space-y-4 text-sm text-gray-600 dark:text-gray-400">
+                                        <div class="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+                                            <h3 class="font-semibold text-purple-700 dark:text-purple-400 mb-1">🔄 Chu kỳ 90 phút</h3>
+                                            <p>Mỗi chu kỳ giấc ngủ kéo dài khoảng 90 phút, bao gồm: ngủ nông, ngủ sâu và REM. Thức dậy cuối chu kỳ giúp bạn tỉnh táo hơn.</p>
+                                        </div>
+                                        <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                                            <h3 class="font-semibold text-blue-700 dark:text-blue-400 mb-1">⏱️ 14 phút để chìm vào giấc ngủ</h3>
+                                            <p>Trung bình mất khoảng 14 phút để chìm vào giấc ngủ. Máy tính đã tính thêm thời gian này.</p>
+                                        </div>
+                                        <div class="p-3 bg-green-50 dark:bg-green-900/20 rounded-xl">
+                                            <h3 class="font-semibold text-green-700 dark:text-green-400 mb-1">🌟 Khuyến nghị</h3>
+                                            <p>Người lớn cần 7-9 tiếng ngủ mỗi đêm. 5 chu kỳ (7.5 tiếng) thường là lựa chọn tốt nhất.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Sleep Tips -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        <span>💡</span> Mẹo Ngủ Ngon
+                                    </h2>
+                                    <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                                        <li class="flex items-start gap-2">
+                                            <span>🕐</span>
+                                            <span>Duy trì lịch ngủ đều đặn, kể cả cuối tuần</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <span>📵</span>
+                                            <span>Tránh màn hình điện tử 30 phút trước khi ngủ</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <span>🌡️</span>
+                                            <span>Giữ phòng ngủ mát mẻ, tối và yên tĩnh</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <span>☕</span>
+                                            <span>Tránh caffeine và bữa ăn lớn gần giờ ngủ</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <span>🧘</span>
+                                            <span>Tạo thói quen thư giãn trước khi ngủ</span>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>

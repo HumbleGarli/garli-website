@@ -1294,3 +1294,141 @@ const BMICalculator = {
         });
     }
 };
+
+
+// ==========================================
+// SLEEP CALCULATOR
+// ==========================================
+const SleepCalculator = {
+    mode: 'bedtime', // 'bedtime' or 'waketime'
+    CYCLE_MINUTES: 90,
+    FALL_ASLEEP_MINUTES: 14,
+
+    setMode(mode) {
+        this.mode = mode;
+        
+        const bedtimeBtn = document.getElementById('sleep-mode-bedtime');
+        const waketimeBtn = document.getElementById('sleep-mode-waketime');
+        const bedtimeInput = document.getElementById('sleep-bedtime-input');
+        const waketimeInput = document.getElementById('sleep-waketime-input');
+        const calcBtn = document.getElementById('sleep-calc-btn');
+        const resultTitle = document.getElementById('sleep-result-title');
+        
+        if (mode === 'bedtime') {
+            bedtimeBtn.classList.add('bg-[#0d544c]', 'text-white');
+            bedtimeBtn.classList.remove('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
+            waketimeBtn.classList.remove('bg-[#0d544c]', 'text-white');
+            waketimeBtn.classList.add('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
+            
+            bedtimeInput.classList.remove('hidden');
+            waketimeInput.classList.add('hidden');
+            calcBtn.classList.remove('hidden');
+            resultTitle.textContent = 'Thời gian đi ngủ gợi ý';
+        } else {
+            waketimeBtn.classList.add('bg-[#0d544c]', 'text-white');
+            waketimeBtn.classList.remove('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
+            bedtimeBtn.classList.remove('bg-[#0d544c]', 'text-white');
+            bedtimeBtn.classList.add('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
+            
+            bedtimeInput.classList.add('hidden');
+            waketimeInput.classList.remove('hidden');
+            calcBtn.classList.add('hidden');
+            resultTitle.textContent = 'Thời gian thức dậy gợi ý';
+        }
+        
+        this.calculate();
+    },
+
+    calculate() {
+        const resultsEl = document.getElementById('sleep-results');
+        
+        if (this.mode === 'bedtime') {
+            this.calculateBedtime(resultsEl);
+        } else {
+            this.calculateWaketime(resultsEl);
+        }
+    },
+
+    calculateBedtime(resultsEl) {
+        const wakeTimeInput = document.getElementById('sleep-wakeup-time').value;
+        if (!wakeTimeInput) {
+            resultsEl.innerHTML = '<p class="text-gray-400 text-center py-4">Chọn thời gian thức dậy</p>';
+            return;
+        }
+
+        const [hours, minutes] = wakeTimeInput.split(':').map(Number);
+        const wakeTime = new Date();
+        wakeTime.setHours(hours, minutes, 0, 0);
+
+        const results = [];
+        // Calculate for 6, 5, 4, 3 cycles (9h, 7.5h, 6h, 4.5h)
+        for (let cycles = 6; cycles >= 3; cycles--) {
+            const sleepDuration = cycles * this.CYCLE_MINUTES + this.FALL_ASLEEP_MINUTES;
+            const bedTime = new Date(wakeTime.getTime() - sleepDuration * 60 * 1000);
+            
+            results.push({
+                cycles: cycles,
+                time: bedTime,
+                duration: cycles * this.CYCLE_MINUTES / 60,
+                recommended: cycles === 5
+            });
+        }
+
+        resultsEl.innerHTML = results.map(r => `
+            <div class="p-4 rounded-xl border-2 transition-all ${r.recommended ? 'border-green-400 bg-green-50 dark:bg-green-900/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'}">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl font-bold ${r.recommended ? 'text-green-600 dark:text-green-400' : 'text-gray-700 dark:text-gray-300'}">
+                            ${this.formatTime(r.time)}
+                        </span>
+                        ${r.recommended ? '<span class="px-2 py-1 bg-green-500 text-white text-xs rounded-full">Khuyến nghị</span>' : ''}
+                    </div>
+                    <div class="text-right text-sm text-gray-500 dark:text-gray-400">
+                        <div>${r.cycles} chu kỳ</div>
+                        <div>${r.duration} tiếng</div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    },
+
+    calculateWaketime(resultsEl) {
+        const now = new Date();
+        const sleepTime = new Date(now.getTime() + this.FALL_ASLEEP_MINUTES * 60 * 1000);
+
+        const results = [];
+        // Calculate for 3, 4, 5, 6 cycles
+        for (let cycles = 3; cycles <= 6; cycles++) {
+            const sleepDuration = cycles * this.CYCLE_MINUTES;
+            const wakeTime = new Date(sleepTime.getTime() + sleepDuration * 60 * 1000);
+            
+            results.push({
+                cycles: cycles,
+                time: wakeTime,
+                duration: cycles * this.CYCLE_MINUTES / 60,
+                recommended: cycles === 5
+            });
+        }
+
+        resultsEl.innerHTML = results.map(r => `
+            <div class="p-4 rounded-xl border-2 transition-all ${r.recommended ? 'border-green-400 bg-green-50 dark:bg-green-900/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'}">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl font-bold ${r.recommended ? 'text-green-600 dark:text-green-400' : 'text-gray-700 dark:text-gray-300'}">
+                            ${this.formatTime(r.time)}
+                        </span>
+                        ${r.recommended ? '<span class="px-2 py-1 bg-green-500 text-white text-xs rounded-full">Khuyến nghị</span>' : ''}
+                    </div>
+                    <div class="text-right text-sm text-gray-500 dark:text-gray-400">
+                        <div>${r.cycles} chu kỳ</div>
+                        <div>${r.duration} tiếng</div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    },
+
+    formatTime(date) {
+        return date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', hour12: false });
+    }
+};
