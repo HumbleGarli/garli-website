@@ -631,10 +631,13 @@ const QRGenerator = {
 
     exportCanvas(canvas, format) {
         let dataUrl;
+        let filename = `qrcode.${format}`;
+        
         if (format === 'png') {
             dataUrl = canvas.toDataURL('image/png');
         } else if (format === 'jpeg') {
             dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+            filename = 'qrcode.jpg';
         } else if (format === 'svg') {
             const imgData = canvas.toDataURL('image/png');
             const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${canvas.width}" height="${canvas.height}">
@@ -643,7 +646,19 @@ const QRGenerator = {
             const blob = new Blob([svg], { type: 'image/svg+xml' });
             dataUrl = URL.createObjectURL(blob);
         }
-        window.open(dataUrl, '_blank');
+        
+        // Create download link
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Clean up blob URL if SVG
+        if (format === 'svg') {
+            URL.revokeObjectURL(dataUrl);
+        }
     },
 
     async copyToClipboard() {
