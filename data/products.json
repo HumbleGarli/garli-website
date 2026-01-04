@@ -37,10 +37,16 @@
       "featured": false,
       "packages": [
         {
-          "name": "Capcut Pro 28D",
+          "name": "Capcut Pro 28 Ngày",
           "price": 30000,
           "originalPrice": 180000,
-          "description": ""
+          "description": "Cấp sẵn"
+        },
+        {
+          "name": "Capcut Pro 6 Tháng",
+          "price": 350000,
+          "originalPrice": 900000,
+          "description": "Cấp sẵn"
         }
       ],
       "id": 3,
