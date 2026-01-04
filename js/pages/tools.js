@@ -1891,3 +1891,274 @@ const PaletteExtractor = {
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => PaletteExtractor.init(), 100);
 });
+
+
+// ==========================================
+// DATE CALCULATOR
+// ==========================================
+const DateCalculator = {
+    currentMode: 'difference',
+
+    setMode(mode) {
+        this.currentMode = mode;
+        
+        // Update mode buttons
+        const modes = ['difference', 'add', 'age'];
+        modes.forEach(m => {
+            const btn = document.getElementById(`datecalc-mode-${m === 'difference' ? 'diff' : m}`);
+            if (btn) {
+                if (m === mode) {
+                    btn.classList.add('bg-[#0d544c]', 'text-white');
+                    btn.classList.remove('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
+                } else {
+                    btn.classList.remove('bg-[#0d544c]', 'text-white');
+                    btn.classList.add('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
+                }
+            }
+        });
+
+        // Show/hide panels
+        document.getElementById('datecalc-diff-panel').classList.toggle('hidden', mode !== 'difference');
+        document.getElementById('datecalc-add-panel').classList.toggle('hidden', mode !== 'add');
+        document.getElementById('datecalc-age-panel').classList.toggle('hidden', mode !== 'age');
+
+        // Hide results when switching modes
+        document.getElementById('datecalc-results').classList.add('hidden');
+        
+        this.calculate();
+    },
+
+    setToday(field) {
+        const today = new Date().toISOString().split('T')[0];
+        
+        if (field === 'start') {
+            document.getElementById('datecalc-start').value = today;
+        } else if (field === 'end') {
+            document.getElementById('datecalc-end').value = today;
+        } else if (field === 'base') {
+            document.getElementById('datecalc-base').value = today;
+        }
+        
+        this.calculate();
+    },
+
+    swapDates() {
+        const startInput = document.getElementById('datecalc-start');
+        const endInput = document.getElementById('datecalc-end');
+        
+        const temp = startInput.value;
+        startInput.value = endInput.value;
+        endInput.value = temp;
+        
+        this.calculate();
+    },
+
+    calculate() {
+        switch (this.currentMode) {
+            case 'difference':
+                this.calculateDifference();
+                break;
+            case 'add':
+                this.calculateAddSubtract();
+                break;
+            case 'age':
+                this.calculateAge();
+                break;
+        }
+    },
+
+    calculateDifference() {
+        const startStr = document.getElementById('datecalc-start').value;
+        const endStr = document.getElementById('datecalc-end').value;
+        
+        if (!startStr || !endStr) {
+            document.getElementById('datecalc-results').classList.add('hidden');
+            return;
+        }
+
+        const start = new Date(startStr);
+        const end = new Date(endStr);
+        const diffTime = Math.abs(end - start);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        // Calculate years, months, days
+        const years = Math.floor(diffDays / 365);
+        const months = Math.floor((diffDays % 365) / 30);
+        const days = diffDays % 30;
+        
+        // Calculate weeks
+        const weeks = Math.floor(diffDays / 7);
+        const remainingDays = diffDays % 7;
+        
+        // Calculate hours, minutes, seconds
+        const hours = Math.floor(diffTime / (1000 * 60 * 60));
+        const minutes = Math.floor(diffTime / (1000 * 60));
+        const seconds = Math.floor(diffTime / 1000);
+
+        const resultsEl = document.getElementById('datecalc-results');
+        const titleEl = document.getElementById('datecalc-result-title');
+        const contentEl = document.getElementById('datecalc-result-content');
+
+        titleEl.textContent = 'Khoảng cách giữa hai ngày';
+        
+        contentEl.innerHTML = `
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="text-center p-4 bg-[#0d544c]/10 dark:bg-[#0d544c]/20 rounded-xl">
+                    <div class="text-3xl font-bold text-[#0d544c] dark:text-[#4ade80]">${diffDays}</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">Ngày</div>
+                </div>
+                <div class="text-center p-4 bg-gray-100 dark:bg-gray-800 rounded-xl">
+                    <div class="text-3xl font-bold text-gray-800 dark:text-white">${weeks}</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">Tuần</div>
+                </div>
+                <div class="text-center p-4 bg-gray-100 dark:bg-gray-800 rounded-xl">
+                    <div class="text-3xl font-bold text-gray-800 dark:text-white">${hours.toLocaleString()}</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">Giờ</div>
+                </div>
+                <div class="text-center p-4 bg-gray-100 dark:bg-gray-800 rounded-xl">
+                    <div class="text-3xl font-bold text-gray-800 dark:text-white">${minutes.toLocaleString()}</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">Phút</div>
+                </div>
+            </div>
+            <div class="space-y-2 text-gray-700 dark:text-gray-300">
+                <p>📅 <strong>${years}</strong> năm, <strong>${months}</strong> tháng, <strong>${days}</strong> ngày</p>
+                <p>📆 <strong>${weeks}</strong> tuần và <strong>${remainingDays}</strong> ngày</p>
+                <p>⏰ <strong>${seconds.toLocaleString()}</strong> giây</p>
+            </div>
+        `;
+
+        resultsEl.classList.remove('hidden');
+    },
+
+    calculateAddSubtract() {
+        const baseStr = document.getElementById('datecalc-base').value;
+        const daysToAdd = parseInt(document.getElementById('datecalc-days').value) || 0;
+        const operation = document.getElementById('datecalc-operation').value;
+        
+        if (!baseStr) {
+            document.getElementById('datecalc-results').classList.add('hidden');
+            return;
+        }
+
+        const baseDate = new Date(baseStr);
+        const resultDate = new Date(baseDate);
+        
+        if (operation === 'add') {
+            resultDate.setDate(resultDate.getDate() + daysToAdd);
+        } else {
+            resultDate.setDate(resultDate.getDate() - daysToAdd);
+        }
+
+        const resultsEl = document.getElementById('datecalc-results');
+        const titleEl = document.getElementById('datecalc-result-title');
+        const contentEl = document.getElementById('datecalc-result-content');
+
+        const operationText = operation === 'add' ? 'cộng' : 'trừ';
+        titleEl.textContent = `Kết quả ${operationText} ngày`;
+
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const formattedDate = resultDate.toLocaleDateString('vi-VN', options);
+        const isoDate = resultDate.toISOString().split('T')[0];
+
+        // Calculate day of week
+        const dayNames = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
+        const dayOfWeek = dayNames[resultDate.getDay()];
+
+        contentEl.innerHTML = `
+            <div class="text-center p-6 bg-[#0d544c]/10 dark:bg-[#0d544c]/20 rounded-xl mb-4">
+                <div class="text-4xl font-bold text-[#0d544c] dark:text-[#4ade80] mb-2">${resultDate.getDate()}/${resultDate.getMonth() + 1}/${resultDate.getFullYear()}</div>
+                <div class="text-lg text-gray-600 dark:text-gray-400">${dayOfWeek}</div>
+            </div>
+            <div class="space-y-2 text-gray-700 dark:text-gray-300">
+                <p>📅 ${formattedDate}</p>
+                <p>🔢 ISO: <code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded">${isoDate}</code></p>
+            </div>
+        `;
+
+        resultsEl.classList.remove('hidden');
+    },
+
+    calculateAge() {
+        const birthdayStr = document.getElementById('datecalc-birthday').value;
+        
+        if (!birthdayStr) {
+            document.getElementById('datecalc-results').classList.add('hidden');
+            return;
+        }
+
+        const birthday = new Date(birthdayStr);
+        const today = new Date();
+        
+        // Calculate exact age
+        let years = today.getFullYear() - birthday.getFullYear();
+        let months = today.getMonth() - birthday.getMonth();
+        let days = today.getDate() - birthday.getDate();
+
+        if (days < 0) {
+            months--;
+            const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+            days += lastMonth.getDate();
+        }
+
+        if (months < 0) {
+            years--;
+            months += 12;
+        }
+
+        // Calculate total days lived
+        const diffTime = Math.abs(today - birthday);
+        const totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        const totalWeeks = Math.floor(totalDays / 7);
+        const totalMonths = years * 12 + months;
+        const totalHours = Math.floor(diffTime / (1000 * 60 * 60));
+        const totalMinutes = Math.floor(diffTime / (1000 * 60));
+
+        // Calculate next birthday
+        const nextBirthday = new Date(today.getFullYear(), birthday.getMonth(), birthday.getDate());
+        if (nextBirthday <= today) {
+            nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
+        }
+        const daysUntilBirthday = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
+
+        const resultsEl = document.getElementById('datecalc-results');
+        const titleEl = document.getElementById('datecalc-result-title');
+        const contentEl = document.getElementById('datecalc-result-content');
+
+        titleEl.textContent = 'Tuổi của bạn';
+
+        contentEl.innerHTML = `
+            <div class="text-center p-6 bg-[#0d544c]/10 dark:bg-[#0d544c]/20 rounded-xl mb-6">
+                <div class="text-5xl font-bold text-[#0d544c] dark:text-[#4ade80] mb-2">${years}</div>
+                <div class="text-lg text-gray-600 dark:text-gray-400">tuổi</div>
+                <div class="text-sm text-gray-500 dark:text-gray-500 mt-2">${years} năm, ${months} tháng, ${days} ngày</div>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="text-center p-3 bg-gray-100 dark:bg-gray-800 rounded-xl">
+                    <div class="text-2xl font-bold text-gray-800 dark:text-white">${totalDays.toLocaleString()}</div>
+                    <div class="text-xs text-gray-600 dark:text-gray-400">Ngày</div>
+                </div>
+                <div class="text-center p-3 bg-gray-100 dark:bg-gray-800 rounded-xl">
+                    <div class="text-2xl font-bold text-gray-800 dark:text-white">${totalWeeks.toLocaleString()}</div>
+                    <div class="text-xs text-gray-600 dark:text-gray-400">Tuần</div>
+                </div>
+                <div class="text-center p-3 bg-gray-100 dark:bg-gray-800 rounded-xl">
+                    <div class="text-2xl font-bold text-gray-800 dark:text-white">${totalMonths.toLocaleString()}</div>
+                    <div class="text-xs text-gray-600 dark:text-gray-400">Tháng</div>
+                </div>
+                <div class="text-center p-3 bg-gray-100 dark:bg-gray-800 rounded-xl">
+                    <div class="text-2xl font-bold text-gray-800 dark:text-white">${totalHours.toLocaleString()}</div>
+                    <div class="text-xs text-gray-600 dark:text-gray-400">Giờ</div>
+                </div>
+            </div>
+
+            <div class="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border border-yellow-200 dark:border-yellow-800">
+                <p class="text-yellow-800 dark:text-yellow-200">
+                    🎂 Còn <strong>${daysUntilBirthday}</strong> ngày nữa đến sinh nhật tiếp theo!
+                </p>
+            </div>
+        `;
+
+        resultsEl.classList.remove('hidden');
+    }
+};

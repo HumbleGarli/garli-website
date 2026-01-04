@@ -57,6 +57,9 @@
                     <button data-tab="palette" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
                         🖼️ Bảng màu
                     </button>
+                    <button data-tab="datecalc" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
+                        📅 Tính ngày
+                    </button>
                 </div>
             </div>
 
@@ -1221,6 +1224,103 @@ Vũ Thị F</textarea>
                                 <span>🎨</span> Bảng Màu
                             </h2>
                             <div id="palette-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Date Calculator Tab -->
+                <div id="tab-datecalc" class="tab-panel hidden">
+                    <div class="max-w-4xl mx-auto space-y-6">
+                        <!-- Mode Selection -->
+                        <div class="glass-card rounded-2xl p-6">
+                            <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                <span>📅</span> Tính Ngày
+                            </h2>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Tính khoảng cách giữa các ngày, đếm ngược đến sự kiện, và tính tuổi chính xác theo ngày, giờ, phút.</p>
+                            
+                            <!-- Mode Tabs -->
+                            <div class="flex gap-2 mb-6">
+                                <button onclick="DateCalculator.setMode('difference')" id="datecalc-mode-diff" class="flex-1 px-4 py-3 rounded-xl font-medium transition-all bg-[#0d544c] text-white text-sm">
+                                    📊 Khoảng cách ngày
+                                </button>
+                                <button onclick="DateCalculator.setMode('add')" id="datecalc-mode-add" class="flex-1 px-4 py-3 rounded-xl font-medium transition-all border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm">
+                                    ➕ Cộng/Trừ ngày
+                                </button>
+                                <button onclick="DateCalculator.setMode('age')" id="datecalc-mode-age" class="flex-1 px-4 py-3 rounded-xl font-medium transition-all border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm">
+                                    🎂 Tính tuổi
+                                </button>
+                            </div>
+
+                            <!-- Difference Mode -->
+                            <div id="datecalc-diff-panel">
+                                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Ngày bắt đầu</label>
+                                        <input type="date" id="datecalc-start" onchange="DateCalculator.calculate()"
+                                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Ngày kết thúc</label>
+                                        <input type="date" id="datecalc-end" onchange="DateCalculator.calculate()"
+                                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                    </div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button onclick="DateCalculator.setToday('start')" class="px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                        Hôm nay → Bắt đầu
+                                    </button>
+                                    <button onclick="DateCalculator.setToday('end')" class="px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                        Hôm nay → Kết thúc
+                                    </button>
+                                    <button onclick="DateCalculator.swapDates()" class="px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                        🔄 Đổi ngày
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Add/Subtract Mode -->
+                            <div id="datecalc-add-panel" class="hidden">
+                                <div class="grid md:grid-cols-3 gap-4 mb-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Ngày gốc</label>
+                                        <input type="date" id="datecalc-base" onchange="DateCalculator.calculate()"
+                                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Số ngày</label>
+                                        <input type="number" id="datecalc-days" value="0" onchange="DateCalculator.calculate()"
+                                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Thao tác</label>
+                                        <select id="datecalc-operation" onchange="DateCalculator.calculate()"
+                                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                            <option value="add">Cộng (+)</option>
+                                            <option value="subtract">Trừ (-)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button onclick="DateCalculator.setToday('base')" class="px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    Hôm nay → Ngày gốc
+                                </button>
+                            </div>
+
+                            <!-- Age Mode -->
+                            <div id="datecalc-age-panel" class="hidden">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Ngày sinh</label>
+                                    <input type="date" id="datecalc-birthday" onchange="DateCalculator.calculate()"
+                                        class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Results -->
+                        <div id="datecalc-results" class="hidden glass-card rounded-2xl p-6">
+                            <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                <span>📊</span> <span id="datecalc-result-title">Kết quả</span>
+                            </h2>
+                            <div id="datecalc-result-content"></div>
                         </div>
                     </div>
                 </div>
