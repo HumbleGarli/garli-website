@@ -458,45 +458,47 @@ const QRGenerator = {
             correctLevel: QRCode.CorrectLevel[correction]
         });
 
-        // Add logo if exists - need to wait for QR to render and hide img element
+        // Add logo if exists
         if (this.logoData) {
-            setTimeout(() => {
-                // Hide the img element that QRCode.js creates (it duplicates the canvas)
-                const img = container.querySelector('img');
-                if (img) img.style.display = 'none';
-                this.addLogoToQR();
-            }, 300);
+            // Wait longer and use interval to ensure canvas is ready
+            let attempts = 0;
+            const tryAddLogo = setInterval(() => {
+                attempts++;
+                const canvas = container.querySelector('canvas');
+                if (canvas && canvas.width > 0) {
+                    clearInterval(tryAddLogo);
+                    // Hide img element created by QRCode.js
+                    const img = container.querySelector('img');
+                    if (img) img.style.display = 'none';
+                    this.addLogoToQR(canvas);
+                } else if (attempts > 20) {
+                    clearInterval(tryAddLogo);
+                }
+            }, 50);
         }
     },
 
-    addLogoToQR() {
-        const container = document.getElementById('qrgen-container');
-        const canvas = container?.querySelector('canvas');
-        if (!canvas || !this.logoData) {
-            console.log('No canvas or logo data');
-            return;
-        }
+    addLogoToQR(canvas) {
+        if (!canvas || !this.logoData) return;
 
         const ctx = canvas.getContext('2d');
-        const img = new Image();
-        img.onload = () => {
-            const logoSize = canvas.width * 0.22;
+        const logoImg = new Image();
+        
+        logoImg.onload = () => {
+            const logoSize = canvas.width * 0.25;
             const x = (canvas.width - logoSize) / 2;
             const y = (canvas.height - logoSize) / 2;
             
             // Draw white background for logo
-            const padding = 6;
+            const padding = 8;
             ctx.fillStyle = '#FFFFFF';
             ctx.fillRect(x - padding, y - padding, logoSize + padding * 2, logoSize + padding * 2);
             
             // Draw logo
-            ctx.drawImage(img, x, y, logoSize, logoSize);
-            
-            // Force canvas to be visible
-            canvas.style.display = 'block';
+            ctx.drawImage(logoImg, x, y, logoSize, logoSize);
         };
-        img.onerror = () => console.error('Failed to load logo image');
-        img.src = this.logoData;
+        
+        logoImg.src = this.logoData;
     },
 
     handleLogo(input) {
