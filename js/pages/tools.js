@@ -431,6 +431,7 @@ const QRGenerator = {
         }
 
         const size = parseInt(document.getElementById('qrgen-size')?.value || 300);
+        const margin = parseInt(document.getElementById('qrgen-margin')?.value || 4);
         const color = document.getElementById('qrgen-color')?.value || '#000000';
         const bgColor = document.getElementById('qrgen-bgcolor')?.value || '#FFFFFF';
         const correction = document.getElementById('qrgen-correction')?.value || 'M';
@@ -438,8 +439,16 @@ const QRGenerator = {
         // Clear previous QR
         preview.innerHTML = '';
         
+        // Create container with margin
+        const container = document.createElement('div');
+        container.style.padding = `${margin * 4}px`;
+        container.style.backgroundColor = bgColor;
+        container.style.display = 'inline-block';
+        container.style.borderRadius = '8px';
+        preview.appendChild(container);
+        
         // Create new QR
-        this.qrInstance = new QRCode(preview, {
+        this.qrInstance = new QRCode(container, {
             text: data,
             width: size,
             height: size,
@@ -450,7 +459,7 @@ const QRGenerator = {
 
         // Add logo if exists
         if (this.logoData) {
-            setTimeout(() => this.addLogoToQR(), 100);
+            setTimeout(() => this.addLogoToQR(), 200);
         }
     },
 
@@ -460,14 +469,18 @@ const QRGenerator = {
 
         const ctx = canvas.getContext('2d');
         const img = new Image();
+        img.crossOrigin = 'anonymous';
         img.onload = () => {
-            const logoSize = canvas.width * 0.2;
+            const logoSize = canvas.width * 0.22;
             const x = (canvas.width - logoSize) / 2;
             const y = (canvas.height - logoSize) / 2;
             
-            // Draw white background for logo
+            // Draw white background for logo with rounded corners
+            const padding = 6;
             ctx.fillStyle = '#FFFFFF';
-            ctx.fillRect(x - 5, y - 5, logoSize + 10, logoSize + 10);
+            ctx.beginPath();
+            ctx.roundRect(x - padding, y - padding, logoSize + padding * 2, logoSize + padding * 2, 8);
+            ctx.fill();
             
             // Draw logo
             ctx.drawImage(img, x, y, logoSize, logoSize);
@@ -500,6 +513,11 @@ const QRGenerator = {
         this.generate();
     },
 
+    updateMargin(input) {
+        document.getElementById('qrgen-margin-label').textContent = input.value;
+        this.generate();
+    },
+
     syncColor(input) {
         document.getElementById('qrgen-color').value = input.value;
         this.generate();
@@ -517,6 +535,8 @@ const QRGenerator = {
         document.getElementById('qrgen-bgcolor-text').value = '#FFFFFF';
         document.getElementById('qrgen-size').value = 300;
         document.getElementById('qrgen-size-label').textContent = '300';
+        document.getElementById('qrgen-margin').value = 4;
+        document.getElementById('qrgen-margin-label').textContent = '4';
         document.getElementById('qrgen-correction').value = 'M';
         this.removeLogo();
         this.generate();
@@ -604,21 +624,19 @@ const QRGenerator = {
             });
 
             // Wait for QR to render
-            await new Promise(resolve => setTimeout(resolve, 100));
+            await new Promise(resolve => setTimeout(resolve, 150));
 
             const canvas = tempDiv.querySelector('canvas');
             if (canvas) {
                 const dataUrl = canvas.toDataURL('image/png');
-                const link = document.createElement('a');
-                link.href = dataUrl;
-                link.download = `${filename}_${i + 1}.png`;
-                link.click();
+                // Open in new tab instead of auto-download
+                window.open(dataUrl, '_blank');
             }
 
             document.body.removeChild(tempDiv);
             
             // Small delay between downloads
-            await new Promise(resolve => setTimeout(resolve, 200));
+            await new Promise(resolve => setTimeout(resolve, 300));
         }
 
         alert(`Đã tạo ${lines.length} mã QR!`);
