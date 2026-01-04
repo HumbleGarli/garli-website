@@ -16,12 +16,26 @@
       ],
       "active": true,
       "featured": true,
-      "image": "assets/images/products/1767029250995-youtube-premium.webp",
+      "packages": [
+        {
+          "name": "Youtube Premium 1 Tháng",
+          "price": 4000079000,
+          "originalPrice": 85000,
+          "description": "Chính chủ"
+        },
+        {
+          "name": "Youtube Premium 1 Năm",
+          "price": 200000,
+          "originalPrice": 1000000,
+          "description": "Cấp sẵn tài khoản"
+        }
+      ],
       "id": 1,
       "createdAt": "2025-01-15",
       "rating": 4.8,
       "reviewCount": 256,
-      "sold": 1520
+      "sold": 1520,
+      "image": "assets/images/products/1767029250995-youtube-premium.webp"
     },
     {
       "name": "Capcut Pro",
