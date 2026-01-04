@@ -1031,12 +1031,80 @@ const LuckyWheel = {
         display.classList.remove('hidden');
         nameEl.textContent = name;
 
+        // Fire confetti!
+        this.fireConfetti();
+
         // Add to history
         this.winners.unshift({
             name: name,
             time: new Date().toLocaleTimeString('vi-VN')
         });
         this.updateHistory();
+    },
+
+    fireConfetti() {
+        // Create confetti container
+        const container = document.createElement('div');
+        container.id = 'confetti-container';
+        container.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;overflow:hidden;';
+        document.body.appendChild(container);
+
+        const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#FF69B4', '#32CD32', '#FFD700', '#FF7F50'];
+        const confettiCount = 150;
+
+        // Create confetti pieces
+        for (let i = 0; i < confettiCount; i++) {
+            const confetti = document.createElement('div');
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const size = Math.random() * 10 + 5;
+            const startX = Math.random() * 100;
+            const startY = -10;
+            const rotation = Math.random() * 360;
+            const duration = Math.random() * 2 + 3;
+            const delay = Math.random() * 0.5;
+            const drift = (Math.random() - 0.5) * 200;
+
+            confetti.style.cssText = `
+                position: absolute;
+                width: ${size}px;
+                height: ${size}px;
+                background: ${color};
+                left: ${startX}%;
+                top: ${startY}%;
+                transform: rotate(${rotation}deg);
+                opacity: 1;
+                border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
+                animation: confetti-fall ${duration}s ease-out ${delay}s forwards;
+            `;
+            
+            // Add custom property for drift
+            confetti.style.setProperty('--drift', `${drift}px`);
+            container.appendChild(confetti);
+        }
+
+        // Add CSS animation if not exists
+        if (!document.getElementById('confetti-style')) {
+            const style = document.createElement('style');
+            style.id = 'confetti-style';
+            style.textContent = `
+                @keyframes confetti-fall {
+                    0% {
+                        transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: translateY(100vh) translateX(var(--drift)) rotate(720deg) scale(0.5);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Remove container after animation
+        setTimeout(() => {
+            container.remove();
+        }, 5000);
     },
 
     updateHistory() {
