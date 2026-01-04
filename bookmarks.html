@@ -15,6 +15,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/otpauth/9.2.2/otpauth.umd.min.js"></script>
     <!-- QRCode.js for QR Generator -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- jsQR for QR Reader -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 </head>
 <body class="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors">
     <div id="header-placeholder"></div>
@@ -59,6 +61,9 @@
                     </button>
                     <button data-tab="datecalc" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
                         📅 Tính ngày
+                    </button>
+                    <button data-tab="qrreader" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
+                        📸 Đọc QR
                     </button>
                 </div>
             </div>
@@ -1338,6 +1343,141 @@ Vũ Thị F</textarea>
                                 </button>
                             </div>
                             <div id="datecalc-result-content"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QR Reader Tab -->
+                <div id="tab-qrreader" class="tab-panel hidden">
+                    <div class="max-w-6xl mx-auto">
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Đọc Mã QR</h2>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Quét mã QR từ camera hoặc file ảnh. Công cụ miễn phí để đọc mã QR.</p>
+                        </div>
+
+                        <div class="grid lg:grid-cols-2 gap-6">
+                            <!-- Left Column - Scanner -->
+                            <div class="space-y-6">
+                                <!-- Mode Selection -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h3 class="text-base font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        🔄 Chọn Chế Độ Quét
+                                    </h3>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <button onclick="QRReader.setMode('camera')" id="qrreader-mode-camera" class="px-4 py-3 rounded-xl font-medium transition-all border-2 border-[#0d544c] bg-[#0d544c] text-white text-sm flex items-center justify-center gap-2">
+                                            📷 Quét Từ Camera
+                                        </button>
+                                        <button onclick="QRReader.setMode('file')" id="qrreader-mode-file" class="px-4 py-3 rounded-xl font-medium transition-all border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm flex items-center justify-center gap-2">
+                                            📁 Quét Từ File
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Camera Mode Panel -->
+                                <div id="qrreader-camera-panel" class="glass-card rounded-2xl p-6">
+                                    <h3 class="text-base font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        📷 Quét Từ Camera
+                                    </h3>
+                                    
+                                    <!-- Info box -->
+                                    <div class="p-3 bg-[#0d544c]/10 dark:bg-[#0d544c]/20 rounded-xl mb-4 flex items-start gap-2">
+                                        <span class="text-[#0d544c] dark:text-[#4ade80]">ℹ️</span>
+                                        <p class="text-sm text-[#0d544c] dark:text-[#4ade80]">Cho phép truy cập camera và hướng nó vào mã QR để quét.</p>
+                                    </div>
+
+                                    <!-- Camera Preview -->
+                                    <div id="qrreader-camera-container" class="relative bg-gray-900 rounded-xl overflow-hidden aspect-video flex items-center justify-center mb-4">
+                                        <video id="qrreader-video" class="w-full h-full object-cover hidden"></video>
+                                        <canvas id="qrreader-canvas" class="hidden"></canvas>
+                                        <div id="qrreader-camera-placeholder" class="text-center text-gray-400">
+                                            <div class="text-5xl mb-3 opacity-50">📷</div>
+                                        </div>
+                                    </div>
+
+                                    <button onclick="QRReader.startCamera()" id="qrreader-start-btn" class="w-full px-5 py-3 bg-[#0d544c] text-white rounded-xl font-medium hover:bg-[#0a443e] transition-colors flex items-center justify-center gap-2">
+                                        ▶️ Bắt Đầu Quét
+                                    </button>
+                                    <button onclick="QRReader.stopCamera()" id="qrreader-stop-btn" class="hidden w-full px-5 py-3 bg-red-500 text-white rounded-xl font-medium hover:bg-red-600 transition-colors flex items-center justify-center gap-2">
+                                        ⏹️ Dừng Quét
+                                    </button>
+                                </div>
+
+                                <!-- File Mode Panel -->
+                                <div id="qrreader-file-panel" class="hidden glass-card rounded-2xl p-6">
+                                    <h3 class="text-base font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        📁 Quét Từ File
+                                    </h3>
+                                    
+                                    <!-- Info box -->
+                                    <div class="p-3 bg-[#0d544c]/10 dark:bg-[#0d544c]/20 rounded-xl mb-4 flex items-start gap-2">
+                                        <span class="text-[#0d544c] dark:text-[#4ade80]">ℹ️</span>
+                                        <p class="text-sm text-[#0d544c] dark:text-[#4ade80]">Tải lên file ảnh chứa mã QR để quét.</p>
+                                    </div>
+
+                                    <!-- Drop Zone -->
+                                    <div id="qrreader-dropzone" 
+                                        class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center cursor-pointer hover:border-[#0d544c] transition-colors"
+                                        onclick="document.getElementById('qrreader-file-input').click()"
+                                        ondragover="QRReader.handleDragOver(event)"
+                                        ondragleave="QRReader.handleDragLeave(event)"
+                                        ondrop="QRReader.handleDrop(event)">
+                                        <div class="text-5xl mb-3 opacity-50">🖼️</div>
+                                        <p class="font-medium text-gray-700 dark:text-gray-300 mb-1">Kéo thả ảnh vào đây</p>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">hoặc nhấn Ctrl+V / Cmd+V để dán</p>
+                                        <button class="px-5 py-2.5 bg-[#0d544c] text-white rounded-xl font-medium hover:bg-[#0a443e] transition-colors inline-flex items-center gap-2">
+                                            📂 Chọn File
+                                        </button>
+                                        <input type="file" id="qrreader-file-input" accept="image/*" class="hidden" onchange="QRReader.handleFile(this.files[0])">
+                                    </div>
+
+                                    <!-- Image Preview -->
+                                    <div id="qrreader-image-preview" class="hidden mt-4">
+                                        <img id="qrreader-preview-img" src="" alt="Preview" class="max-h-64 mx-auto rounded-xl">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column - Results -->
+                            <div class="glass-card rounded-2xl p-6 h-fit">
+                                <h3 class="text-base font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                    📊 Kết Quả
+                                </h3>
+
+                                <div id="qrreader-result-empty" class="text-center py-12">
+                                    <div class="text-5xl mb-4 opacity-30">⬜</div>
+                                    <p class="font-medium text-gray-500 dark:text-gray-400 mb-1">Không tìm thấy mã QR</p>
+                                    <p class="text-sm text-gray-400 dark:text-gray-500">Chọn chế độ quét và bắt đầu quét để xem kết quả ở đây.</p>
+                                </div>
+
+                                <div id="qrreader-result-content" class="hidden space-y-4">
+                                    <!-- Result Type -->
+                                    <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                                        <span id="qrreader-result-type-icon">🔗</span>
+                                        <span id="qrreader-result-type">URL</span>
+                                    </div>
+
+                                    <!-- Result Value -->
+                                    <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-xl">
+                                        <p id="qrreader-result-value" class="text-gray-800 dark:text-white break-all font-mono text-sm"></p>
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="flex gap-2">
+                                        <button onclick="QRReader.copyResult()" class="flex-1 px-4 py-2.5 bg-[#0d544c] text-white rounded-xl font-medium hover:bg-[#0a443e] transition-colors flex items-center justify-center gap-2 text-sm">
+                                            📋 Sao Chép
+                                        </button>
+                                        <a id="qrreader-open-link" href="#" target="_blank" class="hidden flex-1 px-4 py-2.5 border border-[#0d544c] text-[#0d544c] rounded-xl font-medium hover:bg-[#0d544c] hover:text-white transition-colors flex items-center justify-center gap-2 text-sm">
+                                            🔗 Mở Liên Kết
+                                        </a>
+                                    </div>
+
+                                    <!-- Scan History -->
+                                    <div id="qrreader-history" class="hidden pt-4 border-t border-gray-200 dark:border-gray-700">
+                                        <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Lịch sử quét</h4>
+                                        <div id="qrreader-history-list" class="space-y-2 max-h-40 overflow-y-auto"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

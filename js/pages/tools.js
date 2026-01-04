@@ -2211,3 +2211,291 @@ const DateCalculator = {
         }
     }
 };
+
+
+// ==========================================
+// QR CODE READER
+// ==========================================
+const QRReader = {
+    currentMode: 'camera',
+    videoStream: null,
+    scanning: false,
+    scanHistory: [],
+    lastResult: '',
+
+    setMode(mode) {
+        this.currentMode = mode;
+        this.stopCamera();
+        
+        // Update mode buttons
+        const cameraBtn = document.getElementById('qrreader-mode-camera');
+        const fileBtn = document.getElementById('qrreader-mode-file');
+        
+        if (mode === 'camera') {
+            cameraBtn.classList.add('border-[#0d544c]', 'bg-[#0d544c]', 'text-white');
+            cameraBtn.classList.remove('border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
+            fileBtn.classList.remove('border-[#0d544c]', 'bg-[#0d544c]', 'text-white');
+            fileBtn.classList.add('border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
+        } else {
+            fileBtn.classList.add('border-[#0d544c]', 'bg-[#0d544c]', 'text-white');
+            fileBtn.classList.remove('border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
+            cameraBtn.classList.remove('border-[#0d544c]', 'bg-[#0d544c]', 'text-white');
+            cameraBtn.classList.add('border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
+        }
+
+        // Show/hide panels
+        document.getElementById('qrreader-camera-panel').classList.toggle('hidden', mode !== 'camera');
+        document.getElementById('qrreader-file-panel').classList.toggle('hidden', mode !== 'file');
+    },
+
+    async startCamera() {
+        try {
+            const video = document.getElementById('qrreader-video');
+            const placeholder = document.getElementById('qrreader-camera-placeholder');
+            const startBtn = document.getElementById('qrreader-start-btn');
+            const stopBtn = document.getElementById('qrreader-stop-btn');
+
+            this.videoStream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'environment' }
+            });
+
+            video.srcObject = this.videoStream;
+            video.setAttribute('playsinline', true);
+            await video.play();
+
+            video.classList.remove('hidden');
+            placeholder.classList.add('hidden');
+            startBtn.classList.add('hidden');
+            stopBtn.classList.remove('hidden');
+
+            this.scanning = true;
+            this.scanFrame();
+        } catch (err) {
+            console.error('Camera error:', err);
+            alert('Không thể truy cập camera. Vui lòng cho phép quyền truy cập camera.');
+        }
+    },
+
+    stopCamera() {
+        this.scanning = false;
+        const video = document.getElementById('qrreader-video');
+        const placeholder = document.getElementById('qrreader-camera-placeholder');
+        const startBtn = document.getElementById('qrreader-start-btn');
+        const stopBtn = document.getElementById('qrreader-stop-btn');
+
+        if (this.videoStream) {
+            this.videoStream.getTracks().forEach(track => track.stop());
+            this.videoStream = null;
+        }
+
+        if (video) {
+            video.srcObject = null;
+            video.classList.add('hidden');
+        }
+        if (placeholder) placeholder.classList.remove('hidden');
+        if (startBtn) startBtn.classList.remove('hidden');
+        if (stopBtn) stopBtn.classList.add('hidden');
+    },
+
+    scanFrame() {
+        if (!this.scanning) return;
+
+        const video = document.getElementById('qrreader-video');
+        const canvas = document.getElementById('qrreader-canvas');
+        const ctx = canvas.getContext('2d');
+
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                inversionAttempts: 'dontInvert'
+            });
+
+            if (code && code.data !== this.lastResult) {
+                this.lastResult = code.data;
+                this.showResult(code.data);
+            }
+        }
+
+        requestAnimationFrame(() => this.scanFrame());
+    },
+
+    handleDragOver(e) {
+        e.preventDefault();
+        e.currentTarget.classList.add('border-[#0d544c]', 'bg-[#0d544c]/5');
+    },
+
+    handleDragLeave(e) {
+        e.preventDefault();
+        e.currentTarget.classList.remove('border-[#0d544c]', 'bg-[#0d544c]/5');
+    },
+
+    handleDrop(e) {
+        e.preventDefault();
+        e.currentTarget.classList.remove('border-[#0d544c]', 'bg-[#0d544c]/5');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            this.handleFile(file);
+        }
+    },
+
+    handleFile(file) {
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                // Show preview
+                document.getElementById('qrreader-preview-img').src = e.target.result;
+                document.getElementById('qrreader-image-preview').classList.remove('hidden');
+
+                // Scan QR from image
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                    inversionAttempts: 'attemptBoth'
+                });
+
+                if (code) {
+                    this.showResult(code.data);
+                } else {
+                    this.showNoResult();
+                }
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    },
+
+    showResult(data) {
+        const emptyEl = document.getElementById('qrreader-result-empty');
+        const contentEl = document.getElementById('qrreader-result-content');
+        const valueEl = document.getElementById('qrreader-result-value');
+        const typeEl = document.getElementById('qrreader-result-type');
+        const typeIconEl = document.getElementById('qrreader-result-type-icon');
+        const openLinkEl = document.getElementById('qrreader-open-link');
+
+        // Detect type
+        let type = 'Văn bản';
+        let icon = '📝';
+        let isUrl = false;
+
+        if (data.match(/^https?:\/\//i)) {
+            type = 'URL';
+            icon = '🔗';
+            isUrl = true;
+        } else if (data.match(/^mailto:/i)) {
+            type = 'Email';
+            icon = '✉️';
+            isUrl = true;
+        } else if (data.match(/^tel:/i)) {
+            type = 'Điện thoại';
+            icon = '📞';
+            isUrl = true;
+        } else if (data.match(/^sms:/i)) {
+            type = 'Tin nhắn';
+            icon = '💬';
+        } else if (data.match(/^WIFI:/i)) {
+            type = 'WiFi';
+            icon = '📶';
+        } else if (data.match(/^BEGIN:VCARD/i)) {
+            type = 'Danh thiếp';
+            icon = '👤';
+        } else if (data.match(/^BEGIN:VEVENT/i)) {
+            type = 'Sự kiện';
+            icon = '📅';
+        }
+
+        emptyEl.classList.add('hidden');
+        contentEl.classList.remove('hidden');
+        valueEl.textContent = data;
+        typeEl.textContent = type;
+        typeIconEl.textContent = icon;
+
+        if (isUrl) {
+            openLinkEl.href = data;
+            openLinkEl.classList.remove('hidden');
+        } else {
+            openLinkEl.classList.add('hidden');
+        }
+
+        // Add to history
+        this.addToHistory(data, type, icon);
+        this.lastResult = data;
+    },
+
+    showNoResult() {
+        document.getElementById('qrreader-result-empty').classList.remove('hidden');
+        document.getElementById('qrreader-result-content').classList.add('hidden');
+    },
+
+    addToHistory(data, type, icon) {
+        // Avoid duplicates
+        if (this.scanHistory.some(h => h.data === data)) return;
+
+        this.scanHistory.unshift({ data, type, icon, time: new Date() });
+        if (this.scanHistory.length > 10) this.scanHistory.pop();
+
+        this.renderHistory();
+    },
+
+    renderHistory() {
+        const historyEl = document.getElementById('qrreader-history');
+        const listEl = document.getElementById('qrreader-history-list');
+
+        if (this.scanHistory.length <= 1) {
+            historyEl.classList.add('hidden');
+            return;
+        }
+
+        historyEl.classList.remove('hidden');
+        listEl.innerHTML = this.scanHistory.slice(1).map((h, i) => `
+            <div class="flex items-center gap-2 p-2 bg-gray-100 dark:bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700"
+                onclick="QRReader.selectHistory(${i + 1})">
+                <span>${h.icon}</span>
+                <span class="flex-1 text-sm text-gray-700 dark:text-gray-300 truncate">${h.data}</span>
+            </div>
+        `).join('');
+    },
+
+    selectHistory(index) {
+        const item = this.scanHistory[index];
+        if (item) {
+            this.showResult(item.data);
+        }
+    },
+
+    copyResult() {
+        const value = document.getElementById('qrreader-result-value').textContent;
+        if (value) {
+            navigator.clipboard.writeText(value).then(() => {
+                alert('Đã sao chép!');
+            });
+        }
+    }
+};
+
+// Handle paste for QR Reader
+document.addEventListener('paste', (e) => {
+    if (QRReader.currentMode === 'file') {
+        const items = e.clipboardData?.items;
+        if (items) {
+            for (const item of items) {
+                if (item.type.startsWith('image/')) {
+                    const file = item.getAsFile();
+                    QRReader.handleFile(file);
+                    break;
+                }
+            }
+        }
+    }
+});
