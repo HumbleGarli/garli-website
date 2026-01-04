@@ -136,8 +136,29 @@ const ToolsPage = {
     setupTabs() {
         const tabs = document.querySelectorAll('.tools-tab');
         const indicator = document.getElementById('tools-tab-indicator');
+        const container = document.getElementById('tools-tab-container');
 
-        tabs.forEach((tab, index) => {
+        // Function to move indicator to a tab
+        const moveIndicator = (tab) => {
+            const containerRect = container.getBoundingClientRect();
+            const tabRect = tab.getBoundingClientRect();
+            indicator.style.width = `${tabRect.width}px`;
+            indicator.style.left = `${tabRect.left - containerRect.left}px`;
+        };
+
+        // Initialize indicator position
+        setTimeout(() => {
+            const activeTab = document.querySelector('.tools-tab.active');
+            if (activeTab) moveIndicator(activeTab);
+        }, 50);
+
+        // Update on window resize
+        window.addEventListener('resize', () => {
+            const activeTab = document.querySelector('.tools-tab.active');
+            if (activeTab) moveIndicator(activeTab);
+        });
+
+        tabs.forEach((tab) => {
             tab.addEventListener('click', () => {
                 // Update active state
                 tabs.forEach(t => {
@@ -148,9 +169,7 @@ const ToolsPage = {
                 tab.classList.remove('text-gray-600', 'dark:text-gray-300');
 
                 // Move indicator
-                const tabWidth = 100 / tabs.length;
-                indicator.style.width = `calc(${tabWidth}% - 8px)`;
-                indicator.style.left = `calc(${index * tabWidth}% + 4px)`;
+                moveIndicator(tab);
 
                 // Show panel
                 const tabName = tab.dataset.tab;
