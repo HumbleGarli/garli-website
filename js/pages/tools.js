@@ -1634,71 +1634,146 @@ const PaletteExtractor = {
             const ctx = canvas.getContext('2d');
             
             // Scale down for performance
-            const maxSize = 100;
+            const maxSize = 150;
             const scale = Math.min(maxSize / img.width, maxSize / img.height, 1);
-            canvas.width = img.width * scale;
-            canvas.height = img.height * scale;
+            canvas.width = Math.floor(img.width * scale);
+            canvas.height = Math.floor(img.height * scale);
             
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             const pixels = imageData.data;
             
-            // Collect colors
-            const colorMap = {};
+            // Collect all pixels as RGB arrays
+            const pixelArray = [];
             for (let i = 0; i < pixels.length; i += 4) {
-                const r = Math.round(pixels[i] / 16) * 16;
-                const g = Math.round(pixels[i + 1] / 16) * 16;
-                const b = Math.round(pixels[i + 2] / 16) * 16;
-                const key = `${r},${g},${b}`;
-                colorMap[key] = (colorMap[key] || 0) + 1;
+                // Skip transparent pixels
+                if (pixels[i + 3] < 128) continue;
+                pixelArray.push([pixels[i], pixels[i + 1], pixels[i + 2]]);
             }
             
-            // Sort by frequency and get top colors
-            const sortedColors = Object.entries(colorMap)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, this.colorCount * 3); // Get more to filter similar colors
+            // Use K-Means clustering to find dominant colors
+            const colors = this.kMeans(pixelArray, this.colorCount);
             
-            // Filter similar colors
-            const colors = [];
-            for (const [key] of sortedColors) {
-                const [r, g, b] = key.split(',').map(Number);
-                const hex = this.rgbToHex(r, g, b);
-                
-                // Check if too similar to existing colors
-                let tooSimilar = false;
-                for (const existing of colors) {
-                    if (this.colorDistance(hex, existing) < 50) {
-                        tooSimilar = true;
-                        break;
-                    }
-                }
-                
-                if (!tooSimilar) {
-                    colors.push(hex);
-                    if (colors.length >= this.colorCount) break;
-                }
-            }
+            // Sort by luminance (dark to light)
+            colors.sort((a, b) => {
+                const lumA = 0.299 * a[0] + 0.587 * a[1] + 0.114 * a[2];
+                const lumB = 0.299 * b[0] + 0.587 * b[1] + 0.114 * b[2];
+                return lumA - lumB;
+            });
             
-            this.displayColors(colors);
+            const hexColors = colors.map(c => this.rgbToHex(c[0], c[1], c[2]));
+            this.displayColors(hexColors);
         };
         img.src = this.imageData;
     },
 
-    rgbToHex(r, g, b) {
-        return '#' + [r, g, b].map(x => {
-            const hex = Math.min(255, Math.max(0, x)).toString(16);
-            return hex.length === 1 ? '0' + hex : hex;
-        }).join('').toUpperCase();
+    // K-Means clustering algorithm
+    kMeans(pixels, k, maxIterations = 20) {
+        if (pixels.length === 0) return [];
+        if (pixels.length <= k) {
+            return pixels.map(p => [...p]);
+        }
+
+        // Initialize centroids using k-means++ method
+        const centroids = this.initCentroids(pixels, k);
+        
+        for (let iter = 0; iter < maxIterations; iter++) {
+            // Assign pixels to nearest centroid
+            const clusters = Array.from({ length: k }, () => []);
+            
+            for (const pixel of pixels) {
+                let minDist = Infinity;
+                let closestIdx = 0;
+                
+                for (let i = 0; i < centroids.length; i++) {
+                    const dist = this.colorDistanceRGB(pixel, centroids[i]);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        closestIdx = i;
+                    }
+                }
+                clusters[closestIdx].push(pixel);
+            }
+            
+            // Update centroids
+            let converged = true;
+            for (let i = 0; i < k; i++) {
+                if (clusters[i].length === 0) continue;
+                
+                const newCentroid = [0, 0, 0];
+                for (const pixel of clusters[i]) {
+                    newCentroid[0] += pixel[0];
+                    newCentroid[1] += pixel[1];
+                    newCentroid[2] += pixel[2];
+                }
+                newCentroid[0] = Math.round(newCentroid[0] / clusters[i].length);
+                newCentroid[1] = Math.round(newCentroid[1] / clusters[i].length);
+                newCentroid[2] = Math.round(newCentroid[2] / clusters[i].length);
+                
+                if (this.colorDistanceRGB(centroids[i], newCentroid) > 1) {
+                    converged = false;
+                }
+                centroids[i] = newCentroid;
+            }
+            
+            if (converged) break;
+        }
+        
+        return centroids;
     },
 
-    colorDistance(hex1, hex2) {
-        const rgb1 = this.hexToRgb(hex1);
-        const rgb2 = this.hexToRgb(hex2);
+    // K-means++ initialization
+    initCentroids(pixels, k) {
+        const centroids = [];
+        
+        // First centroid: random pixel
+        centroids.push([...pixels[Math.floor(Math.random() * pixels.length)]]);
+        
+        // Remaining centroids: weighted by distance
+        while (centroids.length < k) {
+            const distances = pixels.map(pixel => {
+                let minDist = Infinity;
+                for (const centroid of centroids) {
+                    const dist = this.colorDistanceRGB(pixel, centroid);
+                    minDist = Math.min(minDist, dist);
+                }
+                return minDist * minDist;
+            });
+            
+            const totalDist = distances.reduce((a, b) => a + b, 0);
+            let random = Math.random() * totalDist;
+            
+            for (let i = 0; i < pixels.length; i++) {
+                random -= distances[i];
+                if (random <= 0) {
+                    centroids.push([...pixels[i]]);
+                    break;
+                }
+            }
+        }
+        
+        return centroids;
+    },
+
+    colorDistanceRGB(c1, c2) {
+        // Using weighted Euclidean distance for better perceptual accuracy
+        const rMean = (c1[0] + c2[0]) / 2;
+        const dR = c1[0] - c2[0];
+        const dG = c1[1] - c2[1];
+        const dB = c1[2] - c2[2];
+        
         return Math.sqrt(
-            Math.pow(rgb1.r - rgb2.r, 2) +
-            Math.pow(rgb1.g - rgb2.g, 2) +
-            Math.pow(rgb1.b - rgb2.b, 2)
+            (2 + rMean / 256) * dR * dR +
+            4 * dG * dG +
+            (2 + (255 - rMean) / 256) * dB * dB
         );
+    },
+
+    rgbToHex(r, g, b) {
+        return '#' + [r, g, b].map(x => {
+            const hex = Math.min(255, Math.max(0, Math.round(x))).toString(16);
+            return hex.length === 1 ? '0' + hex : hex;
+        }).join('').toUpperCase();
     },
 
     hexToRgb(hex) {
