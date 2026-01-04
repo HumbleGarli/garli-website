@@ -1151,3 +1151,146 @@ document.addEventListener('DOMContentLoaded', () => {
     // Draw wheel after a short delay to ensure canvas is ready
     setTimeout(() => LuckyWheel.init(), 100);
 });
+
+
+// ==========================================
+// BMI CALCULATOR
+// ==========================================
+const BMICalculator = {
+    unit: 'metric', // 'metric' or 'imperial'
+
+    setUnit(unit) {
+        this.unit = unit;
+        
+        // Update button states
+        const metricBtn = document.getElementById('bmi-unit-metric');
+        const imperialBtn = document.getElementById('bmi-unit-imperial');
+        
+        if (unit === 'metric') {
+            metricBtn.classList.add('bg-[#0d544c]', 'text-white');
+            metricBtn.classList.remove('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
+            imperialBtn.classList.remove('bg-[#0d544c]', 'text-white');
+            imperialBtn.classList.add('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
+            
+            document.getElementById('bmi-height-metric').classList.remove('hidden');
+            document.getElementById('bmi-height-imperial').classList.add('hidden');
+            document.getElementById('bmi-weight-unit').textContent = 'kg';
+        } else {
+            imperialBtn.classList.add('bg-[#0d544c]', 'text-white');
+            imperialBtn.classList.remove('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
+            metricBtn.classList.remove('bg-[#0d544c]', 'text-white');
+            metricBtn.classList.add('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
+            
+            document.getElementById('bmi-height-metric').classList.add('hidden');
+            document.getElementById('bmi-height-imperial').classList.remove('hidden');
+            document.getElementById('bmi-weight-unit').textContent = 'lb';
+        }
+        
+        this.calculate();
+    },
+
+    calculate() {
+        let weight, heightM;
+        
+        if (this.unit === 'metric') {
+            weight = parseFloat(document.getElementById('bmi-weight').value);
+            const heightCm = parseFloat(document.getElementById('bmi-height-cm').value);
+            heightM = heightCm / 100;
+        } else {
+            const weightLb = parseFloat(document.getElementById('bmi-weight').value);
+            weight = weightLb * 0.453592; // Convert to kg
+            const heightFt = parseFloat(document.getElementById('bmi-height-ft').value) || 0;
+            const heightIn = parseFloat(document.getElementById('bmi-height-in').value) || 0;
+            const totalInches = (heightFt * 12) + heightIn;
+            heightM = totalInches * 0.0254; // Convert to meters
+        }
+
+        const resultEl = document.getElementById('bmi-result');
+        
+        if (!weight || !heightM || weight <= 0 || heightM <= 0) {
+            resultEl.innerHTML = '<p class="text-gray-400">Nhập cân nặng và chiều cao để tính BMI</p>';
+            this.highlightCategory(null);
+            return;
+        }
+
+        const bmi = weight / (heightM * heightM);
+        const category = this.getCategory(bmi);
+        
+        resultEl.innerHTML = `
+            <div class="space-y-4">
+                <div class="text-6xl font-bold ${category.color}">${bmi.toFixed(1)}</div>
+                <div class="flex items-center justify-center gap-2">
+                    <span class="text-3xl">${category.emoji}</span>
+                    <span class="text-xl font-semibold ${category.color}">${category.name}</span>
+                </div>
+                <p class="text-sm text-gray-500 dark:text-gray-400">${category.tip}</p>
+                ${this.getHealthyWeightRange(heightM)}
+            </div>
+        `;
+        
+        this.highlightCategory(category.key);
+    },
+
+    getCategory(bmi) {
+        if (bmi < 18.5) {
+            return {
+                key: 'underweight',
+                name: 'Thiếu cân',
+                emoji: '💙',
+                color: 'text-blue-600 dark:text-blue-400',
+                tip: 'Bạn nên tăng cường dinh dưỡng và tham khảo ý kiến chuyên gia.'
+            };
+        } else if (bmi < 25) {
+            return {
+                key: 'normal',
+                name: 'Cân nặng khỏe mạnh',
+                emoji: '💚',
+                color: 'text-green-600 dark:text-green-400',
+                tip: 'Tuyệt vời! Hãy duy trì lối sống lành mạnh.'
+            };
+        } else if (bmi < 30) {
+            return {
+                key: 'overweight',
+                name: 'Thừa cân',
+                emoji: '💛',
+                color: 'text-yellow-600 dark:text-yellow-400',
+                tip: 'Hãy tăng cường vận động và điều chỉnh chế độ ăn.'
+            };
+        } else {
+            return {
+                key: 'obese',
+                name: 'Béo phì',
+                emoji: '❤️',
+                color: 'text-red-600 dark:text-red-400',
+                tip: 'Nên tham khảo ý kiến bác sĩ để có kế hoạch phù hợp.'
+            };
+        }
+    },
+
+    getHealthyWeightRange(heightM) {
+        const minWeight = 18.5 * heightM * heightM;
+        const maxWeight = 24.9 * heightM * heightM;
+        
+        if (this.unit === 'imperial') {
+            const minLb = (minWeight / 0.453592).toFixed(1);
+            const maxLb = (maxWeight / 0.453592).toFixed(1);
+            return `<p class="text-xs text-gray-400 mt-2">Cân nặng khỏe mạnh cho chiều cao của bạn: ${minLb} - ${maxLb} lb</p>`;
+        } else {
+            return `<p class="text-xs text-gray-400 mt-2">Cân nặng khỏe mạnh cho chiều cao của bạn: ${minWeight.toFixed(1)} - ${maxWeight.toFixed(1)} kg</p>`;
+        }
+    },
+
+    highlightCategory(key) {
+        const categories = ['underweight', 'normal', 'overweight', 'obese'];
+        categories.forEach(cat => {
+            const el = document.getElementById(`bmi-cat-${cat}`);
+            if (el) {
+                if (cat === key) {
+                    el.classList.add('ring-2', 'ring-offset-2', 'ring-[#0d544c]', 'scale-105');
+                } else {
+                    el.classList.remove('ring-2', 'ring-offset-2', 'ring-[#0d544c]', 'scale-105');
+                }
+            }
+        });
+    }
+};

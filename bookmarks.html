@@ -28,22 +28,25 @@
 
             <!-- Tab Navigation -->
             <div class="flex justify-center mb-8">
-                <div id="tools-tab-container" class="inline-flex bg-gray-200 dark:bg-gray-700 rounded-full p-1 relative">
-                    <div id="tools-tab-indicator" class="absolute top-1 bottom-1 bg-[#0d544c] rounded-full transition-all duration-300 ease-out"></div>
-                    <button data-tab="2fa" class="tools-tab active relative z-10 px-4 md:px-5 py-2 rounded-full font-medium text-white transition-colors text-sm whitespace-nowrap">
+                <div id="tools-tab-container" class="inline-flex bg-gray-200 dark:bg-gray-700 rounded-full p-1 relative flex-wrap justify-center">
+                    <div id="tools-tab-indicator" class="absolute top-1 bottom-1 bg-[#0d544c] rounded-full transition-all duration-300 ease-out hidden md:block"></div>
+                    <button data-tab="2fa" class="tools-tab active relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-white transition-colors text-sm whitespace-nowrap">
                         🔐 2FA
                     </button>
-                    <button data-tab="vietqr" class="tools-tab relative z-10 px-4 md:px-5 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
+                    <button data-tab="vietqr" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
                         📱 VietQR
                     </button>
-                    <button data-tab="qrgen" class="tools-tab relative z-10 px-4 md:px-5 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
+                    <button data-tab="qrgen" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
                         📷 Tạo QR
                     </button>
-                    <button data-tab="emailsig" class="tools-tab relative z-10 px-4 md:px-5 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
+                    <button data-tab="emailsig" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
                         ✉️ Chữ ký
                     </button>
-                    <button data-tab="wheel" class="tools-tab relative z-10 px-4 md:px-5 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
+                    <button data-tab="wheel" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
                         🎡 Vòng quay
+                    </button>
+                    <button data-tab="bmi" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
+                        ⚖️ BMI
                     </button>
                 </div>
             </div>
@@ -763,6 +766,129 @@ Vũ Thị F</textarea>
                                     <div class="text-4xl mb-2">🎉</div>
                                     <p class="text-lg text-gray-600 dark:text-gray-300">Người chiến thắng:</p>
                                     <p id="wheel-winner-name" class="text-2xl font-bold text-[#0d544c] dark:text-[#10b981] mt-2"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BMI Calculator Tab -->
+                <div id="tab-bmi" class="tab-panel hidden">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="grid lg:grid-cols-2 gap-6">
+                            <!-- Left Column - Input -->
+                            <div class="space-y-6">
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        <span>📏</span> Thông số đo lường
+                                    </h2>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Tất cả tính toán diễn ra trên trình duyệt. Chúng tôi không lưu trữ thông tin của bạn.</p>
+                                    <div class="space-y-4">
+                                        <!-- Unit System -->
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Hệ đo lường</label>
+                                            <div class="flex gap-2">
+                                                <button onclick="BMICalculator.setUnit('metric')" id="bmi-unit-metric" class="flex-1 px-4 py-2 rounded-xl font-medium transition-all bg-[#0d544c] text-white">
+                                                    Metric (kg, cm)
+                                                </button>
+                                                <button onclick="BMICalculator.setUnit('imperial')" id="bmi-unit-imperial" class="flex-1 px-4 py-2 rounded-xl font-medium transition-all border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">
+                                                    Imperial (lb, ft)
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <!-- Weight -->
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cân nặng (<span id="bmi-weight-unit">kg</span>)</label>
+                                            <input type="number" id="bmi-weight" placeholder="70" oninput="BMICalculator.calculate()"
+                                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-lg">
+                                        </div>
+                                        <!-- Height (Metric) -->
+                                        <div id="bmi-height-metric">
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Chiều cao (cm)</label>
+                                            <input type="number" id="bmi-height-cm" placeholder="170" oninput="BMICalculator.calculate()"
+                                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-lg">
+                                        </div>
+                                        <!-- Height (Imperial) -->
+                                        <div id="bmi-height-imperial" class="hidden">
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Chiều cao</label>
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <input type="number" id="bmi-height-ft" placeholder="5" oninput="BMICalculator.calculate()"
+                                                        class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-lg">
+                                                    <span class="text-sm text-gray-500 dark:text-gray-400">feet</span>
+                                                </div>
+                                                <div>
+                                                    <input type="number" id="bmi-height-in" placeholder="7" oninput="BMICalculator.calculate()"
+                                                        class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-lg">
+                                                    <span class="text-sm text-gray-500 dark:text-gray-400">inches</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Result -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        <span>📊</span> Kết quả BMI của bạn
+                                    </h2>
+                                    <div id="bmi-result" class="text-center py-6">
+                                        <p class="text-gray-400">Nhập cân nặng và chiều cao để tính BMI</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column - Categories -->
+                            <div class="glass-card rounded-2xl p-6">
+                                <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                    <span>📋</span> Phân loại BMI
+                                </h2>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Xem cách BMI được phân loại và lời khuyên cho từng mức.</p>
+                                <div class="space-y-4">
+                                    <!-- Underweight -->
+                                    <div id="bmi-cat-underweight" class="p-4 rounded-xl border-2 border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 transition-all">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <span class="text-2xl">💙</span>
+                                            <div>
+                                                <h3 class="font-bold text-blue-700 dark:text-blue-400">Thiếu cân</h3>
+                                                <span class="text-sm text-blue-600 dark:text-blue-300">BMI &lt; 18.5</span>
+                                            </div>
+                                        </div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Tập trung vào các bữa ăn giàu dinh dưỡng và tham khảo ý kiến chuyên gia để đạt mức cân nặng khỏe mạnh.</p>
+                                    </div>
+                                    <!-- Normal -->
+                                    <div id="bmi-cat-normal" class="p-4 rounded-xl border-2 border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 transition-all">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <span class="text-2xl">💚</span>
+                                            <div>
+                                                <h3 class="font-bold text-green-700 dark:text-green-400">Cân nặng khỏe mạnh</h3>
+                                                <span class="text-sm text-green-600 dark:text-green-300">BMI 18.5 - 24.9</span>
+                                            </div>
+                                        </div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Duy trì chế độ ăn cân bằng, vận động và nghỉ ngơi hợp lý để giữ mức này.</p>
+                                    </div>
+                                    <!-- Overweight -->
+                                    <div id="bmi-cat-overweight" class="p-4 rounded-xl border-2 border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20 transition-all">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <span class="text-2xl">💛</span>
+                                            <div>
+                                                <h3 class="font-bold text-yellow-700 dark:text-yellow-400">Thừa cân</h3>
+                                                <span class="text-sm text-yellow-600 dark:text-yellow-300">BMI 25 - 29.9</span>
+                                            </div>
+                                        </div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Tăng cường vận động hàng ngày và điều chỉnh dinh dưỡng để tiến gần hơn đến mức khỏe mạnh.</p>
+                                    </div>
+                                    <!-- Obese -->
+                                    <div id="bmi-cat-obese" class="p-4 rounded-xl border-2 border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 transition-all">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <span class="text-2xl">❤️</span>
+                                            <div>
+                                                <h3 class="font-bold text-red-700 dark:text-red-400">Béo phì</h3>
+                                                <span class="text-sm text-red-600 dark:text-red-300">BMI ≥ 30</span>
+                                            </div>
+                                        </div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Làm việc với chuyên gia y tế để có kế hoạch phù hợp kết hợp dinh dưỡng, vận động và nghỉ ngơi.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
