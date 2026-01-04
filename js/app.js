@@ -194,14 +194,25 @@ const App = {
     // 3. NAV ACTIVE STATE
     // ==========================================
     setActiveNav() {
-        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        let currentPath = window.location.pathname;
+        // Remove trailing slash and .html extension
+        currentPath = currentPath.replace(/\/$/, '').replace(/\.html$/, '');
+        // Handle root path
+        if (currentPath === '' || currentPath === '/index') {
+            currentPath = '/';
+        }
+        
         const navLinks = document.querySelectorAll('.nav-link');
         
         navLinks.forEach(link => {
-            const href = link.getAttribute('href');
+            let href = link.getAttribute('href');
+            // Normalize href
+            href = href.replace(/\.html$/, '');
+            if (href === 'index' || href === '/index') href = '/';
+            
             link.classList.remove('active');
             
-            if (href === currentPage || (currentPage === '' && href === 'index.html')) {
+            if (href === currentPath || (currentPath === '/' && (href === '/' || href === ''))) {
                 link.classList.add('active');
             }
         });

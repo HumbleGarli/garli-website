@@ -72,9 +72,9 @@ const ProductPage = {
             <!-- Breadcrumb -->
             <nav class="mb-6 text-sm">
                 <ol class="flex items-center space-x-2 text-gray-500 dark:text-gray-400">
-                    <li><a href="index.html" class="hover:text-blue-600">Trang chủ</a></li>
+                    <li><a href="/" class="hover:text-blue-600">Trang chủ</a></li>
                     <li><span class="mx-2">/</span></li>
-                    <li><a href="shop.html" class="hover:text-blue-600">Cửa hàng</a></li>
+                    <li><a href="/shop" class="hover:text-blue-600">Cửa hàng</a></li>
                     <li><span class="mx-2">/</span></li>
                     <li class="text-gray-800 dark:text-white font-medium">${p.name}</li>
                 </ol>
@@ -189,7 +189,7 @@ const ProductPage = {
 
             <!-- Back button -->
             <div class="mt-6">
-                <a href="shop.html" class="inline-flex items-center text-[#0d544c] dark:text-[#4ade80] hover:underline">
+                <a href="/shop" class="inline-flex items-center text-[#0d544c] dark:text-[#4ade80] hover:underline">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                     </svg>
@@ -230,7 +230,7 @@ const ProductPage = {
                 <span class="text-6xl">😕</span>
                 <h2 class="text-2xl font-bold text-gray-800 dark:text-white mt-4">Không tìm thấy sản phẩm</h2>
                 <p class="text-gray-600 dark:text-gray-400 mt-2">Sản phẩm này không tồn tại hoặc đã bị xóa</p>
-                <a href="shop.html" class="inline-block mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <a href="/shop" class="inline-block mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                     Quay lại cửa hàng
                 </a>
             </div>

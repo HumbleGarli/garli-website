@@ -134,7 +134,7 @@ const ShopPage = {
         const hasImage = p.image && !p.image.includes('default');
         
         return `
-            <a href="product.html?slug=${p.slug}" class="glass-card bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden group hover:shadow-lg transition-shadow flex flex-col h-full">
+            <a href="/product?slug=${p.slug}" class="glass-card bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden group hover:shadow-lg transition-shadow flex flex-col h-full">
                 <div class="relative aspect-[4/3] sm:aspect-[920/430] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center overflow-hidden flex-shrink-0">
                     ${hasImage 
                         ? `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">` 

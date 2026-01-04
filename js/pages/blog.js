@@ -78,7 +78,7 @@ const BlogPage = {
         const catInfo = this.categories.find(c => c.id === p.category) || {};
         const colors = { blue: 'bg-blue-100 text-blue-600', green: 'bg-green-100 text-green-600', purple: 'bg-purple-100 text-purple-600', pink: 'bg-pink-100 text-pink-600' };
         return `
-            <a href="post.html?slug=${p.slug}" class="glass-card bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden group hover:shadow-lg transition-shadow">
+            <a href="/post?slug=${p.slug}" class="glass-card bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden group hover:shadow-lg transition-shadow">
                 <div class="h-48 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 flex items-center justify-center">
                     <span class="text-5xl">📝</span>
                 </div>

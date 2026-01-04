@@ -89,7 +89,7 @@ const PostPage = {
             container.innerHTML = DOMPurify.sanitize(`
                 <div class="text-center py-12">
                     <p class="text-gray-500 dark:text-gray-400">${msg}</p>
-                    <a href="blog.html" class="text-blue-600 hover:underline mt-4 inline-block">← Quay lại blog</a>
+                    <a href="/blog" class="text-blue-600 hover:underline mt-4 inline-block">← Quay lại blog</a>
                 </div>
             `);
         }
