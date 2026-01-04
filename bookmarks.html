@@ -29,15 +29,18 @@
             <!-- Tab Navigation -->
             <div class="flex justify-center mb-8">
                 <div class="inline-flex bg-gray-200 dark:bg-gray-700 rounded-full p-1 relative flex-wrap justify-center gap-1">
-                    <div id="tools-tab-indicator" class="absolute h-[calc(100%-8px)] bg-[#0d544c] rounded-full transition-all duration-300 hidden md:block" style="width: 33.33%; left: 4px;"></div>
-                    <button data-tab="2fa" class="tools-tab active relative z-10 px-4 md:px-6 py-2 rounded-full font-medium text-white transition-colors text-sm md:text-base">
+                    <div id="tools-tab-indicator" class="absolute h-[calc(100%-8px)] bg-[#0d544c] rounded-full transition-all duration-300 hidden md:block" style="width: 25%; left: 4px;"></div>
+                    <button data-tab="2fa" class="tools-tab active relative z-10 px-3 md:px-5 py-2 rounded-full font-medium text-white transition-colors text-sm">
                         🔐 2FA
                     </button>
-                    <button data-tab="vietqr" class="tools-tab relative z-10 px-4 md:px-6 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm md:text-base">
+                    <button data-tab="vietqr" class="tools-tab relative z-10 px-3 md:px-5 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm">
                         📱 VietQR
                     </button>
-                    <button data-tab="qrgen" class="tools-tab relative z-10 px-4 md:px-6 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm md:text-base">
+                    <button data-tab="qrgen" class="tools-tab relative z-10 px-3 md:px-5 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm">
                         📷 Tạo QR
+                    </button>
+                    <button data-tab="emailsig" class="tools-tab relative z-10 px-3 md:px-5 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm">
+                        ✉️ Chữ ký
                     </button>
                 </div>
             </div>
@@ -447,6 +450,230 @@
                                             📋 Sao Chép
                                         </button>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email Signature Tab -->
+                <div id="tab-emailsig" class="tab-panel hidden">
+                    <div class="max-w-6xl mx-auto">
+                        <div class="grid lg:grid-cols-2 gap-6">
+                            <!-- Left Column - Input Form -->
+                            <div class="space-y-6">
+                                <!-- Personal Information -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        <span>👤</span> Thông tin cá nhân
+                                    </h2>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Họ và tên</label>
+                                            <input type="text" id="sig-name" placeholder="Nguyễn Văn A" oninput="EmailSignature.update()"
+                                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Chức vụ</label>
+                                            <input type="text" id="sig-title" placeholder="Giám đốc Marketing" oninput="EmailSignature.update()"
+                                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Công ty</label>
+                                            <input type="text" id="sig-company" placeholder="Công ty ABC" oninput="EmailSignature.update()"
+                                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Contact Information -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        <span>📞</span> Thông tin liên hệ
+                                    </h2>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                                            <input type="email" id="sig-email" placeholder="email@company.com" oninput="EmailSignature.update()"
+                                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Điện thoại</label>
+                                                <input type="tel" id="sig-phone" placeholder="028 1234 5678" oninput="EmailSignature.update()"
+                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Di động</label>
+                                                <input type="tel" id="sig-mobile" placeholder="0901 234 567" oninput="EmailSignature.update()"
+                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Website</label>
+                                            <input type="url" id="sig-website" placeholder="https://company.com" oninput="EmailSignature.update()"
+                                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Địa chỉ</label>
+                                            <input type="text" id="sig-address" placeholder="123 Đường ABC, Quận 1, TP.HCM" oninput="EmailSignature.update()"
+                                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Social Links -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        <span>🔗</span> Mạng xã hội
+                                    </h2>
+                                    <div class="space-y-4">
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Facebook</label>
+                                                <input type="url" id="sig-facebook" placeholder="https://facebook.com/..." oninput="EmailSignature.update()"
+                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">LinkedIn</label>
+                                                <input type="url" id="sig-linkedin" placeholder="https://linkedin.com/in/..." oninput="EmailSignature.update()"
+                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                            </div>
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Twitter/X</label>
+                                                <input type="url" id="sig-twitter" placeholder="https://twitter.com/..." oninput="EmailSignature.update()"
+                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Instagram</label>
+                                                <input type="url" id="sig-instagram" placeholder="https://instagram.com/..." oninput="EmailSignature.update()"
+                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">GitHub</label>
+                                            <input type="url" id="sig-github" placeholder="https://github.com/..." oninput="EmailSignature.update()"
+                                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Styling Options -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        <span>🎨</span> Tùy chỉnh giao diện
+                                    </h2>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">URL Logo/Avatar</label>
+                                            <input type="url" id="sig-logo" placeholder="https://example.com/logo.png" oninput="EmailSignature.update()"
+                                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Màu chính</label>
+                                                <div class="flex items-center gap-2">
+                                                    <input type="color" id="sig-primary-color" value="#0d544c" onchange="EmailSignature.update()"
+                                                        class="w-12 h-12 rounded-lg border border-gray-300 cursor-pointer">
+                                                    <input type="text" id="sig-primary-color-text" value="#0d544c" oninput="EmailSignature.syncColor('primary', this.value)"
+                                                        class="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Màu chữ</label>
+                                                <div class="flex items-center gap-2">
+                                                    <input type="color" id="sig-text-color" value="#333333" onchange="EmailSignature.update()"
+                                                        class="w-12 h-12 rounded-lg border border-gray-300 cursor-pointer">
+                                                    <input type="text" id="sig-text-color-text" value="#333333" oninput="EmailSignature.syncColor('text', this.value)"
+                                                        class="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Font chữ</label>
+                                            <select id="sig-font" onchange="EmailSignature.update()"
+                                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                                <option value="Arial, sans-serif">Arial</option>
+                                                <option value="'Segoe UI', sans-serif">Segoe UI</option>
+                                                <option value="'Helvetica Neue', sans-serif">Helvetica</option>
+                                                <option value="Georgia, serif">Georgia</option>
+                                                <option value="'Times New Roman', serif">Times New Roman</option>
+                                                <option value="Verdana, sans-serif">Verdana</option>
+                                                <option value="Tahoma, sans-serif">Tahoma</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column - Preview & Code -->
+                            <div class="space-y-6">
+                                <!-- Preview -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        <span>👁️</span> Xem trước
+                                    </h2>
+                                    <div class="bg-white rounded-xl p-6 border border-gray-200" id="sig-preview">
+                                        <p class="text-gray-400 text-center">Nhập thông tin để xem trước chữ ký</p>
+                                    </div>
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        <span>📋</span> Sao chép chữ ký
+                                    </h2>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <button onclick="EmailSignature.copySignature()" class="flex items-center justify-center gap-2 px-4 py-3 bg-[#0d544c] text-white rounded-xl hover:bg-[#0a443e] transition-colors font-medium">
+                                            📋 Copy chữ ký
+                                        </button>
+                                        <button onclick="EmailSignature.copyHTML()" class="flex items-center justify-center gap-2 px-4 py-3 border-2 border-[#0d544c] text-[#0d544c] rounded-xl hover:bg-[#0d544c] hover:text-white transition-colors font-medium">
+                                            &lt;/&gt; Copy HTML
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- HTML Code -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <details>
+                                        <summary class="text-lg font-bold text-gray-800 dark:text-white cursor-pointer flex items-center gap-2">
+                                            <span>💻</span> Mã HTML
+                                        </summary>
+                                        <div class="mt-4">
+                                            <textarea id="sig-html-code" readonly rows="10"
+                                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white font-mono text-xs resize-none"></textarea>
+                                        </div>
+                                    </details>
+                                </div>
+
+                                <!-- Instructions -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <details>
+                                        <summary class="text-lg font-bold text-gray-800 dark:text-white cursor-pointer flex items-center gap-2">
+                                            <span>📖</span> Hướng dẫn cài đặt
+                                        </summary>
+                                        <div class="mt-4 space-y-4 text-sm text-gray-600 dark:text-gray-400">
+                                            <div>
+                                                <h4 class="font-semibold text-gray-800 dark:text-white mb-2">Gmail:</h4>
+                                                <ol class="list-decimal list-inside space-y-1">
+                                                    <li>Mở Gmail → Cài đặt (⚙️) → Xem tất cả cài đặt</li>
+                                                    <li>Tab "Chung" → Cuộn xuống "Chữ ký"</li>
+                                                    <li>Tạo mới hoặc chỉnh sửa → Paste chữ ký</li>
+                                                    <li>Lưu thay đổi</li>
+                                                </ol>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-semibold text-gray-800 dark:text-white mb-2">Outlook:</h4>
+                                                <ol class="list-decimal list-inside space-y-1">
+                                                    <li>File → Options → Mail → Signatures</li>
+                                                    <li>New → Đặt tên → Paste chữ ký</li>
+                                                    <li>OK để lưu</li>
+                                                </ol>
+                                            </div>
+                                        </div>
+                                    </details>
                                 </div>
                             </div>
                         </div>

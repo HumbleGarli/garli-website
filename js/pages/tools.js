@@ -649,3 +649,149 @@ const QRGenerator = {
 
 // Init
 document.addEventListener('DOMContentLoaded', () => ToolsPage.init());
+
+// ==========================================
+// EMAIL SIGNATURE GENERATOR
+// ==========================================
+const EmailSignature = {
+    update() {
+        const data = this.getData();
+        const preview = document.getElementById('sig-preview');
+        const htmlCode = document.getElementById('sig-html-code');
+        
+        if (!data.name) {
+            preview.innerHTML = '<p class="text-gray-400 text-center">Nhập thông tin để xem trước chữ ký</p>';
+            htmlCode.value = '';
+            return;
+        }
+
+        const html = this.generateHTML(data);
+        preview.innerHTML = html;
+        htmlCode.value = html;
+    },
+
+    getData() {
+        return {
+            name: document.getElementById('sig-name')?.value || '',
+            title: document.getElementById('sig-title')?.value || '',
+            company: document.getElementById('sig-company')?.value || '',
+            email: document.getElementById('sig-email')?.value || '',
+            phone: document.getElementById('sig-phone')?.value || '',
+            mobile: document.getElementById('sig-mobile')?.value || '',
+            website: document.getElementById('sig-website')?.value || '',
+            address: document.getElementById('sig-address')?.value || '',
+            facebook: document.getElementById('sig-facebook')?.value || '',
+            linkedin: document.getElementById('sig-linkedin')?.value || '',
+            twitter: document.getElementById('sig-twitter')?.value || '',
+            instagram: document.getElementById('sig-instagram')?.value || '',
+            github: document.getElementById('sig-github')?.value || '',
+            logo: document.getElementById('sig-logo')?.value || '',
+            primaryColor: document.getElementById('sig-primary-color')?.value || '#0d544c',
+            textColor: document.getElementById('sig-text-color')?.value || '#333333',
+            font: document.getElementById('sig-font')?.value || 'Arial, sans-serif'
+        };
+    },
+
+    generateHTML(data) {
+        const socialIcons = this.getSocialLinks(data);
+        
+        return `<table cellpadding="0" cellspacing="0" border="0" style="font-family: ${data.font}; font-size: 14px; color: ${data.textColor};">
+  <tr>
+    ${data.logo ? `<td style="vertical-align: top; padding-right: 15px;">
+      <img src="${data.logo}" alt="Logo" style="width: 80px; height: 80px; border-radius: 8px; object-fit: cover;">
+    </td>` : ''}
+    <td style="vertical-align: top; ${data.logo ? 'border-left: 3px solid ' + data.primaryColor + '; padding-left: 15px;' : ''}">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="font-size: 18px; font-weight: bold; color: ${data.primaryColor}; padding-bottom: 2px;">${data.name}</td>
+        </tr>
+        ${data.title ? `<tr><td style="font-size: 14px; color: ${data.textColor}; padding-bottom: 2px;">${data.title}</td></tr>` : ''}
+        ${data.company ? `<tr><td style="font-size: 14px; font-weight: 600; color: ${data.primaryColor}; padding-bottom: 8px;">${data.company}</td></tr>` : ''}
+        <tr>
+          <td style="font-size: 13px; color: ${data.textColor};">
+            ${data.phone ? `<span>📞 ${data.phone}</span>` : ''}
+            ${data.mobile ? `<span style="margin-left: ${data.phone ? '10px' : '0'};">📱 ${data.mobile}</span>` : ''}
+          </td>
+        </tr>
+        ${data.email ? `<tr><td style="font-size: 13px; padding-top: 3px;"><a href="mailto:${data.email}" style="color: ${data.primaryColor}; text-decoration: none;">✉️ ${data.email}</a></td></tr>` : ''}
+        ${data.website ? `<tr><td style="font-size: 13px; padding-top: 3px;"><a href="${data.website}" style="color: ${data.primaryColor}; text-decoration: none;">🌐 ${data.website.replace(/^https?:\/\//, '')}</a></td></tr>` : ''}
+        ${data.address ? `<tr><td style="font-size: 13px; padding-top: 3px; color: ${data.textColor};">📍 ${data.address}</td></tr>` : ''}
+        ${socialIcons ? `<tr><td style="padding-top: 10px;">${socialIcons}</td></tr>` : ''}
+      </table>
+    </td>
+  </tr>
+</table>`;
+    },
+
+    getSocialLinks(data) {
+        const links = [];
+        const iconStyle = 'width: 24px; height: 24px; margin-right: 8px;';
+        
+        if (data.facebook) {
+            links.push(`<a href="${data.facebook}" style="text-decoration: none;"><img src="https://cdn-icons-png.flaticon.com/24/733/733547.png" alt="Facebook" style="${iconStyle}"></a>`);
+        }
+        if (data.linkedin) {
+            links.push(`<a href="${data.linkedin}" style="text-decoration: none;"><img src="https://cdn-icons-png.flaticon.com/24/733/733561.png" alt="LinkedIn" style="${iconStyle}"></a>`);
+        }
+        if (data.twitter) {
+            links.push(`<a href="${data.twitter}" style="text-decoration: none;"><img src="https://cdn-icons-png.flaticon.com/24/733/733579.png" alt="Twitter" style="${iconStyle}"></a>`);
+        }
+        if (data.instagram) {
+            links.push(`<a href="${data.instagram}" style="text-decoration: none;"><img src="https://cdn-icons-png.flaticon.com/24/733/733558.png" alt="Instagram" style="${iconStyle}"></a>`);
+        }
+        if (data.github) {
+            links.push(`<a href="${data.github}" style="text-decoration: none;"><img src="https://cdn-icons-png.flaticon.com/24/733/733553.png" alt="GitHub" style="${iconStyle}"></a>`);
+        }
+        
+        return links.join('');
+    },
+
+    syncColor(type, value) {
+        if (type === 'primary') {
+            document.getElementById('sig-primary-color').value = value;
+        } else {
+            document.getElementById('sig-text-color').value = value;
+        }
+        this.update();
+    },
+
+    copySignature() {
+        const preview = document.getElementById('sig-preview');
+        if (!preview || preview.querySelector('.text-gray-400')) {
+            alert('Vui lòng nhập thông tin trước');
+            return;
+        }
+
+        // Copy as rich text (HTML)
+        const range = document.createRange();
+        range.selectNodeContents(preview);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        
+        try {
+            document.execCommand('copy');
+            alert('Đã copy chữ ký! Paste vào email client của bạn.');
+        } catch (e) {
+            alert('Không thể copy. Vui lòng chọn thủ công và copy.');
+        }
+        
+        selection.removeAllRanges();
+    },
+
+    copyHTML() {
+        const htmlCode = document.getElementById('sig-html-code');
+        if (!htmlCode.value) {
+            alert('Vui lòng nhập thông tin trước');
+            return;
+        }
+
+        navigator.clipboard.writeText(htmlCode.value).then(() => {
+            alert('Đã copy mã HTML!');
+        }).catch(() => {
+            htmlCode.select();
+            document.execCommand('copy');
+            alert('Đã copy mã HTML!');
+        });
+    }
+};
