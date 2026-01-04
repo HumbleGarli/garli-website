@@ -458,16 +458,24 @@ const QRGenerator = {
             correctLevel: QRCode.CorrectLevel[correction]
         });
 
-        // Add logo if exists
+        // Add logo if exists - need to wait for QR to render and hide img element
         if (this.logoData) {
-            setTimeout(() => this.addLogoToQR(), 300);
+            setTimeout(() => {
+                // Hide the img element that QRCode.js creates (it duplicates the canvas)
+                const img = container.querySelector('img');
+                if (img) img.style.display = 'none';
+                this.addLogoToQR();
+            }, 300);
         }
     },
 
     addLogoToQR() {
         const container = document.getElementById('qrgen-container');
         const canvas = container?.querySelector('canvas');
-        if (!canvas || !this.logoData) return;
+        if (!canvas || !this.logoData) {
+            console.log('No canvas or logo data');
+            return;
+        }
 
         const ctx = canvas.getContext('2d');
         const img = new Image();
@@ -476,21 +484,18 @@ const QRGenerator = {
             const x = (canvas.width - logoSize) / 2;
             const y = (canvas.height - logoSize) / 2;
             
-            // Draw white background for logo with rounded corners
+            // Draw white background for logo
             const padding = 6;
             ctx.fillStyle = '#FFFFFF';
-            ctx.beginPath();
-            if (ctx.roundRect) {
-                ctx.roundRect(x - padding, y - padding, logoSize + padding * 2, logoSize + padding * 2, 8);
-            } else {
-                // Fallback for browsers without roundRect
-                ctx.rect(x - padding, y - padding, logoSize + padding * 2, logoSize + padding * 2);
-            }
-            ctx.fill();
+            ctx.fillRect(x - padding, y - padding, logoSize + padding * 2, logoSize + padding * 2);
             
             // Draw logo
             ctx.drawImage(img, x, y, logoSize, logoSize);
+            
+            // Force canvas to be visible
+            canvas.style.display = 'block';
         };
+        img.onerror = () => console.error('Failed to load logo image');
         img.src = this.logoData;
     },
 
