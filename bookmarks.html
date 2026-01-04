@@ -49,7 +49,10 @@
                         ⚖️ Tính BMI
                     </button>
                     <button data-tab="sleep" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
-                        😴 Tính giấc ngủ
+                        😴 Giấc ngủ
+                    </button>
+                    <button data-tab="contrast" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
+                        🎨 Tương phản
                     </button>
                 </div>
             </div>
@@ -1004,6 +1007,126 @@ Vũ Thị F</textarea>
                                             <span>Tạo thói quen thư giãn trước khi ngủ</span>
                                         </li>
                                     </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Color Contrast Checker Tab -->
+                <div id="tab-contrast" class="tab-panel hidden">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="grid lg:grid-cols-2 gap-6">
+                            <!-- Left Column - Color Inputs -->
+                            <div class="space-y-6">
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-2 flex items-center gap-2">
+                                        <span>🎨</span> Kiểm Tra Độ Tương Phản Màu
+                                    </h2>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Kiểm tra tỷ lệ tương phản màu theo tiêu chuẩn WCAG để đảm bảo khả năng tiếp cận cho người khiếm thị.</p>
+                                    
+                                    <div class="space-y-4">
+                                        <!-- Foreground Color -->
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Màu chữ (Foreground)</label>
+                                            <div class="flex items-center gap-3">
+                                                <input type="color" id="contrast-fg" value="#000000" onchange="ContrastChecker.update()"
+                                                    class="w-14 h-14 rounded-xl border border-gray-300 cursor-pointer">
+                                                <input type="text" id="contrast-fg-text" value="#000000" oninput="ContrastChecker.syncColor('fg', this.value)"
+                                                    class="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white font-mono uppercase">
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Swap Button -->
+                                        <div class="flex justify-center">
+                                            <button onclick="ContrastChecker.swap()" class="p-2 rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="Đổi màu">
+                                                🔄
+                                            </button>
+                                        </div>
+                                        
+                                        <!-- Background Color -->
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Màu nền (Background)</label>
+                                            <div class="flex items-center gap-3">
+                                                <input type="color" id="contrast-bg" value="#FFFFFF" onchange="ContrastChecker.update()"
+                                                    class="w-14 h-14 rounded-xl border border-gray-300 cursor-pointer">
+                                                <input type="text" id="contrast-bg-text" value="#FFFFFF" oninput="ContrastChecker.syncColor('bg', this.value)"
+                                                    class="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white font-mono uppercase">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Live Preview -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        <span>👁️</span> Xem trước
+                                    </h2>
+                                    <div id="contrast-preview" class="rounded-xl p-6 transition-all" style="background-color: #FFFFFF;">
+                                        <p id="contrast-preview-normal" class="text-base mb-2" style="color: #000000;">Văn bản kích thước bình thường (16px)</p>
+                                        <p id="contrast-preview-large" class="text-2xl font-bold" style="color: #000000;">Văn bản kích thước lớn (24px)</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column - Results -->
+                            <div class="space-y-6">
+                                <!-- Contrast Ratio -->
+                                <div class="glass-card rounded-2xl p-6 text-center">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center justify-center gap-2">
+                                        <span>📊</span> Tỷ lệ tương phản
+                                    </h2>
+                                    <div id="contrast-ratio" class="text-5xl font-bold text-[#0d544c] dark:text-[#10b981] mb-2">21.00:1</div>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Tỷ lệ tương phản giữa màu chữ và màu nền</p>
+                                </div>
+
+                                <!-- WCAG Compliance -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        <span>✅</span> Tuân thủ WCAG
+                                    </h2>
+                                    <div class="space-y-3">
+                                        <!-- AA Normal -->
+                                        <div id="wcag-aa-normal" class="p-3 rounded-xl border-2 border-green-400 bg-green-50 dark:bg-green-900/20">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <h3 class="font-semibold text-gray-800 dark:text-white">WCAG AA (Chữ thường)</h3>
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400">Yêu cầu tối thiểu 4.5:1</p>
+                                                </div>
+                                                <span id="wcag-aa-normal-badge" class="px-3 py-1 bg-green-500 text-white text-sm font-bold rounded-full">Đạt</span>
+                                            </div>
+                                        </div>
+                                        <!-- AA Large -->
+                                        <div id="wcag-aa-large" class="p-3 rounded-xl border-2 border-green-400 bg-green-50 dark:bg-green-900/20">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <h3 class="font-semibold text-gray-800 dark:text-white">WCAG AA (Chữ lớn)</h3>
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400">Yêu cầu tối thiểu 3:1 (18pt+ hoặc 14pt+ đậm)</p>
+                                                </div>
+                                                <span id="wcag-aa-large-badge" class="px-3 py-1 bg-green-500 text-white text-sm font-bold rounded-full">Đạt</span>
+                                            </div>
+                                        </div>
+                                        <!-- AAA Normal -->
+                                        <div id="wcag-aaa-normal" class="p-3 rounded-xl border-2 border-green-400 bg-green-50 dark:bg-green-900/20">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <h3 class="font-semibold text-gray-800 dark:text-white">WCAG AAA (Chữ thường)</h3>
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400">Yêu cầu tối thiểu 7:1</p>
+                                                </div>
+                                                <span id="wcag-aaa-normal-badge" class="px-3 py-1 bg-green-500 text-white text-sm font-bold rounded-full">Đạt</span>
+                                            </div>
+                                        </div>
+                                        <!-- AAA Large -->
+                                        <div id="wcag-aaa-large" class="p-3 rounded-xl border-2 border-green-400 bg-green-50 dark:bg-green-900/20">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <h3 class="font-semibold text-gray-800 dark:text-white">WCAG AAA (Chữ lớn)</h3>
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400">Yêu cầu tối thiểu 4.5:1 (18pt+ hoặc 14pt+ đậm)</p>
+                                                </div>
+                                                <span id="wcag-aaa-large-badge" class="px-3 py-1 bg-green-500 text-white text-sm font-bold rounded-full">Đạt</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

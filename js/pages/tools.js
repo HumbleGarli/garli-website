@@ -1432,3 +1432,128 @@ const SleepCalculator = {
         return date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', hour12: false });
     }
 };
+
+
+// ==========================================
+// COLOR CONTRAST CHECKER
+// ==========================================
+const ContrastChecker = {
+    init() {
+        this.update();
+    },
+
+    update() {
+        const fgColor = document.getElementById('contrast-fg').value;
+        const bgColor = document.getElementById('contrast-bg').value;
+        
+        // Update text inputs
+        document.getElementById('contrast-fg-text').value = fgColor.toUpperCase();
+        document.getElementById('contrast-bg-text').value = bgColor.toUpperCase();
+        
+        // Update preview
+        const preview = document.getElementById('contrast-preview');
+        const previewNormal = document.getElementById('contrast-preview-normal');
+        const previewLarge = document.getElementById('contrast-preview-large');
+        
+        preview.style.backgroundColor = bgColor;
+        previewNormal.style.color = fgColor;
+        previewLarge.style.color = fgColor;
+        
+        // Calculate contrast ratio
+        const ratio = this.getContrastRatio(fgColor, bgColor);
+        document.getElementById('contrast-ratio').textContent = ratio.toFixed(2) + ':1';
+        
+        // Update WCAG compliance
+        this.updateWCAG(ratio);
+    },
+
+    syncColor(type, value) {
+        // Validate hex color
+        if (/^#[0-9A-Fa-f]{6}$/.test(value)) {
+            if (type === 'fg') {
+                document.getElementById('contrast-fg').value = value;
+            } else {
+                document.getElementById('contrast-bg').value = value;
+            }
+            this.update();
+        }
+    },
+
+    swap() {
+        const fg = document.getElementById('contrast-fg').value;
+        const bg = document.getElementById('contrast-bg').value;
+        
+        document.getElementById('contrast-fg').value = bg;
+        document.getElementById('contrast-bg').value = fg;
+        
+        this.update();
+    },
+
+    // Convert hex to RGB
+    hexToRgb(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : null;
+    },
+
+    // Calculate relative luminance
+    getLuminance(hex) {
+        const rgb = this.hexToRgb(hex);
+        if (!rgb) return 0;
+        
+        const [r, g, b] = [rgb.r, rgb.g, rgb.b].map(v => {
+            v /= 255;
+            return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+        });
+        
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    },
+
+    // Calculate contrast ratio
+    getContrastRatio(fg, bg) {
+        const l1 = this.getLuminance(fg);
+        const l2 = this.getLuminance(bg);
+        
+        const lighter = Math.max(l1, l2);
+        const darker = Math.min(l1, l2);
+        
+        return (lighter + 0.05) / (darker + 0.05);
+    },
+
+    updateWCAG(ratio) {
+        const checks = [
+            { id: 'wcag-aa-normal', threshold: 4.5 },
+            { id: 'wcag-aa-large', threshold: 3 },
+            { id: 'wcag-aaa-normal', threshold: 7 },
+            { id: 'wcag-aaa-large', threshold: 4.5 }
+        ];
+
+        checks.forEach(check => {
+            const el = document.getElementById(check.id);
+            const badge = document.getElementById(check.id + '-badge');
+            const pass = ratio >= check.threshold;
+            
+            if (pass) {
+                el.classList.remove('border-red-400', 'bg-red-50', 'dark:bg-red-900/20');
+                el.classList.add('border-green-400', 'bg-green-50', 'dark:bg-green-900/20');
+                badge.classList.remove('bg-red-500');
+                badge.classList.add('bg-green-500');
+                badge.textContent = 'Đạt';
+            } else {
+                el.classList.remove('border-green-400', 'bg-green-50', 'dark:bg-green-900/20');
+                el.classList.add('border-red-400', 'bg-red-50', 'dark:bg-red-900/20');
+                badge.classList.remove('bg-green-500');
+                badge.classList.add('bg-red-500');
+                badge.textContent = 'Không đạt';
+            }
+        });
+    }
+};
+
+// Initialize contrast checker when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => ContrastChecker.init(), 100);
+});
