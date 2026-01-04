@@ -500,14 +500,9 @@ body.dark {
    ========================================== */
 
 /* Active nav link - box style */
-.nav-link.active {
-    background-color: #374151;
-    color: #f3f4f6 !important;
-}
-
 /* Light mode active */
 .nav-link.active {
-    background-color: #1f2937;
+    background-color: #0C5249;
     color: white !important;
 }
 
@@ -519,7 +514,7 @@ body.dark {
 
 /* Mobile active */
 #mobile-menu .nav-link.active {
-    background-color: #1f2937;
+    background-color: #0C5249;
     color: white !important;
 }
 
