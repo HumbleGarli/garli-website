@@ -1929,7 +1929,9 @@ const DateCalculator = {
     },
 
     setToday(field) {
-        const today = new Date().toISOString().split('T')[0];
+        // Use local date format to avoid timezone issues
+        const now = new Date();
+        const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
         
         if (field === 'start') {
             document.getElementById('datecalc-start').value = today;
@@ -2058,7 +2060,8 @@ const DateCalculator = {
 
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         const formattedDate = resultDate.toLocaleDateString('vi-VN', options);
-        const isoDate = resultDate.toISOString().split('T')[0];
+        // Use local date format to avoid timezone issues
+        const isoDate = `${resultDate.getFullYear()}-${String(resultDate.getMonth() + 1).padStart(2, '0')}-${String(resultDate.getDate()).padStart(2, '0')}`;
 
         // Calculate day of week
         const dayNames = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
