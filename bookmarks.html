@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="assets/css/main.css">
     <!-- OTPAuth for 2FA -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/otpauth/9.2.2/otpauth.umd.min.js"></script>
+    <!-- QRCode.js for QR Generator -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors">
     <div id="header-placeholder"></div>
@@ -26,13 +28,16 @@
 
             <!-- Tab Navigation -->
             <div class="flex justify-center mb-8">
-                <div class="inline-flex bg-gray-200 dark:bg-gray-700 rounded-full p-1 relative">
-                    <div id="tools-tab-indicator" class="absolute h-[calc(100%-8px)] bg-[#0d544c] rounded-full transition-all duration-300" style="width: 50%; left: 4px;"></div>
-                    <button data-tab="2fa" class="tools-tab active relative z-10 px-6 py-2 rounded-full font-medium text-white transition-colors">
-                        🔐 2FA Code
+                <div class="inline-flex bg-gray-200 dark:bg-gray-700 rounded-full p-1 relative flex-wrap justify-center gap-1">
+                    <div id="tools-tab-indicator" class="absolute h-[calc(100%-8px)] bg-[#0d544c] rounded-full transition-all duration-300 hidden md:block" style="width: 33.33%; left: 4px;"></div>
+                    <button data-tab="2fa" class="tools-tab active relative z-10 px-4 md:px-6 py-2 rounded-full font-medium text-white transition-colors text-sm md:text-base">
+                        🔐 2FA
                     </button>
-                    <button data-tab="vietqr" class="tools-tab relative z-10 px-6 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors">
+                    <button data-tab="vietqr" class="tools-tab relative z-10 px-4 md:px-6 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm md:text-base">
                         📱 VietQR
+                    </button>
+                    <button data-tab="qrgen" class="tools-tab relative z-10 px-4 md:px-6 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm md:text-base">
+                        📷 Tạo QR
                     </button>
                 </div>
             </div>
@@ -151,6 +156,320 @@
                                     class="hidden mt-4 px-4 py-2 border border-[#0d544c] text-[#0d544c] rounded-lg hover:bg-[#0d544c] hover:text-white transition-colors inline-block">
                                     📥 Tải xuống
                                 </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QR Generator Tab -->
+                <div id="tab-qrgen" class="tab-panel hidden">
+                    <div class="max-w-6xl mx-auto">
+                        <div class="grid lg:grid-cols-2 gap-6">
+                            <!-- Left Column - Input -->
+                            <div class="space-y-6">
+                                <!-- QR Type Selection -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        <span>🎯</span> Chọn Loại Mã QR
+                                    </h2>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <button onclick="QRGenerator.setType('url')" data-qrtype="url" class="qr-type-btn active px-3 py-2 rounded-lg border-2 border-[#0d544c] bg-[#0d544c] text-white font-medium text-sm transition-all">
+                                            🔗 URL
+                                        </button>
+                                        <button onclick="QRGenerator.setType('text')" data-qrtype="text" class="qr-type-btn px-3 py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium text-sm transition-all hover:border-[#0d544c]">
+                                            📝 Văn bản
+                                        </button>
+                                        <button onclick="QRGenerator.setType('email')" data-qrtype="email" class="qr-type-btn px-3 py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium text-sm transition-all hover:border-[#0d544c]">
+                                            ✉️ Email
+                                        </button>
+                                        <button onclick="QRGenerator.setType('phone')" data-qrtype="phone" class="qr-type-btn px-3 py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium text-sm transition-all hover:border-[#0d544c]">
+                                            📞 Điện thoại
+                                        </button>
+                                        <button onclick="QRGenerator.setType('sms')" data-qrtype="sms" class="qr-type-btn px-3 py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium text-sm transition-all hover:border-[#0d544c]">
+                                            💬 Tin nhắn
+                                        </button>
+                                        <button onclick="QRGenerator.setType('wifi')" data-qrtype="wifi" class="qr-type-btn px-3 py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium text-sm transition-all hover:border-[#0d544c]">
+                                            📶 WiFi
+                                        </button>
+                                        <button onclick="QRGenerator.setType('vcard')" data-qrtype="vcard" class="qr-type-btn px-3 py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium text-sm transition-all hover:border-[#0d544c]">
+                                            👤 Danh thiếp
+                                        </button>
+                                        <button onclick="QRGenerator.setType('location')" data-qrtype="location" class="qr-type-btn px-3 py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium text-sm transition-all hover:border-[#0d544c]">
+                                            📍 Vị trí
+                                        </button>
+                                        <button onclick="QRGenerator.setType('event')" data-qrtype="event" class="qr-type-btn px-3 py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium text-sm transition-all hover:border-[#0d544c]">
+                                            📅 Sự kiện
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Data Input -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        <span>✏️</span> Nhập Dữ Liệu
+                                    </h2>
+                                    <div id="qrgen-input-fields">
+                                        <!-- URL Input (default) -->
+                                        <div id="qrgen-url" class="qrgen-field">
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">URL</label>
+                                            <input type="url" id="qrgen-url-input" placeholder="https://example.com" oninput="QRGenerator.generate()"
+                                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                        </div>
+                                        <!-- Text Input -->
+                                        <div id="qrgen-text" class="qrgen-field hidden">
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Văn bản</label>
+                                            <textarea id="qrgen-text-input" rows="3" placeholder="Nhập nội dung văn bản..." oninput="QRGenerator.generate()"
+                                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white resize-none"></textarea>
+                                        </div>
+                                        <!-- Email Input -->
+                                        <div id="qrgen-email" class="qrgen-field hidden space-y-3">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                                                <input type="email" id="qrgen-email-input" placeholder="example@email.com" oninput="QRGenerator.generate()"
+                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tiêu đề (tùy chọn)</label>
+                                                <input type="text" id="qrgen-email-subject" placeholder="Tiêu đề email" oninput="QRGenerator.generate()"
+                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nội dung (tùy chọn)</label>
+                                                <textarea id="qrgen-email-body" rows="2" placeholder="Nội dung email" oninput="QRGenerator.generate()"
+                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white resize-none"></textarea>
+                                            </div>
+                                        </div>
+                                        <!-- Phone Input -->
+                                        <div id="qrgen-phone" class="qrgen-field hidden">
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Số điện thoại</label>
+                                            <input type="tel" id="qrgen-phone-input" placeholder="+84 123 456 789" oninput="QRGenerator.generate()"
+                                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                        </div>
+                                        <!-- SMS Input -->
+                                        <div id="qrgen-sms" class="qrgen-field hidden space-y-3">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Số điện thoại</label>
+                                                <input type="tel" id="qrgen-sms-phone" placeholder="+84 123 456 789" oninput="QRGenerator.generate()"
+                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nội dung tin nhắn</label>
+                                                <textarea id="qrgen-sms-message" rows="2" placeholder="Nội dung tin nhắn..." oninput="QRGenerator.generate()"
+                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white resize-none"></textarea>
+                                            </div>
+                                        </div>
+                                        <!-- WiFi Input -->
+                                        <div id="qrgen-wifi" class="qrgen-field hidden space-y-3">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tên WiFi (SSID)</label>
+                                                <input type="text" id="qrgen-wifi-ssid" placeholder="Tên mạng WiFi" oninput="QRGenerator.generate()"
+                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mật khẩu</label>
+                                                <input type="text" id="qrgen-wifi-password" placeholder="Mật khẩu WiFi" oninput="QRGenerator.generate()"
+                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Loại bảo mật</label>
+                                                <select id="qrgen-wifi-security" onchange="QRGenerator.generate()"
+                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                                    <option value="WPA">WPA/WPA2</option>
+                                                    <option value="WEP">WEP</option>
+                                                    <option value="nopass">Không mật khẩu</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <!-- vCard Input -->
+                                        <div id="qrgen-vcard" class="qrgen-field hidden space-y-3">
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Họ</label>
+                                                    <input type="text" id="qrgen-vcard-lastname" placeholder="Nguyễn" oninput="QRGenerator.generate()"
+                                                        class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tên</label>
+                                                    <input type="text" id="qrgen-vcard-firstname" placeholder="Văn A" oninput="QRGenerator.generate()"
+                                                        class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Điện thoại</label>
+                                                <input type="tel" id="qrgen-vcard-phone" placeholder="+84 123 456 789" oninput="QRGenerator.generate()"
+                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                                                <input type="email" id="qrgen-vcard-email" placeholder="email@example.com" oninput="QRGenerator.generate()"
+                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Công ty</label>
+                                                <input type="text" id="qrgen-vcard-company" placeholder="Tên công ty" oninput="QRGenerator.generate()"
+                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                            </div>
+                                        </div>
+                                        <!-- Location Input -->
+                                        <div id="qrgen-location" class="qrgen-field hidden space-y-3">
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Vĩ độ</label>
+                                                    <input type="text" id="qrgen-location-lat" placeholder="10.762622" oninput="QRGenerator.generate()"
+                                                        class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Kinh độ</label>
+                                                    <input type="text" id="qrgen-location-lng" placeholder="106.660172" oninput="QRGenerator.generate()"
+                                                        class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Event Input -->
+                                        <div id="qrgen-event" class="qrgen-field hidden space-y-3">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tên sự kiện</label>
+                                                <input type="text" id="qrgen-event-title" placeholder="Họp mặt công ty" oninput="QRGenerator.generate()"
+                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                            </div>
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bắt đầu</label>
+                                                    <input type="datetime-local" id="qrgen-event-start" oninput="QRGenerator.generate()"
+                                                        class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Kết thúc</label>
+                                                    <input type="datetime-local" id="qrgen-event-end" oninput="QRGenerator.generate()"
+                                                        class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Địa điểm</label>
+                                                <input type="text" id="qrgen-event-location" placeholder="123 Đường ABC, Quận 1" oninput="QRGenerator.generate()"
+                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Customization -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        <span>🎨</span> Tùy Chỉnh
+                                    </h2>
+                                    <div class="space-y-4">
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Màu chính</label>
+                                                <div class="flex items-center gap-2">
+                                                    <input type="color" id="qrgen-color" value="#000000" onchange="QRGenerator.generate()"
+                                                        class="w-12 h-12 rounded-lg border border-gray-300 cursor-pointer">
+                                                    <input type="text" id="qrgen-color-text" value="#000000" oninput="QRGenerator.syncColor(this)"
+                                                        class="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Màu nền</label>
+                                                <div class="flex items-center gap-2">
+                                                    <input type="color" id="qrgen-bgcolor" value="#FFFFFF" onchange="QRGenerator.generate()"
+                                                        class="w-12 h-12 rounded-lg border border-gray-300 cursor-pointer">
+                                                    <input type="text" id="qrgen-bgcolor-text" value="#FFFFFF" oninput="QRGenerator.syncBgColor(this)"
+                                                        class="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Kích thước: <span id="qrgen-size-label">300</span>px</label>
+                                            <input type="range" id="qrgen-size" min="100" max="500" value="300" oninput="QRGenerator.updateSize(this)"
+                                                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mức độ sửa lỗi</label>
+                                            <select id="qrgen-correction" onchange="QRGenerator.generate()"
+                                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                                <option value="L">L (~7%)</option>
+                                                <option value="M" selected>M (~15%)</option>
+                                                <option value="Q">Q (~25%)</option>
+                                                <option value="H">H (~30%)</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Logo (tùy chọn)</label>
+                                            <input type="file" id="qrgen-logo" accept="image/*" onchange="QRGenerator.handleLogo(this)"
+                                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-[#0d544c] file:text-white file:cursor-pointer">
+                                            <button onclick="QRGenerator.removeLogo()" id="qrgen-remove-logo" class="hidden mt-2 text-sm text-red-500 hover:underline">❌ Xóa logo</button>
+                                        </div>
+                                        <button onclick="QRGenerator.reset()" class="w-full py-2 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                            🔄 Đặt Lại Mặc Định
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Batch Generation -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <details>
+                                        <summary class="text-lg font-bold text-gray-800 dark:text-white cursor-pointer flex items-center gap-2">
+                                            <span>📦</span> Tạo Hàng Loạt
+                                        </summary>
+                                        <div class="mt-4 space-y-4">
+                                            <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 text-sm text-blue-700 dark:text-blue-300">
+                                                ℹ️ Tạo nhiều mã QR cùng lúc. Nhập mỗi dữ liệu trên một dòng (tối đa 100).
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Danh Sách Dữ Liệu</label>
+                                                <textarea id="qrgen-batch-data" rows="5" placeholder="Nhập một mục dữ liệu mỗi dòng"
+                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white resize-none"></textarea>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tên File Gốc</label>
+                                                <input type="text" id="qrgen-batch-filename" value="qrcode" placeholder="qrcode"
+                                                    class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                            </div>
+                                            <button onclick="QRGenerator.generateBatch()" class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#0d544c] text-white rounded-xl hover:bg-[#0a443e] transition-colors font-medium">
+                                                ⚡ Tạo Tất Cả
+                                            </button>
+                                        </div>
+                                    </details>
+                                </div>
+                            </div>
+
+                            <!-- Right Column - Preview & Download -->
+                            <div class="space-y-6">
+                                <!-- Preview -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        <span>👁️</span> Xem Trước
+                                    </h2>
+                                    <div class="flex justify-center">
+                                        <div id="qrgen-preview" class="bg-white rounded-xl p-4 inline-block">
+                                            <div class="w-[300px] h-[300px] flex items-center justify-center text-gray-400">
+                                                Nhập dữ liệu để tạo QR
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Download -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        <span>📥</span> Tải Xuống
+                                    </h2>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <button onclick="QRGenerator.download('png')" class="flex items-center justify-center gap-2 px-4 py-3 border-2 border-[#0d544c] text-[#0d544c] rounded-xl hover:bg-[#0d544c] hover:text-white transition-colors font-medium">
+                                            🖼️ Tải PNG
+                                        </button>
+                                        <button onclick="QRGenerator.download('jpeg')" class="flex items-center justify-center gap-2 px-4 py-3 border-2 border-[#0d544c] text-[#0d544c] rounded-xl hover:bg-[#0d544c] hover:text-white transition-colors font-medium">
+                                            🖼️ Tải JPEG
+                                        </button>
+                                        <button onclick="QRGenerator.download('svg')" class="flex items-center justify-center gap-2 px-4 py-3 border-2 border-[#0d544c] text-[#0d544c] rounded-xl hover:bg-[#0d544c] hover:text-white transition-colors font-medium">
+                                            📐 Tải SVG
+                                        </button>
+                                        <button onclick="QRGenerator.copyToClipboard()" class="flex items-center justify-center gap-2 px-4 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors font-medium">
+                                            📋 Sao Chép
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

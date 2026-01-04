@@ -329,5 +329,301 @@ const ToolsPage = {
     }
 };
 
+// ==========================================
+// QR GENERATOR
+// ==========================================
+const QRGenerator = {
+    currentType: 'url',
+    qrInstance: null,
+    logoData: null,
+
+    setType(type) {
+        this.currentType = type;
+        
+        // Update button states
+        document.querySelectorAll('.qr-type-btn').forEach(btn => {
+            if (btn.dataset.qrtype === type) {
+                btn.classList.add('border-[#0d544c]', 'bg-[#0d544c]', 'text-white');
+                btn.classList.remove('border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
+            } else {
+                btn.classList.remove('border-[#0d544c]', 'bg-[#0d544c]', 'text-white');
+                btn.classList.add('border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
+            }
+        });
+
+        // Show/hide input fields
+        document.querySelectorAll('.qrgen-field').forEach(field => field.classList.add('hidden'));
+        document.getElementById(`qrgen-${type}`)?.classList.remove('hidden');
+        
+        this.generate();
+    },
+
+    getData() {
+        switch (this.currentType) {
+            case 'url':
+                return document.getElementById('qrgen-url-input')?.value || '';
+            case 'text':
+                return document.getElementById('qrgen-text-input')?.value || '';
+            case 'email': {
+                const email = document.getElementById('qrgen-email-input')?.value || '';
+                const subject = document.getElementById('qrgen-email-subject')?.value || '';
+                const body = document.getElementById('qrgen-email-body')?.value || '';
+                if (!email) return '';
+                let mailto = `mailto:${email}`;
+                const params = [];
+                if (subject) params.push(`subject=${encodeURIComponent(subject)}`);
+                if (body) params.push(`body=${encodeURIComponent(body)}`);
+                if (params.length) mailto += '?' + params.join('&');
+                return mailto;
+            }
+            case 'phone':
+                const phone = document.getElementById('qrgen-phone-input')?.value || '';
+                return phone ? `tel:${phone}` : '';
+            case 'sms': {
+                const smsPhone = document.getElementById('qrgen-sms-phone')?.value || '';
+                const message = document.getElementById('qrgen-sms-message')?.value || '';
+                if (!smsPhone) return '';
+                return message ? `sms:${smsPhone}?body=${encodeURIComponent(message)}` : `sms:${smsPhone}`;
+            }
+            case 'wifi': {
+                const ssid = document.getElementById('qrgen-wifi-ssid')?.value || '';
+                const password = document.getElementById('qrgen-wifi-password')?.value || '';
+                const security = document.getElementById('qrgen-wifi-security')?.value || 'WPA';
+                if (!ssid) return '';
+                return `WIFI:T:${security};S:${ssid};P:${password};;`;
+            }
+            case 'vcard': {
+                const lastName = document.getElementById('qrgen-vcard-lastname')?.value || '';
+                const firstName = document.getElementById('qrgen-vcard-firstname')?.value || '';
+                const vcardPhone = document.getElementById('qrgen-vcard-phone')?.value || '';
+                const vcardEmail = document.getElementById('qrgen-vcard-email')?.value || '';
+                const company = document.getElementById('qrgen-vcard-company')?.value || '';
+                if (!lastName && !firstName) return '';
+                return `BEGIN:VCARD\nVERSION:3.0\nN:${lastName};${firstName}\nFN:${firstName} ${lastName}\nTEL:${vcardPhone}\nEMAIL:${vcardEmail}\nORG:${company}\nEND:VCARD`;
+            }
+            case 'location': {
+                const lat = document.getElementById('qrgen-location-lat')?.value || '';
+                const lng = document.getElementById('qrgen-location-lng')?.value || '';
+                if (!lat || !lng) return '';
+                return `geo:${lat},${lng}`;
+            }
+            case 'event': {
+                const title = document.getElementById('qrgen-event-title')?.value || '';
+                const start = document.getElementById('qrgen-event-start')?.value || '';
+                const end = document.getElementById('qrgen-event-end')?.value || '';
+                const location = document.getElementById('qrgen-event-location')?.value || '';
+                if (!title || !start) return '';
+                const formatDate = (d) => d.replace(/[-:]/g, '').replace('T', 'T') + '00';
+                return `BEGIN:VEVENT\nSUMMARY:${title}\nDTSTART:${formatDate(start)}\nDTEND:${formatDate(end || start)}\nLOCATION:${location}\nEND:VEVENT`;
+            }
+            default:
+                return '';
+        }
+    },
+
+    generate() {
+        const data = this.getData();
+        const preview = document.getElementById('qrgen-preview');
+        
+        if (!data) {
+            preview.innerHTML = '<div class="w-[300px] h-[300px] flex items-center justify-center text-gray-400">Nhập dữ liệu để tạo QR</div>';
+            return;
+        }
+
+        const size = parseInt(document.getElementById('qrgen-size')?.value || 300);
+        const color = document.getElementById('qrgen-color')?.value || '#000000';
+        const bgColor = document.getElementById('qrgen-bgcolor')?.value || '#FFFFFF';
+        const correction = document.getElementById('qrgen-correction')?.value || 'M';
+
+        // Clear previous QR
+        preview.innerHTML = '';
+        
+        // Create new QR
+        this.qrInstance = new QRCode(preview, {
+            text: data,
+            width: size,
+            height: size,
+            colorDark: color,
+            colorLight: bgColor,
+            correctLevel: QRCode.CorrectLevel[correction]
+        });
+
+        // Add logo if exists
+        if (this.logoData) {
+            setTimeout(() => this.addLogoToQR(), 100);
+        }
+    },
+
+    addLogoToQR() {
+        const canvas = document.querySelector('#qrgen-preview canvas');
+        if (!canvas || !this.logoData) return;
+
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        img.onload = () => {
+            const logoSize = canvas.width * 0.2;
+            const x = (canvas.width - logoSize) / 2;
+            const y = (canvas.height - logoSize) / 2;
+            
+            // Draw white background for logo
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(x - 5, y - 5, logoSize + 10, logoSize + 10);
+            
+            // Draw logo
+            ctx.drawImage(img, x, y, logoSize, logoSize);
+        };
+        img.src = this.logoData;
+    },
+
+    handleLogo(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            this.logoData = e.target.result;
+            document.getElementById('qrgen-remove-logo')?.classList.remove('hidden');
+            this.generate();
+        };
+        reader.readAsDataURL(file);
+    },
+
+    removeLogo() {
+        this.logoData = null;
+        document.getElementById('qrgen-logo').value = '';
+        document.getElementById('qrgen-remove-logo')?.classList.add('hidden');
+        this.generate();
+    },
+
+    updateSize(input) {
+        document.getElementById('qrgen-size-label').textContent = input.value;
+        this.generate();
+    },
+
+    syncColor(input) {
+        document.getElementById('qrgen-color').value = input.value;
+        this.generate();
+    },
+
+    syncBgColor(input) {
+        document.getElementById('qrgen-bgcolor').value = input.value;
+        this.generate();
+    },
+
+    reset() {
+        document.getElementById('qrgen-color').value = '#000000';
+        document.getElementById('qrgen-color-text').value = '#000000';
+        document.getElementById('qrgen-bgcolor').value = '#FFFFFF';
+        document.getElementById('qrgen-bgcolor-text').value = '#FFFFFF';
+        document.getElementById('qrgen-size').value = 300;
+        document.getElementById('qrgen-size-label').textContent = '300';
+        document.getElementById('qrgen-correction').value = 'M';
+        this.removeLogo();
+        this.generate();
+    },
+
+    download(format) {
+        const canvas = document.querySelector('#qrgen-preview canvas');
+        if (!canvas) {
+            alert('Vui lòng tạo mã QR trước');
+            return;
+        }
+
+        let dataUrl;
+        if (format === 'png') {
+            dataUrl = canvas.toDataURL('image/png');
+        } else if (format === 'jpeg') {
+            dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+        } else if (format === 'svg') {
+            // For SVG, we need to create it manually
+            const size = canvas.width;
+            const imgData = canvas.toDataURL('image/png');
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}">
+                <image href="${imgData}" width="${size}" height="${size}"/>
+            </svg>`;
+            const blob = new Blob([svg], { type: 'image/svg+xml' });
+            dataUrl = URL.createObjectURL(blob);
+        }
+
+        // Open in new tab
+        window.open(dataUrl, '_blank');
+    },
+
+    async copyToClipboard() {
+        const canvas = document.querySelector('#qrgen-preview canvas');
+        if (!canvas) {
+            alert('Vui lòng tạo mã QR trước');
+            return;
+        }
+
+        try {
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+            await navigator.clipboard.write([
+                new ClipboardItem({ 'image/png': blob })
+            ]);
+            alert('Đã sao chép mã QR vào clipboard!');
+        } catch (e) {
+            alert('Không thể sao chép. Trình duyệt không hỗ trợ.');
+        }
+    },
+
+    async generateBatch() {
+        const data = document.getElementById('qrgen-batch-data')?.value.trim();
+        const filename = document.getElementById('qrgen-batch-filename')?.value || 'qrcode';
+        
+        if (!data) {
+            alert('Vui lòng nhập danh sách dữ liệu');
+            return;
+        }
+
+        const lines = data.split('\n').filter(l => l.trim()).slice(0, 100);
+        
+        if (lines.length === 0) {
+            alert('Không có dữ liệu hợp lệ');
+            return;
+        }
+
+        const size = parseInt(document.getElementById('qrgen-size')?.value || 300);
+        const color = document.getElementById('qrgen-color')?.value || '#000000';
+        const bgColor = document.getElementById('qrgen-bgcolor')?.value || '#FFFFFF';
+        const correction = document.getElementById('qrgen-correction')?.value || 'M';
+
+        // Generate and download each QR
+        for (let i = 0; i < lines.length; i++) {
+            const tempDiv = document.createElement('div');
+            tempDiv.style.display = 'none';
+            document.body.appendChild(tempDiv);
+
+            new QRCode(tempDiv, {
+                text: lines[i].trim(),
+                width: size,
+                height: size,
+                colorDark: color,
+                colorLight: bgColor,
+                correctLevel: QRCode.CorrectLevel[correction]
+            });
+
+            // Wait for QR to render
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            const canvas = tempDiv.querySelector('canvas');
+            if (canvas) {
+                const dataUrl = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.href = dataUrl;
+                link.download = `${filename}_${i + 1}.png`;
+                link.click();
+            }
+
+            document.body.removeChild(tempDiv);
+            
+            // Small delay between downloads
+            await new Promise(resolve => setTimeout(resolve, 200));
+        }
+
+        alert(`Đã tạo ${lines.length} mã QR!`);
+    }
+};
+
 // Init
 document.addEventListener('DOMContentLoaded', () => ToolsPage.init());
