@@ -695,29 +695,24 @@ const EmailSignature = {
     generateHTML(data) {
         const socialIcons = this.getSocialLinks(data);
         
-        return `<table cellpadding="0" cellspacing="0" border="0" style="font-family: ${data.font}; font-size: 14px; color: ${data.textColor};">
+        // Format: Logo | Name, Title at Company, w: website e: email, social icons
+        let contactLine = [];
+        if (data.website) contactLine.push(`w: <a href="${data.website}" style="color: ${data.primaryColor}; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a>`);
+        if (data.email) contactLine.push(`e: <a href="mailto:${data.email}" style="color: ${data.primaryColor}; text-decoration: none;">${data.email}</a>`);
+        if (data.phone) contactLine.push(`p: ${data.phone}`);
+        if (data.mobile) contactLine.push(`m: ${data.mobile}`);
+        
+        return `<table cellpadding="0" cellspacing="0" border="0" style="font-family: ${data.font}; font-size: 14px; color: ${data.textColor}; line-height: 1.4;">
   <tr>
-    ${data.logo ? `<td style="vertical-align: top; padding-right: 15px;">
-      <img src="${data.logo}" alt="Logo" style="width: 80px; height: 80px; border-radius: 8px; object-fit: cover;">
-    </td>` : ''}
-    <td style="vertical-align: top; ${data.logo ? 'border-left: 3px solid ' + data.primaryColor + '; padding-left: 15px;' : ''}">
-      <table cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td style="font-size: 18px; font-weight: bold; color: ${data.primaryColor}; padding-bottom: 2px;">${data.name}</td>
-        </tr>
-        ${data.title ? `<tr><td style="font-size: 14px; color: ${data.textColor}; padding-bottom: 2px;">${data.title}</td></tr>` : ''}
-        ${data.company ? `<tr><td style="font-size: 14px; font-weight: 600; color: ${data.primaryColor}; padding-bottom: 8px;">${data.company}</td></tr>` : ''}
-        <tr>
-          <td style="font-size: 13px; color: ${data.textColor};">
-            ${data.phone ? `<span>📞 ${data.phone}</span>` : ''}
-            ${data.mobile ? `<span style="margin-left: ${data.phone ? '10px' : '0'};">📱 ${data.mobile}</span>` : ''}
-          </td>
-        </tr>
-        ${data.email ? `<tr><td style="font-size: 13px; padding-top: 3px;"><a href="mailto:${data.email}" style="color: ${data.primaryColor}; text-decoration: none;">✉️ ${data.email}</a></td></tr>` : ''}
-        ${data.website ? `<tr><td style="font-size: 13px; padding-top: 3px;"><a href="${data.website}" style="color: ${data.primaryColor}; text-decoration: none;">🌐 ${data.website.replace(/^https?:\/\//, '')}</a></td></tr>` : ''}
-        ${data.address ? `<tr><td style="font-size: 13px; padding-top: 3px; color: ${data.textColor};">📍 ${data.address}</td></tr>` : ''}
-        ${socialIcons ? `<tr><td style="padding-top: 10px;">${socialIcons}</td></tr>` : ''}
-      </table>
+    ${data.logo ? `<td style="vertical-align: middle; padding-right: 12px;">
+      <img src="${data.logo}" alt="Logo" style="width: 70px; height: 70px; border-radius: 6px; object-fit: cover; display: block;">
+    </td>
+    <td style="border-left: 2px solid ${data.primaryColor}; padding-left: 12px; vertical-align: middle;">` : '<td style="vertical-align: middle;">'}
+      <div style="font-size: 16px; font-weight: bold; color: ${data.primaryColor}; margin-bottom: 2px;">${data.name}</div>
+      ${data.title || data.company ? `<div style="font-size: 13px; color: ${data.textColor}; margin-bottom: 4px;">${data.title}${data.title && data.company ? ' at ' : ''}${data.company ? `<strong>${data.company}</strong>` : ''}</div>` : ''}
+      ${contactLine.length ? `<div style="font-size: 12px; color: ${data.textColor}; margin-bottom: 4px;">${contactLine.join('  ')}</div>` : ''}
+      ${data.address ? `<div style="font-size: 12px; color: ${data.textColor}; margin-bottom: 4px;">📍 ${data.address}</div>` : ''}
+      ${socialIcons ? `<div style="margin-top: 6px;">${socialIcons}</div>` : ''}
     </td>
   </tr>
 </table>`;
@@ -725,22 +720,22 @@ const EmailSignature = {
 
     getSocialLinks(data) {
         const links = [];
-        const iconStyle = 'width: 24px; height: 24px; margin-right: 8px;';
+        const iconSize = '20';
         
         if (data.facebook) {
-            links.push(`<a href="${data.facebook}" style="text-decoration: none;"><img src="https://cdn-icons-png.flaticon.com/24/733/733547.png" alt="Facebook" style="${iconStyle}"></a>`);
+            links.push(`<a href="${data.facebook}" style="text-decoration: none; margin-right: 6px;"><img src="https://cdn-icons-png.flaticon.com/128/5968/5968764.png" alt="Facebook" style="width: ${iconSize}px; height: ${iconSize}px; vertical-align: middle;"></a>`);
         }
         if (data.linkedin) {
-            links.push(`<a href="${data.linkedin}" style="text-decoration: none;"><img src="https://cdn-icons-png.flaticon.com/24/733/733561.png" alt="LinkedIn" style="${iconStyle}"></a>`);
+            links.push(`<a href="${data.linkedin}" style="text-decoration: none; margin-right: 6px;"><img src="https://cdn-icons-png.flaticon.com/128/3536/3536505.png" alt="LinkedIn" style="width: ${iconSize}px; height: ${iconSize}px; vertical-align: middle;"></a>`);
         }
         if (data.twitter) {
-            links.push(`<a href="${data.twitter}" style="text-decoration: none;"><img src="https://cdn-icons-png.flaticon.com/24/733/733579.png" alt="Twitter" style="${iconStyle}"></a>`);
+            links.push(`<a href="${data.twitter}" style="text-decoration: none; margin-right: 6px;"><img src="https://cdn-icons-png.flaticon.com/128/5969/5969020.png" alt="Twitter" style="width: ${iconSize}px; height: ${iconSize}px; vertical-align: middle;"></a>`);
         }
         if (data.instagram) {
-            links.push(`<a href="${data.instagram}" style="text-decoration: none;"><img src="https://cdn-icons-png.flaticon.com/24/733/733558.png" alt="Instagram" style="${iconStyle}"></a>`);
+            links.push(`<a href="${data.instagram}" style="text-decoration: none; margin-right: 6px;"><img src="https://cdn-icons-png.flaticon.com/128/2111/2111463.png" alt="Instagram" style="width: ${iconSize}px; height: ${iconSize}px; vertical-align: middle;"></a>`);
         }
         if (data.github) {
-            links.push(`<a href="${data.github}" style="text-decoration: none;"><img src="https://cdn-icons-png.flaticon.com/24/733/733553.png" alt="GitHub" style="${iconStyle}"></a>`);
+            links.push(`<a href="${data.github}" style="text-decoration: none; margin-right: 6px;"><img src="https://cdn-icons-png.flaticon.com/128/733/733553.png" alt="GitHub" style="width: ${iconSize}px; height: ${iconSize}px; vertical-align: middle;"></a>`);
         }
         
         return links.join('');
