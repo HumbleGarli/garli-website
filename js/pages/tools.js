@@ -1587,7 +1587,6 @@ const PaletteExtractor = {
 
     updateCount(value) {
         this.colorCount = parseInt(value);
-        document.getElementById('palette-count-label').textContent = value;
         if (this.imageData) {
             this.extractColors();
         }
@@ -1621,6 +1620,7 @@ const PaletteExtractor = {
             document.getElementById('palette-image').src = this.imageData;
             document.getElementById('palette-image-container').classList.remove('hidden');
             document.getElementById('palette-dropzone').classList.add('hidden');
+            document.getElementById('palette-clear-btn').classList.remove('hidden');
             this.extractColors();
         };
         reader.readAsDataURL(file);
@@ -1654,15 +1654,21 @@ const PaletteExtractor = {
             // Use K-Means clustering to find dominant colors
             const colors = this.kMeans(pixelArray, this.colorCount);
             
-            // Sort by luminance (dark to light)
-            colors.sort((a, b) => {
+            // Sort by frequency/importance (first color is dominant)
+            // Then sort rest by luminance
+            const dominant = colors[0];
+            const rest = colors.slice(1).sort((a, b) => {
                 const lumA = 0.299 * a[0] + 0.587 * a[1] + 0.114 * a[2];
                 const lumB = 0.299 * b[0] + 0.587 * b[1] + 0.114 * b[2];
                 return lumA - lumB;
             });
             
-            const hexColors = colors.map(c => this.rgbToHex(c[0], c[1], c[2]));
-            this.displayColors(hexColors);
+            this.currentColors = [dominant, ...rest].map(c => ({
+                hex: this.rgbToHex(c[0], c[1], c[2]),
+                rgb: c
+            }));
+            
+            this.displayColors();
         };
         img.src = this.imageData;
     },
@@ -1676,10 +1682,11 @@ const PaletteExtractor = {
 
         // Initialize centroids using k-means++ method
         const centroids = this.initCentroids(pixels, k);
+        let clusters = [];
         
         for (let iter = 0; iter < maxIterations; iter++) {
             // Assign pixels to nearest centroid
-            const clusters = Array.from({ length: k }, () => []);
+            clusters = Array.from({ length: k }, () => []);
             
             for (const pixel of pixels) {
                 let minDist = Infinity;
@@ -1719,7 +1726,11 @@ const PaletteExtractor = {
             if (converged) break;
         }
         
-        return centroids;
+        // Sort by cluster size (most pixels = dominant)
+        const indexed = centroids.map((c, i) => ({ centroid: c, size: clusters[i].length }));
+        indexed.sort((a, b) => b.size - a.size);
+        
+        return indexed.map(x => x.centroid);
     },
 
     // K-means++ initialization
@@ -1785,33 +1796,75 @@ const PaletteExtractor = {
         } : { r: 0, g: 0, b: 0 };
     },
 
-    displayColors(colors) {
-        const resultsEl = document.getElementById('palette-results');
-        const barEl = document.getElementById('palette-bar');
-        const barContainer = document.getElementById('palette-bar-container');
-        
-        if (colors.length === 0) {
-            resultsEl.innerHTML = '<p class="text-gray-400 text-center py-8">Không thể trích xuất màu từ hình ảnh</p>';
-            barContainer.classList.add('hidden');
-            return;
-        }
+    displayColors() {
+        const colors = this.currentColors;
+        if (!colors || colors.length === 0) return;
 
-        resultsEl.innerHTML = colors.map(color => `
-            <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer" onclick="PaletteExtractor.copyColor('${color}')">
-                <div class="w-12 h-12 rounded-lg shadow-inner flex-shrink-0" style="background-color: ${color};"></div>
-                <div class="flex-1">
-                    <div class="font-mono font-bold text-gray-800 dark:text-white">${color}</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">Click để copy</div>
+        // Show sections
+        document.getElementById('palette-dominant-section').classList.remove('hidden');
+        document.getElementById('palette-grid-section').classList.remove('hidden');
+
+        // Display color circles under image
+        const circlesEl = document.getElementById('palette-circles');
+        circlesEl.innerHTML = colors.map((c, i) => 
+            `<div class="w-10 h-10 rounded-full border-2 border-white shadow-lg cursor-pointer transition-transform hover:scale-110" 
+                style="background-color: ${c.hex};" 
+                onclick="PaletteExtractor.selectDominant(${i})"
+                title="${c.hex}"></div>`
+        ).join('');
+
+        // Display dominant color (first one)
+        this.selectDominant(0);
+
+        // Display palette grid
+        const gridEl = document.getElementById('palette-grid');
+        gridEl.innerHTML = colors.map((c, i) => `
+            <div class="relative">
+                <div class="h-32 rounded-xl mb-3 cursor-pointer transition-transform hover:scale-105" 
+                    style="background-color: ${c.hex};"
+                    onclick="PaletteExtractor.selectDominant(${i})">
+                    ${i === 0 ? '<span class="absolute top-2 right-2 px-2 py-1 bg-[#0d544c] text-white text-xs rounded-full">Chủ Đạo</span>' : ''}
                 </div>
-                <span class="text-gray-400">📋</span>
+                <div class="space-y-2">
+                    <div>
+                        <label class="text-xs text-gray-500 dark:text-gray-400">HEX</label>
+                        <div class="flex items-center gap-1">
+                            <input type="text" value="${c.hex}" readonly id="palette-hex-${i}"
+                                class="flex-1 px-2 py-1 text-sm rounded bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white font-mono">
+                            <button onclick="PaletteExtractor.copyValue('palette-hex-${i}')" class="p-1 text-gray-400 hover:text-[#0d544c] text-sm">📋</button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500 dark:text-gray-400">RGB</label>
+                        <div class="flex items-center gap-1">
+                            <input type="text" value="rgb(${c.rgb[0]}, ${c.rgb[1]}, ${c.rgb[2]})" readonly id="palette-rgb-${i}"
+                                class="flex-1 px-2 py-1 text-sm rounded bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white font-mono">
+                            <button onclick="PaletteExtractor.copyValue('palette-rgb-${i}')" class="p-1 text-gray-400 hover:text-[#0d544c] text-sm">📋</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         `).join('');
+    },
 
-        // Display color bar
-        barContainer.classList.remove('hidden');
-        barEl.innerHTML = colors.map(color => 
-            `<div class="flex-1 h-full" style="background-color: ${color};" title="${color}"></div>`
-        ).join('');
+    selectDominant(index) {
+        const color = this.currentColors[index];
+        if (!color) return;
+
+        document.getElementById('palette-dominant-preview').style.backgroundColor = color.hex;
+        document.getElementById('palette-dominant-hex').value = color.hex;
+        document.getElementById('palette-dominant-rgb').value = `rgb(${color.rgb[0]}, ${color.rgb[1]}, ${color.rgb[2]})`;
+    },
+
+    copyValue(inputId) {
+        const input = document.getElementById(inputId);
+        if (input) {
+            navigator.clipboard.writeText(input.value).then(() => {
+                // Brief visual feedback
+                input.classList.add('ring-2', 'ring-[#0d544c]');
+                setTimeout(() => input.classList.remove('ring-2', 'ring-[#0d544c]'), 300);
+            });
+        }
     },
 
     copyColor(color) {
@@ -1822,11 +1875,14 @@ const PaletteExtractor = {
 
     clear() {
         this.imageData = null;
+        this.currentColors = null;
         document.getElementById('palette-image').src = '';
         document.getElementById('palette-image-container').classList.add('hidden');
         document.getElementById('palette-dropzone').classList.remove('hidden');
-        document.getElementById('palette-results').innerHTML = '<p class="text-gray-400 text-center py-8">Tải lên hình ảnh để trích xuất bảng màu</p>';
-        document.getElementById('palette-bar-container').classList.add('hidden');
+        document.getElementById('palette-clear-btn').classList.add('hidden');
+        document.getElementById('palette-dominant-section').classList.add('hidden');
+        document.getElementById('palette-grid-section').classList.add('hidden');
+        document.getElementById('palette-circles').innerHTML = '';
         document.getElementById('palette-input').value = '';
     }
 };

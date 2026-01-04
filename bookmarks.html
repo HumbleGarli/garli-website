@@ -1138,68 +1138,89 @@ Vũ Thị F</textarea>
 
                 <!-- Image Palette Extractor Tab -->
                 <div id="tab-palette" class="tab-panel hidden">
-                    <div class="max-w-4xl mx-auto">
-                        <div class="grid lg:grid-cols-2 gap-6">
-                            <!-- Left Column - Upload -->
-                            <div class="space-y-6">
-                                <div class="glass-card rounded-2xl p-6">
-                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-2 flex items-center gap-2">
-                                        <span>🖼️</span> Trích Xuất Bảng Màu Từ Hình Ảnh
-                                    </h2>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Trích xuất bảng màu từ hình ảnh để giúp bạn xác định và sử dụng các phối màu.</p>
-                                    
-                                    <!-- Number of Colors -->
-                                    <div class="mb-4">
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Số lượng màu: <span id="palette-count-label">6</span></label>
-                                        <input type="range" id="palette-count" min="3" max="12" value="6" oninput="PaletteExtractor.updateCount(this.value)"
-                                            class="w-full h-2 bg-gray-300 dark:bg-gray-500 rounded-lg appearance-none cursor-pointer accent-[#0d544c]">
-                                    </div>
-                                    
-                                    <!-- Drop Zone -->
-                                    <div id="palette-dropzone" 
-                                        class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center cursor-pointer hover:border-[#0d544c] transition-colors"
-                                        onclick="document.getElementById('palette-input').click()"
-                                        ondragover="PaletteExtractor.handleDragOver(event)"
-                                        ondragleave="PaletteExtractor.handleDragLeave(event)"
-                                        ondrop="PaletteExtractor.handleDrop(event)">
-                                        <div class="text-4xl mb-3">📤</div>
-                                        <p class="text-gray-600 dark:text-gray-400 font-medium">Kéo thả hình ảnh vào đây</p>
-                                        <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">hoặc dán từ clipboard (Ctrl+V)</p>
-                                        <input type="file" id="palette-input" accept="image/*" class="hidden" onchange="PaletteExtractor.handleFile(this.files[0])">
-                                    </div>
-                                </div>
-
-                                <!-- Image Preview -->
-                                <div id="palette-image-container" class="hidden glass-card rounded-2xl p-6">
-                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-                                        <span>🖼️</span> Hình ảnh
-                                    </h2>
-                                    <img id="palette-image" src="" alt="Uploaded image" class="w-full rounded-xl">
-                                    <button onclick="PaletteExtractor.clear()" class="w-full mt-4 px-4 py-2 border border-red-300 text-red-500 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-sm">
-                                        🗑️ Xóa hình ảnh
+                    <div class="max-w-6xl mx-auto space-y-6">
+                        <!-- Upload Section -->
+                        <div class="glass-card rounded-2xl p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                                    <span>📤</span> Tải Lên Hình Ảnh
+                                </h2>
+                                <div class="flex items-center gap-4">
+                                    <button onclick="PaletteExtractor.clear()" id="palette-clear-btn" class="hidden text-red-500 hover:text-red-600 text-sm flex items-center gap-1">
+                                        ✕ Xóa Hình Ảnh
                                     </button>
-                                </div>
-                            </div>
-
-                            <!-- Right Column - Results -->
-                            <div class="space-y-6">
-                                <div class="glass-card rounded-2xl p-6">
-                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-                                        <span>🎨</span> Bảng màu trích xuất
-                                    </h2>
-                                    <div id="palette-results" class="space-y-3">
-                                        <p class="text-gray-400 text-center py-8">Tải lên hình ảnh để trích xuất bảng màu</p>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">Số Lượng Màu:</span>
+                                        <select id="palette-count" onchange="PaletteExtractor.updateCount(this.value)"
+                                            class="px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5" selected>5</option>
+                                            <option value="6">6</option>
+                                            <option value="8">8</option>
+                                            <option value="10">10</option>
+                                        </select>
                                     </div>
                                 </div>
+                            </div>
+                            
+                            <!-- Drop Zone / Image Preview -->
+                            <div id="palette-dropzone" 
+                                class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-12 text-center cursor-pointer hover:border-[#0d544c] transition-colors min-h-[300px] flex flex-col items-center justify-center"
+                                onclick="document.getElementById('palette-input').click()"
+                                ondragover="PaletteExtractor.handleDragOver(event)"
+                                ondragleave="PaletteExtractor.handleDragLeave(event)"
+                                ondrop="PaletteExtractor.handleDrop(event)">
+                                <div class="text-5xl mb-4 opacity-50">🖼️</div>
+                                <p class="text-gray-600 dark:text-gray-400 font-medium">Kéo thả hình ảnh vào đây</p>
+                                <p class="text-sm text-gray-400 dark:text-gray-500 mt-2">hoặc dán từ clipboard (Ctrl+V / Cmd+V)</p>
+                                <input type="file" id="palette-input" accept="image/*" class="hidden" onchange="PaletteExtractor.handleFile(this.files[0])">
+                            </div>
 
-                                <!-- Color Preview Bar -->
-                                <div id="palette-bar-container" class="hidden glass-card rounded-2xl p-6">
-                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-                                        <span>📊</span> Xem trước bảng màu
-                                    </h2>
-                                    <div id="palette-bar" class="h-16 rounded-xl overflow-hidden flex"></div>
+                            <!-- Image Preview (hidden by default) -->
+                            <div id="palette-image-container" class="hidden">
+                                <div class="flex flex-col items-center">
+                                    <img id="palette-image" src="" alt="Uploaded image" class="max-h-[400px] rounded-xl object-contain">
+                                    <!-- Color Circles Preview -->
+                                    <div id="palette-circles" class="flex gap-2 mt-4"></div>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Dominant Color Section -->
+                        <div id="palette-dominant-section" class="hidden glass-card rounded-2xl p-6">
+                            <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                <span>💎</span> Màu Chủ Đạo
+                            </h2>
+                            <div class="flex flex-col md:flex-row gap-6">
+                                <div id="palette-dominant-preview" class="w-32 h-32 rounded-xl border-4 border-gray-200 dark:border-gray-600"></div>
+                                <div class="flex-1 space-y-4">
+                                    <div>
+                                        <label class="text-sm text-gray-500 dark:text-gray-400">HEX</label>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <input type="text" id="palette-dominant-hex" readonly
+                                                class="flex-1 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white font-mono">
+                                            <button onclick="PaletteExtractor.copyValue('palette-dominant-hex')" class="p-2 text-gray-400 hover:text-[#0d544c]">📋</button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm text-gray-500 dark:text-gray-400">RGB</label>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <input type="text" id="palette-dominant-rgb" readonly
+                                                class="flex-1 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white font-mono">
+                                            <button onclick="PaletteExtractor.copyValue('palette-dominant-rgb')" class="p-2 text-gray-400 hover:text-[#0d544c]">📋</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Palette Grid Section -->
+                        <div id="palette-grid-section" class="hidden glass-card rounded-2xl p-6">
+                            <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                <span>🎨</span> Bảng Màu
+                            </h2>
+                            <div id="palette-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4"></div>
                         </div>
                     </div>
                 </div>
