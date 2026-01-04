@@ -819,3 +819,243 @@ const EmailSignature = {
         });
     }
 };
+
+
+// ==========================================
+// LUCKY WHEEL - Vòng xoay may mắn
+// ==========================================
+const LuckyWheel = {
+    isSpinning: false,
+    currentRotation: 0,
+    winners: [],
+    colors: [
+        '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', 
+        '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
+        '#F8B500', '#00CED1', '#FF69B4', '#32CD32', '#FF7F50'
+    ],
+
+    init() {
+        this.draw();
+        this.setupKeyboard();
+    },
+
+    getNames() {
+        const textarea = document.getElementById('wheel-names');
+        if (!textarea) return [];
+        return textarea.value.split('\n').map(n => n.trim()).filter(n => n.length > 0);
+    },
+
+    updateCount() {
+        const names = this.getNames();
+        const countEl = document.getElementById('wheel-count');
+        if (countEl) {
+            countEl.textContent = `${names.length} mục (tối thiểu: 2, tối đa: 200)`;
+            if (names.length < 2) {
+                countEl.classList.add('text-red-500');
+            } else {
+                countEl.classList.remove('text-red-500');
+            }
+        }
+        this.draw();
+    },
+
+    shuffle() {
+        const names = this.getNames();
+        for (let i = names.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [names[i], names[j]] = [names[j], names[i]];
+        }
+        document.getElementById('wheel-names').value = names.join('\n');
+        this.draw();
+    },
+
+    sort() {
+        const names = this.getNames();
+        names.sort((a, b) => a.localeCompare(b, 'vi'));
+        document.getElementById('wheel-names').value = names.join('\n');
+        this.draw();
+    },
+
+    draw() {
+        const canvas = document.getElementById('wheel-canvas');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        const names = this.getNames();
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = Math.min(centerX, centerY) - 10;
+
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (names.length < 2) {
+            ctx.fillStyle = '#ccc';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.fillStyle = '#666';
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Cần ít nhất 2 mục', centerX, centerY);
+            return;
+        }
+
+        const sliceAngle = (2 * Math.PI) / names.length;
+
+        // Draw slices
+        names.forEach((name, i) => {
+            const startAngle = i * sliceAngle + this.currentRotation;
+            const endAngle = startAngle + sliceAngle;
+
+            // Draw slice
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+            ctx.closePath();
+            ctx.fillStyle = this.colors[i % this.colors.length];
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw text
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(startAngle + sliceAngle / 2);
+            ctx.textAlign = 'right';
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 12px Arial';
+            ctx.shadowColor = 'rgba(0,0,0,0.5)';
+            ctx.shadowBlur = 2;
+            
+            // Truncate long names
+            let displayName = name.length > 15 ? name.substring(0, 12) + '...' : name;
+            ctx.fillText(displayName, radius - 15, 4);
+            ctx.restore();
+        });
+
+        // Draw center circle
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 25, 0, 2 * Math.PI);
+        ctx.fillStyle = '#0d544c';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+    },
+
+    spin() {
+        if (this.isSpinning) return;
+        
+        const names = this.getNames();
+        if (names.length < 2) {
+            alert('Cần ít nhất 2 mục để quay!');
+            return;
+        }
+
+        this.isSpinning = true;
+        const btn = document.getElementById('wheel-spin-btn');
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+
+        // Random winner
+        const winnerIndex = Math.floor(Math.random() * names.length);
+        const sliceAngle = (2 * Math.PI) / names.length;
+        
+        // Calculate target rotation (winner at top = -90 degrees = -PI/2)
+        // We want the middle of the winning slice to be at the top (where pointer is)
+        const targetSliceMiddle = winnerIndex * sliceAngle + sliceAngle / 2;
+        const targetRotation = -targetSliceMiddle - Math.PI / 2;
+        
+        // Add extra spins (5-8 full rotations)
+        const extraSpins = (5 + Math.random() * 3) * 2 * Math.PI;
+        const totalRotation = targetRotation + extraSpins - this.currentRotation;
+
+        // Animate
+        const duration = 5000 + Math.random() * 2000; // 5-7 seconds
+        const startTime = Date.now();
+        const startRotation = this.currentRotation;
+
+        const animate = () => {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Easing function (ease out cubic)
+            const easeOut = 1 - Math.pow(1 - progress, 3);
+            
+            this.currentRotation = startRotation + totalRotation * easeOut;
+            this.draw();
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                this.isSpinning = false;
+                btn.disabled = false;
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                this.announceWinner(names[winnerIndex]);
+            }
+        };
+
+        requestAnimationFrame(animate);
+    },
+
+    announceWinner(name) {
+        // Show winner display
+        const display = document.getElementById('wheel-winner-display');
+        const nameEl = document.getElementById('wheel-winner-name');
+        display.classList.remove('hidden');
+        nameEl.textContent = name;
+
+        // Add to history
+        this.winners.unshift({
+            name: name,
+            time: new Date().toLocaleTimeString('vi-VN')
+        });
+        this.updateHistory();
+    },
+
+    updateHistory() {
+        const historyEl = document.getElementById('wheel-history');
+        if (!historyEl) return;
+
+        if (this.winners.length === 0) {
+            historyEl.innerHTML = '<p class="text-gray-400 text-center py-4">Chưa có người thắng. Quay vòng xoay để bắt đầu!</p>';
+            return;
+        }
+
+        historyEl.innerHTML = this.winners.map((w, i) => `
+            <div class="flex items-center justify-between p-3 rounded-lg ${i === 0 ? 'bg-yellow-100 dark:bg-yellow-900/30' : 'bg-gray-100 dark:bg-gray-700'}">
+                <div class="flex items-center gap-2">
+                    <span class="text-lg">${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '🎯'}</span>
+                    <span class="font-medium text-gray-800 dark:text-white">${w.name}</span>
+                </div>
+                <span class="text-sm text-gray-500 dark:text-gray-400">${w.time}</span>
+            </div>
+        `).join('');
+    },
+
+    clearHistory() {
+        this.winners = [];
+        this.updateHistory();
+        document.getElementById('wheel-winner-display')?.classList.add('hidden');
+    },
+
+    setupKeyboard() {
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                const wheelTab = document.getElementById('tab-wheel');
+                if (wheelTab && !wheelTab.classList.contains('hidden')) {
+                    e.preventDefault();
+                    this.spin();
+                }
+            }
+        });
+    }
+};
+
+// Initialize wheel when tab is shown
+document.addEventListener('DOMContentLoaded', () => {
+    // Draw wheel after a short delay to ensure canvas is ready
+    setTimeout(() => LuckyWheel.init(), 100);
+});
