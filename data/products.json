@@ -35,12 +35,20 @@
       "tags": [],
       "active": true,
       "featured": false,
-      "image": "assets/images/products/1767031334863-capcut.webp",
+      "packages": [
+        {
+          "name": "Capcut Pro 28D",
+          "price": 30000,
+          "originalPrice": 180000,
+          "description": ""
+        }
+      ],
       "id": 3,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0
+      "sold": 0,
+      "image": "assets/images/products/1767031334863-capcut.webp"
     },
     {
       "name": "ChatGPT Plus/ Go/ Teacher K12",
