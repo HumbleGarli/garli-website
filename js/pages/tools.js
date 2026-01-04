@@ -985,11 +985,14 @@ const LuckyWheel = {
         // Calculate target rotation (winner at top = -90 degrees = -PI/2)
         // We want the middle of the winning slice to be at the top (where pointer is)
         const targetSliceMiddle = winnerIndex * sliceAngle + sliceAngle / 2;
-        const targetRotation = -targetSliceMiddle - Math.PI / 2;
+        const targetAngle = -targetSliceMiddle - Math.PI / 2;
         
-        // Add extra spins (5-8 full rotations)
+        // Always add 5-8 full rotations for consistent spin speed
         const extraSpins = (5 + Math.random() * 3) * 2 * Math.PI;
-        const totalRotation = targetRotation + extraSpins - this.currentRotation;
+        
+        // Normalize current rotation to 0-2PI range, then add extra spins
+        const normalizedCurrent = this.currentRotation % (2 * Math.PI);
+        const totalRotation = extraSpins + (targetAngle - normalizedCurrent);
 
         // Animate
         const duration = 5000 + Math.random() * 2000; // 5-7 seconds
@@ -1009,6 +1012,8 @@ const LuckyWheel = {
             if (progress < 1) {
                 requestAnimationFrame(animate);
             } else {
+                // Normalize rotation to prevent huge numbers over time
+                this.currentRotation = this.currentRotation % (2 * Math.PI);
                 this.isSpinning = false;
                 btn.disabled = false;
                 btn.classList.remove('opacity-50', 'cursor-not-allowed');
