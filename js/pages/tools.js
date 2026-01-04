@@ -1557,3 +1557,206 @@ const ContrastChecker = {
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => ContrastChecker.init(), 100);
 });
+
+
+// ==========================================
+// IMAGE PALETTE EXTRACTOR
+// ==========================================
+const PaletteExtractor = {
+    colorCount: 6,
+    imageData: null,
+
+    init() {
+        // Setup paste event
+        document.addEventListener('paste', (e) => {
+            const paletteTab = document.getElementById('tab-palette');
+            if (paletteTab && !paletteTab.classList.contains('hidden')) {
+                const items = e.clipboardData?.items;
+                if (items) {
+                    for (let item of items) {
+                        if (item.type.startsWith('image/')) {
+                            const file = item.getAsFile();
+                            this.handleFile(file);
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+    },
+
+    updateCount(value) {
+        this.colorCount = parseInt(value);
+        document.getElementById('palette-count-label').textContent = value;
+        if (this.imageData) {
+            this.extractColors();
+        }
+    },
+
+    handleDragOver(e) {
+        e.preventDefault();
+        e.currentTarget.classList.add('border-[#0d544c]', 'bg-[#0d544c]/5');
+    },
+
+    handleDragLeave(e) {
+        e.preventDefault();
+        e.currentTarget.classList.remove('border-[#0d544c]', 'bg-[#0d544c]/5');
+    },
+
+    handleDrop(e) {
+        e.preventDefault();
+        e.currentTarget.classList.remove('border-[#0d544c]', 'bg-[#0d544c]/5');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            this.handleFile(file);
+        }
+    },
+
+    handleFile(file) {
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            this.imageData = e.target.result;
+            document.getElementById('palette-image').src = this.imageData;
+            document.getElementById('palette-image-container').classList.remove('hidden');
+            document.getElementById('palette-dropzone').classList.add('hidden');
+            this.extractColors();
+        };
+        reader.readAsDataURL(file);
+    },
+
+    extractColors() {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Scale down for performance
+            const maxSize = 100;
+            const scale = Math.min(maxSize / img.width, maxSize / img.height, 1);
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+            
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+            
+            // Collect colors
+            const colorMap = {};
+            for (let i = 0; i < pixels.length; i += 4) {
+                const r = Math.round(pixels[i] / 16) * 16;
+                const g = Math.round(pixels[i + 1] / 16) * 16;
+                const b = Math.round(pixels[i + 2] / 16) * 16;
+                const key = `${r},${g},${b}`;
+                colorMap[key] = (colorMap[key] || 0) + 1;
+            }
+            
+            // Sort by frequency and get top colors
+            const sortedColors = Object.entries(colorMap)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, this.colorCount * 3); // Get more to filter similar colors
+            
+            // Filter similar colors
+            const colors = [];
+            for (const [key] of sortedColors) {
+                const [r, g, b] = key.split(',').map(Number);
+                const hex = this.rgbToHex(r, g, b);
+                
+                // Check if too similar to existing colors
+                let tooSimilar = false;
+                for (const existing of colors) {
+                    if (this.colorDistance(hex, existing) < 50) {
+                        tooSimilar = true;
+                        break;
+                    }
+                }
+                
+                if (!tooSimilar) {
+                    colors.push(hex);
+                    if (colors.length >= this.colorCount) break;
+                }
+            }
+            
+            this.displayColors(colors);
+        };
+        img.src = this.imageData;
+    },
+
+    rgbToHex(r, g, b) {
+        return '#' + [r, g, b].map(x => {
+            const hex = Math.min(255, Math.max(0, x)).toString(16);
+            return hex.length === 1 ? '0' + hex : hex;
+        }).join('').toUpperCase();
+    },
+
+    colorDistance(hex1, hex2) {
+        const rgb1 = this.hexToRgb(hex1);
+        const rgb2 = this.hexToRgb(hex2);
+        return Math.sqrt(
+            Math.pow(rgb1.r - rgb2.r, 2) +
+            Math.pow(rgb1.g - rgb2.g, 2) +
+            Math.pow(rgb1.b - rgb2.b, 2)
+        );
+    },
+
+    hexToRgb(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : { r: 0, g: 0, b: 0 };
+    },
+
+    displayColors(colors) {
+        const resultsEl = document.getElementById('palette-results');
+        const barEl = document.getElementById('palette-bar');
+        const barContainer = document.getElementById('palette-bar-container');
+        
+        if (colors.length === 0) {
+            resultsEl.innerHTML = '<p class="text-gray-400 text-center py-8">Không thể trích xuất màu từ hình ảnh</p>';
+            barContainer.classList.add('hidden');
+            return;
+        }
+
+        resultsEl.innerHTML = colors.map(color => `
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer" onclick="PaletteExtractor.copyColor('${color}')">
+                <div class="w-12 h-12 rounded-lg shadow-inner flex-shrink-0" style="background-color: ${color};"></div>
+                <div class="flex-1">
+                    <div class="font-mono font-bold text-gray-800 dark:text-white">${color}</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">Click để copy</div>
+                </div>
+                <span class="text-gray-400">📋</span>
+            </div>
+        `).join('');
+
+        // Display color bar
+        barContainer.classList.remove('hidden');
+        barEl.innerHTML = colors.map(color => 
+            `<div class="flex-1 h-full" style="background-color: ${color};" title="${color}"></div>`
+        ).join('');
+    },
+
+    copyColor(color) {
+        navigator.clipboard.writeText(color).then(() => {
+            alert(`Đã copy: ${color}`);
+        });
+    },
+
+    clear() {
+        this.imageData = null;
+        document.getElementById('palette-image').src = '';
+        document.getElementById('palette-image-container').classList.add('hidden');
+        document.getElementById('palette-dropzone').classList.remove('hidden');
+        document.getElementById('palette-results').innerHTML = '<p class="text-gray-400 text-center py-8">Tải lên hình ảnh để trích xuất bảng màu</p>';
+        document.getElementById('palette-bar-container').classList.add('hidden');
+        document.getElementById('palette-input').value = '';
+    }
+};
+
+// Initialize palette extractor
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => PaletteExtractor.init(), 100);
+});

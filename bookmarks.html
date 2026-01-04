@@ -54,6 +54,9 @@
                     <button data-tab="contrast" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
                         🎨 Tương phản
                     </button>
+                    <button data-tab="palette" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
+                        🖼️ Bảng màu
+                    </button>
                 </div>
             </div>
 
@@ -1127,6 +1130,74 @@ Vũ Thị F</textarea>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Palette Extractor Tab -->
+                <div id="tab-palette" class="tab-panel hidden">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="grid lg:grid-cols-2 gap-6">
+                            <!-- Left Column - Upload -->
+                            <div class="space-y-6">
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-2 flex items-center gap-2">
+                                        <span>🖼️</span> Trích Xuất Bảng Màu Từ Hình Ảnh
+                                    </h2>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Trích xuất bảng màu từ hình ảnh để giúp bạn xác định và sử dụng các phối màu.</p>
+                                    
+                                    <!-- Number of Colors -->
+                                    <div class="mb-4">
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Số lượng màu: <span id="palette-count-label">6</span></label>
+                                        <input type="range" id="palette-count" min="3" max="12" value="6" oninput="PaletteExtractor.updateCount(this.value)"
+                                            class="w-full h-2 bg-gray-300 dark:bg-gray-500 rounded-lg appearance-none cursor-pointer accent-[#0d544c]">
+                                    </div>
+                                    
+                                    <!-- Drop Zone -->
+                                    <div id="palette-dropzone" 
+                                        class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center cursor-pointer hover:border-[#0d544c] transition-colors"
+                                        onclick="document.getElementById('palette-input').click()"
+                                        ondragover="PaletteExtractor.handleDragOver(event)"
+                                        ondragleave="PaletteExtractor.handleDragLeave(event)"
+                                        ondrop="PaletteExtractor.handleDrop(event)">
+                                        <div class="text-4xl mb-3">📤</div>
+                                        <p class="text-gray-600 dark:text-gray-400 font-medium">Kéo thả hình ảnh vào đây</p>
+                                        <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">hoặc dán từ clipboard (Ctrl+V)</p>
+                                        <input type="file" id="palette-input" accept="image/*" class="hidden" onchange="PaletteExtractor.handleFile(this.files[0])">
+                                    </div>
+                                </div>
+
+                                <!-- Image Preview -->
+                                <div id="palette-image-container" class="hidden glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        <span>🖼️</span> Hình ảnh
+                                    </h2>
+                                    <img id="palette-image" src="" alt="Uploaded image" class="w-full rounded-xl">
+                                    <button onclick="PaletteExtractor.clear()" class="w-full mt-4 px-4 py-2 border border-red-300 text-red-500 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-sm">
+                                        🗑️ Xóa hình ảnh
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Right Column - Results -->
+                            <div class="space-y-6">
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        <span>🎨</span> Bảng màu trích xuất
+                                    </h2>
+                                    <div id="palette-results" class="space-y-3">
+                                        <p class="text-gray-400 text-center py-8">Tải lên hình ảnh để trích xuất bảng màu</p>
+                                    </div>
+                                </div>
+
+                                <!-- Color Preview Bar -->
+                                <div id="palette-bar-container" class="hidden glass-card rounded-2xl p-6">
+                                    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                                        <span>📊</span> Xem trước bảng màu
+                                    </h2>
+                                    <div id="palette-bar" class="h-16 rounded-xl overflow-hidden flex"></div>
                                 </div>
                             </div>
                         </div>
