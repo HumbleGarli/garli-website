@@ -28,51 +28,121 @@
                 <p class="text-gray-600 dark:text-gray-400">Các công cụ hữu ích cho công việc hàng ngày</p>
             </div>
 
-            <!-- Tab Navigation -->
-            <div class="flex justify-center mb-8">
-                <div id="tools-tab-container" class="inline-flex bg-gray-200 dark:bg-gray-700 rounded-full p-1 relative flex-wrap justify-center">
-                    <div id="tools-tab-indicator" class="absolute top-1 bottom-1 bg-[#0d544c] rounded-full transition-all duration-300 ease-out hidden md:block"></div>
-                    <button data-tab="2fa" class="tools-tab active relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-white transition-colors text-sm whitespace-nowrap">
-                        🔐 2FA
-                    </button>
-                    <button data-tab="vietqr" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
-                        📱 VietQR
-                    </button>
-                    <button data-tab="qrgen" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
-                        📷 Tạo QR
-                    </button>
-                    <button data-tab="emailsig" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
-                        ✉️ Chữ ký
-                    </button>
-                    <button data-tab="wheel" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
-                        🎡 Vòng quay
-                    </button>
-                    <button data-tab="bmi" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
-                        ⚖️ Tính BMI
-                    </button>
-                    <button data-tab="sleep" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
-                        😴 Giấc ngủ
-                    </button>
-                    <button data-tab="contrast" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
-                        🎨 Tương phản
-                    </button>
-                    <button data-tab="palette" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
-                        🖼️ Bảng màu
-                    </button>
-                    <button data-tab="datecalc" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
-                        📅 Tính ngày
-                    </button>
-                    <button data-tab="qrreader" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
-                        📸 Đọc QR
-                    </button>
-                    <button data-tab="percent" class="tools-tab relative z-10 px-3 md:px-4 py-2 rounded-full font-medium text-gray-600 dark:text-gray-300 transition-colors text-sm whitespace-nowrap">
-                        🔢 Phần trăm
-                    </button>
+            <!-- Tools Grid (Home View) -->
+            <div id="tools-grid-view">
+                <!-- QR & Mã Code -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                        <span class="w-8 h-8 bg-[#0d544c] rounded-lg flex items-center justify-center text-white text-sm">📱</span>
+                        QR & Mã Code
+                    </h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div onclick="ToolsPage.openTool('2fa')" class="tool-card glass-card rounded-2xl p-5 cursor-pointer hover:scale-[1.02] hover:shadow-lg transition-all duration-300 group">
+                            <div class="text-3xl mb-3 group-hover:scale-110 transition-transform">🔐</div>
+                            <h3 class="font-bold text-gray-800 dark:text-white mb-1">2FA Code</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Lấy mã xác thực 2 bước</p>
+                        </div>
+                        <div onclick="ToolsPage.openTool('vietqr')" class="tool-card glass-card rounded-2xl p-5 cursor-pointer hover:scale-[1.02] hover:shadow-lg transition-all duration-300 group">
+                            <div class="text-3xl mb-3 group-hover:scale-110 transition-transform">💳</div>
+                            <h3 class="font-bold text-gray-800 dark:text-white mb-1">VietQR</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Tạo mã QR thanh toán</p>
+                        </div>
+                        <div onclick="ToolsPage.openTool('qrgen')" class="tool-card glass-card rounded-2xl p-5 cursor-pointer hover:scale-[1.02] hover:shadow-lg transition-all duration-300 group">
+                            <div class="text-3xl mb-3 group-hover:scale-110 transition-transform">📷</div>
+                            <h3 class="font-bold text-gray-800 dark:text-white mb-1">Tạo QR</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Tạo mã QR đa năng</p>
+                        </div>
+                        <div onclick="ToolsPage.openTool('qrreader')" class="tool-card glass-card rounded-2xl p-5 cursor-pointer hover:scale-[1.02] hover:shadow-lg transition-all duration-300 group">
+                            <div class="text-3xl mb-3 group-hover:scale-110 transition-transform">📸</div>
+                            <h3 class="font-bold text-gray-800 dark:text-white mb-1">Đọc QR</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Quét mã QR từ camera/ảnh</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Máy Tính -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                        <span class="w-8 h-8 bg-[#0d544c] rounded-lg flex items-center justify-center text-white text-sm">🧮</span>
+                        Máy Tính
+                    </h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div onclick="ToolsPage.openTool('bmi')" class="tool-card glass-card rounded-2xl p-5 cursor-pointer hover:scale-[1.02] hover:shadow-lg transition-all duration-300 group">
+                            <div class="text-3xl mb-3 group-hover:scale-110 transition-transform">⚖️</div>
+                            <h3 class="font-bold text-gray-800 dark:text-white mb-1">Tính BMI</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Chỉ số khối cơ thể</p>
+                        </div>
+                        <div onclick="ToolsPage.openTool('sleep')" class="tool-card glass-card rounded-2xl p-5 cursor-pointer hover:scale-[1.02] hover:shadow-lg transition-all duration-300 group">
+                            <div class="text-3xl mb-3 group-hover:scale-110 transition-transform">😴</div>
+                            <h3 class="font-bold text-gray-800 dark:text-white mb-1">Giấc Ngủ</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Tính chu kỳ giấc ngủ</p>
+                        </div>
+                        <div onclick="ToolsPage.openTool('datecalc')" class="tool-card glass-card rounded-2xl p-5 cursor-pointer hover:scale-[1.02] hover:shadow-lg transition-all duration-300 group">
+                            <div class="text-3xl mb-3 group-hover:scale-110 transition-transform">📅</div>
+                            <h3 class="font-bold text-gray-800 dark:text-white mb-1">Tính Ngày</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Khoảng cách, tuổi, đếm ngược</p>
+                        </div>
+                        <div onclick="ToolsPage.openTool('percent')" class="tool-card glass-card rounded-2xl p-5 cursor-pointer hover:scale-[1.02] hover:shadow-lg transition-all duration-300 group">
+                            <div class="text-3xl mb-3 group-hover:scale-110 transition-transform">🔢</div>
+                            <h3 class="font-bold text-gray-800 dark:text-white mb-1">Phần Trăm</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Máy tính phần trăm</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thiết Kế -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                        <span class="w-8 h-8 bg-[#0d544c] rounded-lg flex items-center justify-center text-white text-sm">🎨</span>
+                        Thiết Kế
+                    </h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div onclick="ToolsPage.openTool('contrast')" class="tool-card glass-card rounded-2xl p-5 cursor-pointer hover:scale-[1.02] hover:shadow-lg transition-all duration-300 group">
+                            <div class="text-3xl mb-3 group-hover:scale-110 transition-transform">🎨</div>
+                            <h3 class="font-bold text-gray-800 dark:text-white mb-1">Tương Phản</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Kiểm tra độ tương phản WCAG</p>
+                        </div>
+                        <div onclick="ToolsPage.openTool('palette')" class="tool-card glass-card rounded-2xl p-5 cursor-pointer hover:scale-[1.02] hover:shadow-lg transition-all duration-300 group">
+                            <div class="text-3xl mb-3 group-hover:scale-110 transition-transform">🖼️</div>
+                            <h3 class="font-bold text-gray-800 dark:text-white mb-1">Bảng Màu</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Trích xuất màu từ ảnh</p>
+                        </div>
+                        <div onclick="ToolsPage.openTool('emailsig')" class="tool-card glass-card rounded-2xl p-5 cursor-pointer hover:scale-[1.02] hover:shadow-lg transition-all duration-300 group">
+                            <div class="text-3xl mb-3 group-hover:scale-110 transition-transform">✉️</div>
+                            <h3 class="font-bold text-gray-800 dark:text-white mb-1">Chữ Ký Email</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Tạo chữ ký email chuyên nghiệp</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Giải Trí -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                        <span class="w-8 h-8 bg-[#0d544c] rounded-lg flex items-center justify-center text-white text-sm">🎮</span>
+                        Giải Trí
+                    </h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div onclick="ToolsPage.openTool('wheel')" class="tool-card glass-card rounded-2xl p-5 cursor-pointer hover:scale-[1.02] hover:shadow-lg transition-all duration-300 group">
+                            <div class="text-3xl mb-3 group-hover:scale-110 transition-transform">🎡</div>
+                            <h3 class="font-bold text-gray-800 dark:text-white mb-1">Vòng Quay</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Vòng quay may mắn</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Tab Contents -->
-            <div id="tools-content">
+            <!-- Tool Detail View (Hidden by default) -->
+            <div id="tools-detail-view" class="hidden">
+                <!-- Back Button -->
+                <button onclick="ToolsPage.backToGrid()" class="mb-6 flex items-center gap-2 text-[#0d544c] dark:text-[#4ade80] hover:underline font-medium">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                    Quay lại danh sách
+                </button>
+
+                <!-- Tab Contents -->
+                <div id="tools-content">
                 <!-- 2FA Tab -->
                 <div id="tab-2fa" class="tab-panel">
                     <div class="max-w-2xl mx-auto">
@@ -1620,6 +1690,7 @@ Vũ Thị F</textarea>
                             </div>
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
         </div>

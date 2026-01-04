@@ -9,9 +9,63 @@ const ToolsPage = {
     bankInitialized: false,
 
     init() {
-        this.setupTabs();
         this.loadBanks();
         this.setupClickOutside();
+        this.checkUrlHash();
+    },
+
+    // ==========================================
+    // GRID VIEW NAVIGATION
+    // ==========================================
+    openTool(toolId) {
+        const gridView = document.getElementById('tools-grid-view');
+        const detailView = document.getElementById('tools-detail-view');
+        
+        // Hide grid, show detail
+        gridView.classList.add('hidden');
+        detailView.classList.remove('hidden');
+        
+        // Hide all panels, show selected
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+        const panel = document.getElementById(`tab-${toolId}`);
+        if (panel) {
+            panel.classList.remove('hidden');
+        }
+        
+        this.currentTab = toolId;
+        
+        // Update URL hash
+        window.location.hash = toolId;
+        
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+
+    backToGrid() {
+        const gridView = document.getElementById('tools-grid-view');
+        const detailView = document.getElementById('tools-detail-view');
+        
+        // Show grid, hide detail
+        gridView.classList.remove('hidden');
+        detailView.classList.add('hidden');
+        
+        // Clear URL hash
+        history.pushState('', document.title, window.location.pathname);
+        
+        // Stop camera if QR reader was active
+        if (typeof QRReader !== 'undefined') {
+            QRReader.stopCamera();
+        }
+    },
+
+    checkUrlHash() {
+        const hash = window.location.hash.slice(1);
+        if (hash) {
+            const panel = document.getElementById(`tab-${hash}`);
+            if (panel) {
+                this.openTool(hash);
+            }
+        }
     },
 
     // ==========================================
@@ -127,56 +181,6 @@ const ToolsPage = {
             if (dropdown && !dropdown.contains(e.target)) {
                 document.getElementById('bank-list')?.classList.add('hidden');
             }
-        });
-    },
-
-    // ==========================================
-    // TAB NAVIGATION
-    // ==========================================
-    setupTabs() {
-        const tabs = document.querySelectorAll('.tools-tab');
-        const indicator = document.getElementById('tools-tab-indicator');
-        const container = document.getElementById('tools-tab-container');
-
-        // Function to move indicator to a tab
-        const moveIndicator = (tab) => {
-            const containerRect = container.getBoundingClientRect();
-            const tabRect = tab.getBoundingClientRect();
-            indicator.style.width = `${tabRect.width}px`;
-            indicator.style.left = `${tabRect.left - containerRect.left}px`;
-        };
-
-        // Initialize indicator position
-        setTimeout(() => {
-            const activeTab = document.querySelector('.tools-tab.active');
-            if (activeTab) moveIndicator(activeTab);
-        }, 50);
-
-        // Update on window resize
-        window.addEventListener('resize', () => {
-            const activeTab = document.querySelector('.tools-tab.active');
-            if (activeTab) moveIndicator(activeTab);
-        });
-
-        tabs.forEach((tab) => {
-            tab.addEventListener('click', () => {
-                // Update active state
-                tabs.forEach(t => {
-                    t.classList.remove('active', 'text-white');
-                    t.classList.add('text-gray-600', 'dark:text-gray-300');
-                });
-                tab.classList.add('active', 'text-white');
-                tab.classList.remove('text-gray-600', 'dark:text-gray-300');
-
-                // Move indicator
-                moveIndicator(tab);
-
-                // Show panel
-                const tabName = tab.dataset.tab;
-                this.currentTab = tabName;
-                document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
-                document.getElementById(`tab-${tabName}`).classList.remove('hidden');
-            });
         });
     },
 
