@@ -441,6 +441,7 @@ const QRGenerator = {
         
         // Create container with margin
         const container = document.createElement('div');
+        container.id = 'qrgen-container';
         container.style.padding = `${margin * 4}px`;
         container.style.backgroundColor = bgColor;
         container.style.display = 'inline-block';
@@ -459,17 +460,17 @@ const QRGenerator = {
 
         // Add logo if exists
         if (this.logoData) {
-            setTimeout(() => this.addLogoToQR(), 200);
+            setTimeout(() => this.addLogoToQR(), 300);
         }
     },
 
     addLogoToQR() {
-        const canvas = document.querySelector('#qrgen-preview canvas');
+        const container = document.getElementById('qrgen-container');
+        const canvas = container?.querySelector('canvas');
         if (!canvas || !this.logoData) return;
 
         const ctx = canvas.getContext('2d');
         const img = new Image();
-        img.crossOrigin = 'anonymous';
         img.onload = () => {
             const logoSize = canvas.width * 0.22;
             const x = (canvas.width - logoSize) / 2;
@@ -479,7 +480,12 @@ const QRGenerator = {
             const padding = 6;
             ctx.fillStyle = '#FFFFFF';
             ctx.beginPath();
-            ctx.roundRect(x - padding, y - padding, logoSize + padding * 2, logoSize + padding * 2, 8);
+            if (ctx.roundRect) {
+                ctx.roundRect(x - padding, y - padding, logoSize + padding * 2, logoSize + padding * 2, 8);
+            } else {
+                // Fallback for browsers without roundRect
+                ctx.rect(x - padding, y - padding, logoSize + padding * 2, logoSize + padding * 2);
+            }
             ctx.fill();
             
             // Draw logo
@@ -543,7 +549,8 @@ const QRGenerator = {
     },
 
     download(format) {
-        const canvas = document.querySelector('#qrgen-preview canvas');
+        const container = document.getElementById('qrgen-container');
+        const canvas = container?.querySelector('canvas');
         if (!canvas) {
             alert('Vui lòng tạo mã QR trước');
             return;
@@ -570,7 +577,8 @@ const QRGenerator = {
     },
 
     async copyToClipboard() {
-        const canvas = document.querySelector('#qrgen-preview canvas');
+        const container = document.getElementById('qrgen-container');
+        const canvas = container?.querySelector('canvas');
         if (!canvas) {
             alert('Vui lòng tạo mã QR trước');
             return;
