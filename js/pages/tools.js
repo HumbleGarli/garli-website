@@ -695,24 +695,41 @@ const EmailSignature = {
     generateHTML(data) {
         const socialIcons = this.getSocialLinks(data);
         
-        // Format: Logo | Name, Title at Company, w: website e: email, social icons
-        let contactLine = [];
-        if (data.website) contactLine.push(`w: <a href="${data.website}" style="color: ${data.primaryColor}; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a>`);
-        if (data.email) contactLine.push(`e: <a href="mailto:${data.email}" style="color: ${data.primaryColor}; text-decoration: none;">${data.email}</a>`);
-        if (data.phone) contactLine.push(`p: ${data.phone}`);
-        if (data.mobile) contactLine.push(`m: ${data.mobile}`);
+        // Build contact items
+        let contactItems = [];
+        if (data.website) contactItems.push(`<span style="white-space: nowrap;">🌐 <a href="${data.website}" style="color: ${data.primaryColor}; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a></span>`);
+        if (data.email) contactItems.push(`<span style="white-space: nowrap;">✉️ <a href="mailto:${data.email}" style="color: ${data.primaryColor}; text-decoration: none;">${data.email}</a></span>`);
+        if (data.phone) contactItems.push(`<span style="white-space: nowrap;">📞 ${data.phone}</span>`);
+        if (data.mobile) contactItems.push(`<span style="white-space: nowrap;">📱 ${data.mobile}</span>`);
         
-        return `<table cellpadding="0" cellspacing="0" border="0" style="font-family: ${data.font}; font-size: 14px; color: ${data.textColor}; line-height: 1.4;">
+        return `<table cellpadding="0" cellspacing="0" border="0" style="font-family: ${data.font}; font-size: 14px; color: ${data.textColor}; line-height: 1.5;">
   <tr>
-    ${data.logo ? `<td style="vertical-align: middle; padding-right: 12px;">
-      <img src="${data.logo}" alt="Logo" style="width: 70px; height: 70px; border-radius: 6px; object-fit: cover; display: block;">
+    ${data.logo ? `<td style="vertical-align: top; padding-right: 15px;">
+      <img src="${data.logo}" alt="Logo" style="width: 80px; height: 80px; border-radius: 8px; object-fit: cover; display: block; border: 2px solid ${data.primaryColor};">
     </td>
-    <td style="border-left: 2px solid ${data.primaryColor}; padding-left: 12px; vertical-align: middle;">` : '<td style="vertical-align: middle;">'}
-      <div style="font-size: 16px; font-weight: bold; color: ${data.primaryColor}; margin-bottom: 2px;">${data.name}</div>
-      ${data.title || data.company ? `<div style="font-size: 13px; color: ${data.textColor}; margin-bottom: 4px;">${data.title}${data.title && data.company ? ' at ' : ''}${data.company ? `<strong>${data.company}</strong>` : ''}</div>` : ''}
-      ${contactLine.length ? `<div style="font-size: 12px; color: ${data.textColor}; margin-bottom: 4px;">${contactLine.join('  ')}</div>` : ''}
-      ${data.address ? `<div style="font-size: 12px; color: ${data.textColor}; margin-bottom: 4px;">📍 ${data.address}</div>` : ''}
-      ${socialIcons ? `<div style="margin-top: 6px;">${socialIcons}</div>` : ''}
+    <td style="border-left: 3px solid ${data.primaryColor}; padding-left: 15px; vertical-align: top;">` : '<td style="vertical-align: top;">'}
+      <table cellpadding="0" cellspacing="0" border="0" style="font-family: ${data.font};">
+        <tr>
+          <td style="font-size: 20px; font-weight: 700; color: ${data.primaryColor}; padding-bottom: 4px; letter-spacing: -0.5px;">${data.name}</td>
+        </tr>
+        ${data.title || data.company ? `<tr>
+          <td style="font-size: 14px; color: ${data.textColor}; padding-bottom: 8px;">
+            ${data.title ? `<span style="font-weight: 500;">${data.title}</span>` : ''}${data.title && data.company ? ' · ' : ''}${data.company ? `<span style="font-weight: 600; color: ${data.primaryColor};">${data.company}</span>` : ''}
+          </td>
+        </tr>` : ''}
+        ${contactItems.length ? `<tr>
+          <td style="font-size: 13px; color: ${data.textColor}; padding-bottom: 6px;">
+            ${contactItems.slice(0, 2).join(' &nbsp;│&nbsp; ')}
+          </td>
+        </tr>` : ''}
+        ${contactItems.length > 2 ? `<tr>
+          <td style="font-size: 13px; color: ${data.textColor}; padding-bottom: 6px;">
+            ${contactItems.slice(2).join(' &nbsp;│&nbsp; ')}
+          </td>
+        </tr>` : ''}
+        ${data.address ? `<tr><td style="font-size: 13px; color: ${data.textColor}; padding-bottom: 8px;">📍 ${data.address}</td></tr>` : ''}
+        ${socialIcons ? `<tr><td style="padding-top: 4px;">${socialIcons}</td></tr>` : ''}
+      </table>
     </td>
   </tr>
 </table>`;
@@ -720,22 +737,34 @@ const EmailSignature = {
 
     getSocialLinks(data) {
         const links = [];
-        const iconSize = '20';
+        const iconSize = '22';
+        const iconStyle = `width: ${iconSize}px; height: ${iconSize}px; vertical-align: middle; border-radius: 4px;`;
         
+        // Using better quality icons from simpleicons.org CDN
         if (data.facebook) {
-            links.push(`<a href="${data.facebook}" style="text-decoration: none; margin-right: 6px;"><img src="https://cdn-icons-png.flaticon.com/128/5968/5968764.png" alt="Facebook" style="width: ${iconSize}px; height: ${iconSize}px; vertical-align: middle;"></a>`);
+            links.push(`<a href="${data.facebook}" style="text-decoration: none; display: inline-block; margin-right: 8px;" title="Facebook">
+              <img src="https://cdn.simpleicons.org/facebook/1877F2" alt="Facebook" style="${iconStyle}">
+            </a>`);
         }
         if (data.linkedin) {
-            links.push(`<a href="${data.linkedin}" style="text-decoration: none; margin-right: 6px;"><img src="https://cdn-icons-png.flaticon.com/128/3536/3536505.png" alt="LinkedIn" style="width: ${iconSize}px; height: ${iconSize}px; vertical-align: middle;"></a>`);
+            links.push(`<a href="${data.linkedin}" style="text-decoration: none; display: inline-block; margin-right: 8px;" title="LinkedIn">
+              <img src="https://cdn.simpleicons.org/linkedin/0A66C2" alt="LinkedIn" style="${iconStyle}">
+            </a>`);
         }
         if (data.twitter) {
-            links.push(`<a href="${data.twitter}" style="text-decoration: none; margin-right: 6px;"><img src="https://cdn-icons-png.flaticon.com/128/5969/5969020.png" alt="Twitter" style="width: ${iconSize}px; height: ${iconSize}px; vertical-align: middle;"></a>`);
+            links.push(`<a href="${data.twitter}" style="text-decoration: none; display: inline-block; margin-right: 8px;" title="X/Twitter">
+              <img src="https://cdn.simpleicons.org/x/000000" alt="X" style="${iconStyle}">
+            </a>`);
         }
         if (data.instagram) {
-            links.push(`<a href="${data.instagram}" style="text-decoration: none; margin-right: 6px;"><img src="https://cdn-icons-png.flaticon.com/128/2111/2111463.png" alt="Instagram" style="width: ${iconSize}px; height: ${iconSize}px; vertical-align: middle;"></a>`);
+            links.push(`<a href="${data.instagram}" style="text-decoration: none; display: inline-block; margin-right: 8px;" title="Instagram">
+              <img src="https://cdn.simpleicons.org/instagram/E4405F" alt="Instagram" style="${iconStyle}">
+            </a>`);
         }
         if (data.github) {
-            links.push(`<a href="${data.github}" style="text-decoration: none; margin-right: 6px;"><img src="https://cdn-icons-png.flaticon.com/128/733/733553.png" alt="GitHub" style="width: ${iconSize}px; height: ${iconSize}px; vertical-align: middle;"></a>`);
+            links.push(`<a href="${data.github}" style="text-decoration: none; display: inline-block; margin-right: 8px;" title="GitHub">
+              <img src="https://cdn.simpleicons.org/github/181717" alt="GitHub" style="${iconStyle}">
+            </a>`);
         }
         
         return links.join('');
