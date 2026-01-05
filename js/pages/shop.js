@@ -49,7 +49,7 @@ const ShopPage = {
                 <div class="flex flex-col sm:flex-row gap-3">
                     <input type="text" id="shop-search" placeholder="Tìm sản phẩm..." 
                         class="flex-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0d544c]">
-                    <select id="shop-sort" class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0d544c]">
+                    <select id="shop-sort" class="px-4 py-2 pr-8 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0d544c]">
                         <option value="newest">Mới nhất</option>
                         <option value="price-asc">Giá tăng dần</option>
                         <option value="price-desc">Giá giảm dần</option>
