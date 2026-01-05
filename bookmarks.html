@@ -1278,8 +1278,14 @@ Vũ Thị F</textarea>
                 <!-- Image Palette Extractor Tab -->
                 <div id="tab-palette" class="tab-panel hidden">
                     <div class="max-w-6xl mx-auto space-y-6">
+                        <!-- Title -->
+                        <div class="mb-2">
+                            <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Công cụ trích xuất mã màu từ hình</h2>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Tải lên hình ảnh để trích xuất bảng màu chủ đạo.</p>
+                        </div>
+
                         <!-- Privacy Notice -->
-                        <div class="p-3 bg-[#0d544c]/10 dark:bg-[#0d544c]/20 rounded-xl flex items-start gap-2">
+                        <div class="p-3 bg-[#0d544c]/10 dark:bg-[#0d544c]/20 rounded-xl flex items-center gap-2">
                             <span class="text-[#0d544c] dark:text-[#4ade80]">🔒</span>
                             <p class="text-xs text-[#0d544c] dark:text-[#4ade80]">Tất cả các tính năng được thực hiện hoàn toàn trong trình duyệt của bạn. Dữ liệu của bạn không bao giờ được gửi đến máy chủ và không được lưu trữ.</p>
                         </div>
@@ -1296,7 +1302,7 @@ Vũ Thị F</textarea>
                                     <div class="flex items-center gap-2">
                                         <span class="text-sm text-gray-600 dark:text-gray-400">Số Lượng Màu:</span>
                                         <select id="palette-count" onchange="PaletteExtractor.updateCount(this.value)"
-                                            class="px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
+                                            class="px-3 py-1 pr-8 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm select-arrow">
                                             <option value="3">3</option>
                                             <option value="4">4</option>
                                             <option value="5" selected>5</option>
