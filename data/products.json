@@ -63,12 +63,12 @@
           "description": "Cấp sẵn"
         }
       ],
+      "image": "assets/images/products/1767599047694-capcut.webp",
       "id": 3,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0,
-      "image": "assets/images/products/1767031334863-capcut.webp"
+      "sold": 0
     },
     {
       "name": "ChatGPT Plus/ Go/ Teacher K12",
