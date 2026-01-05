@@ -2632,3 +2632,150 @@ const PercentCalc = {
         return rounded.toLocaleString('vi-VN', { maximumFractionDigits: 4 });
     }
 };
+
+// ==========================================
+// TEXT DIFF - So sánh văn bản (LCS Algorithm)
+// ==========================================
+const TextDiff = {
+    getMode() {
+        return document.querySelector('input[name="diffMode"]:checked')?.value || 'line';
+    },
+
+    // LCS (Longest Common Subsequence) Algorithm
+    lcs(a, b) {
+        const m = a.length;
+        const n = b.length;
+        const dp = Array(m + 1).fill(null).map(() => Array(n + 1).fill(0));
+
+        for (let i = 1; i <= m; i++) {
+            for (let j = 1; j <= n; j++) {
+                if (a[i - 1] === b[j - 1]) {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+        return dp;
+    },
+
+    // Backtrack to find diff
+    backtrack(dp, a, b, i, j) {
+        const result = [];
+        while (i > 0 || j > 0) {
+            if (i > 0 && j > 0 && a[i - 1] === b[j - 1]) {
+                result.unshift({ type: 'unchanged', value: a[i - 1] });
+                i--; j--;
+            } else if (j > 0 && (i === 0 || dp[i][j - 1] >= dp[i - 1][j])) {
+                result.unshift({ type: 'added', value: b[j - 1] });
+                j--;
+            } else if (i > 0) {
+                result.unshift({ type: 'removed', value: a[i - 1] });
+                i--;
+            }
+        }
+        return result;
+    },
+
+    // Split text based on mode
+    splitText(text, mode) {
+        switch (mode) {
+            case 'char': return text.split('');
+            case 'word': return text.split(/(\s+)/).filter(s => s);
+            case 'line': default: return text.split('\n');
+        }
+    },
+
+    // Main diff function
+    diff(oldText, newText, mode) {
+        const oldParts = this.splitText(oldText, mode);
+        const newParts = this.splitText(newText, mode);
+        const dp = this.lcs(oldParts, newParts);
+        return this.backtrack(dp, oldParts, newParts, oldParts.length, newParts.length);
+    },
+
+    compare() {
+        const oldText = document.getElementById('diff-old-text').value;
+        const newText = document.getElementById('diff-new-text').value;
+        const mode = this.getMode();
+
+        if (!oldText && !newText) {
+            alert('Vui lòng nhập văn bản để so sánh');
+            return;
+        }
+
+        const diffs = this.diff(oldText, newText, mode);
+        this.renderResults(diffs, mode);
+    },
+
+    renderResults(diffs, mode) {
+        const resultsEl = document.getElementById('diff-results');
+        const outputEl = document.getElementById('diff-output');
+        
+        let added = 0, removed = 0, unchanged = 0;
+        let html = '';
+
+        diffs.forEach(d => {
+            const escapedValue = this.escapeHtml(d.value);
+            const displayValue = mode === 'line' ? escapedValue + '\n' : escapedValue;
+
+            switch (d.type) {
+                case 'added':
+                    html += `<span class="bg-green-500/30 text-green-600 dark:text-green-400">${displayValue}</span>`;
+                    added++;
+                    break;
+                case 'removed':
+                    html += `<span class="bg-red-500/30 text-red-600 dark:text-red-400 line-through">${displayValue}</span>`;
+                    removed++;
+                    break;
+                default:
+                    html += `<span class="text-gray-700 dark:text-gray-300">${displayValue}</span>`;
+                    unchanged++;
+            }
+        });
+
+        document.getElementById('diff-stat-added').textContent = added;
+        document.getElementById('diff-stat-removed').textContent = removed;
+        document.getElementById('diff-stat-modified').textContent = Math.min(added, removed);
+        document.getElementById('diff-stat-unchanged').textContent = unchanged;
+
+        outputEl.innerHTML = html || '<span class="text-gray-500">Không có sự khác biệt</span>';
+        resultsEl.classList.remove('hidden');
+        resultsEl.scrollIntoView({ behavior: 'smooth' });
+    },
+
+    merge() {
+        const oldText = document.getElementById('diff-old-text').value;
+        const newText = document.getElementById('diff-new-text').value;
+        const mode = this.getMode();
+
+        if (!oldText && !newText) {
+            alert('Vui lòng nhập văn bản để hợp nhất');
+            return;
+        }
+
+        const diffs = this.diff(oldText, newText, mode);
+        const separator = mode === 'line' ? '\n' : '';
+        
+        // Merge: keep unchanged + added (remove the removed parts)
+        const merged = diffs
+            .filter(d => d.type !== 'removed')
+            .map(d => d.value)
+            .join(separator);
+
+        document.getElementById('diff-new-text').value = merged;
+        alert('Đã hợp nhất! Kết quả được đặt vào ô "Văn bản mới"');
+    },
+
+    clear() {
+        document.getElementById('diff-old-text').value = '';
+        document.getElementById('diff-new-text').value = '';
+        document.getElementById('diff-results').classList.add('hidden');
+    },
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+};
