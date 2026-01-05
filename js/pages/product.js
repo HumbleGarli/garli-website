@@ -156,7 +156,7 @@ const ProductPage = {
 
                         <!-- Actions -->
                         <div class="mt-auto pt-6 space-y-3">
-                            <a href="${this.config?.socialLinks?.zalo || 'https://zalo.me/0868074935'}" target="_blank" rel="noopener noreferrer"
+                            <a href="${this.config?.socialLinks?.zalo || '#'}" target="_blank" rel="noopener noreferrer"
                                 class="flex items-center justify-center gap-2 w-full py-3 bg-[#0d544c] text-white rounded-xl font-semibold hover:bg-[#0a443e] transition-colors">
                                 <svg class="w-6 h-6" viewBox="0 0 48 48" fill="currentColor">
                                     <path d="M12.5 42C8.08 42 4.5 38.42 4.5 34V14C4.5 9.58 8.08 6 12.5 6H35.5C39.92 6 43.5 9.58 43.5 14V34C43.5 38.42 39.92 42 35.5 42H12.5ZM15.5 18C14.67 18 14 18.67 14 19.5C14 20.33 14.67 21 15.5 21H20.5V31.5C20.5 32.33 21.17 33 22 33C22.83 33 23.5 32.33 23.5 31.5V21H28.5C29.33 21 30 20.33 30 19.5C30 18.67 29.33 18 28.5 18H15.5ZM32 18C31.17 18 30.5 18.67 30.5 19.5V31.5C30.5 32.33 31.17 33 32 33C32.83 33 33.5 32.33 33.5 31.5V19.5C33.5 18.67 32.83 18 32 18Z"/>
@@ -179,9 +179,11 @@ const ProductPage = {
                                 </a>
                                 ` : ''}
                             </div>
+                            ${this.config?.phone ? `
                             <p class="text-center text-sm text-gray-500 dark:text-gray-400">
-                                📞 Hotline: ${this.config?.phone || '+84 868 074 935'}
+                                📞 Hotline: ${this.config.phone}
                             </p>
+                            ` : ''}
                         </div>
                     </div>
                 </div>

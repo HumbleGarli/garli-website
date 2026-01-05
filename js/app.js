@@ -257,7 +257,6 @@ const App = {
     },
 
     handleSearch(query) {
-        console.log('[App] Search:', query);
         // TODO: Implement search logic
     },
 
@@ -362,8 +361,6 @@ const App = {
                 e.stopPropagation();
                 closePopup();
             });
-            
-            console.log('[App] Donate widget loaded');
         } catch (e) {
             console.error('[App] Error loading donate widget:', e);
         }
@@ -461,8 +458,6 @@ const App = {
         
         // 5. Load donate widget
         await this.loadDonateWidget();
-
-        console.log('[App] Initialized');
     }
 };
 
