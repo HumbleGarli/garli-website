@@ -2779,3 +2779,156 @@ const TextDiff = {
         return div.innerHTML;
     }
 };
+
+
+// ==========================================
+// FANCY TEXT - Chữ đặc biệt Unicode
+// ==========================================
+const FancyText = {
+    mode: 'encode',
+    
+    // Unicode character maps
+    styles: {
+        'Bold': { name: '𝐁𝐨𝐥𝐝', map: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', to: '𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟕𝟖𝟗' },
+        'Italic': { name: '𝐼𝑡𝑎𝑙𝑖𝑐', map: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', to: '𝐴𝐵𝐶𝐷𝐸𝐹𝐺𝐻𝐼𝐽𝐾𝐿𝑀𝑁𝑂𝑃𝑄𝑅𝑆𝑇𝑈𝑉𝑊𝑋𝑌𝑍𝑎𝑏𝑐𝑑𝑒𝑓𝑔ℎ𝑖𝑗𝑘𝑙𝑚𝑛𝑜𝑝𝑞𝑟𝑠𝑡𝑢𝑣𝑤𝑥𝑦𝑧' },
+        'Bold Italic': { name: '𝑩𝒐𝒍𝒅 𝑰𝒕𝒂𝒍𝒊𝒄', map: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', to: '𝑨𝑩𝑪𝑫𝑬𝑭𝑮𝑯𝑰𝑱𝑲𝑳𝑴𝑵𝑶𝑷𝑸𝑹𝑺𝑻𝑼𝑽𝑾𝑿𝒀𝒁𝒂𝒃𝒄𝒅𝒆𝒇𝒈𝒉𝒊𝒋𝒌𝒍𝒎𝒏𝒐𝒑𝒒𝒓𝒔𝒕𝒖𝒗𝒘𝒙𝒚𝒛' },
+        'Script': { name: '𝒮𝒸𝓇𝒾𝓅𝓉', map: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', to: '𝒜ℬ𝒞𝒟ℰℱ𝒢ℋℐ𝒥𝒦ℒℳ𝒩𝒪𝒫𝒬ℛ𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵𝒶𝒷𝒸𝒹ℯ𝒻ℊ𝒽𝒾𝒿𝓀𝓁𝓂𝓃ℴ𝓅𝓆𝓇𝓈𝓉𝓊𝓋𝓌𝓍𝓎𝓏' },
+        'Bold Script': { name: '𝓑𝓸𝓵𝓭 𝓢𝓬𝓻𝓲𝓹𝓽', map: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', to: '𝓐𝓑𝓒𝓓𝓔𝓕𝓖𝓗𝓘𝓙𝓚𝓛𝓜𝓝𝓞𝓟𝓠𝓡𝓢𝓣𝓤𝓥𝓦𝓧𝓨𝓩𝓪𝓫𝓬𝓭𝓮𝓯𝓰𝓱𝓲𝓳𝓴𝓵𝓶𝓷𝓸𝓹𝓺𝓻𝓼𝓽𝓾𝓿𝔀𝔁𝔂𝔃' },
+        'Fraktur': { name: '𝔉𝔯𝔞𝔨𝔱𝔲𝔯', map: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', to: '𝔄𝔅ℭ𝔇𝔈𝔉𝔊ℌℑ𝔍𝔎𝔏𝔐𝔑𝔒𝔓𝔔ℜ𝔖𝔗𝔘𝔙𝔚𝔛𝔜ℨ𝔞𝔟𝔠𝔡𝔢𝔣𝔤𝔥𝔦𝔧𝔨𝔩𝔪𝔫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔴𝔵𝔶𝔷' },
+        'Double-struck': { name: '𝔻𝕠𝕦𝕓𝕝𝕖', map: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', to: '𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡' },
+        'Sans-serif': { name: '𝖲𝖺𝗇𝗌', map: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', to: '𝖠𝖡𝖢𝖣𝖤𝖥𝖦𝖧𝖨𝖩𝖪𝖫𝖬𝖭𝖮𝖯𝖰𝖱𝖲𝖳𝖴𝖵𝖶𝖷𝖸𝖹𝖺𝖻𝖼𝖽𝖾𝖿𝗀𝗁𝗂𝗃𝗄𝗅𝗆𝗇𝗈𝗉𝗊𝗋𝗌𝗍𝗎𝗏𝗐𝗑𝗒𝗓𝟢𝟣𝟤𝟥𝟦𝟧𝟨𝟩𝟪𝟫' },
+        'Sans Bold': { name: '𝗦𝗮𝗻𝘀 𝗕𝗼𝗹𝗱', map: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', to: '𝗔𝗕𝗖𝗗𝗘𝗙𝗚𝗛𝗜𝗝𝗞𝗟𝗠𝗡𝗢𝗣𝗤𝗥𝗦𝗧𝗨𝗩𝗪𝗫𝗬𝗭𝗮𝗯𝗰𝗱𝗲𝗳𝗴𝗵𝗶𝗷𝗸𝗹𝗺𝗻𝗼𝗽𝗾𝗿𝘀𝘁𝘂𝘃𝘄𝘅𝘆𝘇𝟬𝟭𝟮𝟯𝟰𝟱𝟲𝟳𝟴𝟵' },
+        'Sans Italic': { name: '𝘚𝘢𝘯𝘴 𝘐𝘵𝘢𝘭𝘪𝘤', map: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', to: '𝘈𝘉𝘊𝘋𝘌𝘍𝘎𝘏𝘐𝘑𝘒𝘓𝘔𝘕𝘖𝘗𝘘𝘙𝘚𝘛𝘜𝘝𝘞𝘟𝘠𝘡𝘢𝘣𝘤𝘥𝘦𝘧𝘨𝘩𝘪𝘫𝘬𝘭𝘮𝘯𝘰𝘱𝘲𝘳𝘴𝘵𝘶𝘷𝘸𝘹𝘺𝘻' },
+        'Monospace': { name: '𝙼𝚘𝚗𝚘', map: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', to: '𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟽𝟾𝟿' },
+        'Circled': { name: 'Ⓒⓘⓡⓒⓛⓔⓓ', map: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', to: 'ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ⓪①②③④⑤⑥⑦⑧⑨' },
+        'Squared': { name: '🅂🅀🅄🄰🅁🄴🄳', map: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', to: '🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉' },
+        'Negative Squared': { name: '🅽🅴🅶 🆂🆀', map: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', to: '🅰🅱🅲🅳🅴🅵🅶🅷🅸🅹🅺🅻🅼🅽🅾🅿🆀🆁🆂🆃🆄🆅🆆🆇🆈🆉' },
+        'Fullwidth': { name: 'Ｆｕｌｌｗｉｄｔｈ', map: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', to: 'ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ０１２３４５６７８９' },
+        'Small Caps': { name: 'Sᴍᴀʟʟ Cᴀᴘs', map: 'abcdefghijklmnopqrstuvwxyz', to: 'ᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ' },
+        'Superscript': { name: 'ˢᵘᵖᵉʳˢᶜʳⁱᵖᵗ', map: 'abcdefghijklmnoprstuvwxyz0123456789', to: 'ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖʳˢᵗᵘᵛʷˣʸᶻ⁰¹²³⁴⁵⁶⁷⁸⁹' },
+        'Subscript': { name: 'ₛᵤᵦₛ꜀ᵣᵢₚₜ', map: 'aehijklmnoprstuvx0123456789', to: 'ₐₑₕᵢⱼₖₗₘₙₒₚᵣₛₜᵤᵥₓ₀₁₂₃₄₅₆₇₈₉' },
+        'Upside Down': { name: 'uʍop ǝpᴉsd∩', map: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', to: '∀ꓭƆꓷƎℲ⅁HIſꓘ⅂WNOԀꝹꓤSꓕꓵΛMX⅄Zɐqɔpǝɟƃɥᴉɾʞlɯuodbɹsʇnʌʍxʎz' },
+    },
+
+    setMode(mode) {
+        this.mode = mode;
+        const encodeBtn = document.getElementById('fancy-mode-encode');
+        const decodeBtn = document.getElementById('fancy-mode-decode');
+        const encodeResults = document.getElementById('fancy-encode-results');
+        const decodeResults = document.getElementById('fancy-decode-results');
+
+        if (mode === 'encode') {
+            encodeBtn.classList.add('bg-[#0d544c]', 'text-white');
+            encodeBtn.classList.remove('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
+            decodeBtn.classList.remove('bg-[#0d544c]', 'text-white');
+            decodeBtn.classList.add('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
+            encodeResults.classList.remove('hidden');
+            decodeResults.classList.add('hidden');
+        } else {
+            decodeBtn.classList.add('bg-[#0d544c]', 'text-white');
+            decodeBtn.classList.remove('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
+            encodeBtn.classList.remove('bg-[#0d544c]', 'text-white');
+            encodeBtn.classList.add('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
+            encodeResults.classList.add('hidden');
+            decodeResults.classList.remove('hidden');
+        }
+        this.convert();
+    },
+
+    convert() {
+        const input = document.getElementById('fancy-input').value;
+        if (this.mode === 'encode') {
+            this.renderEncodeResults(input);
+        } else {
+            this.renderDecodeResult(input);
+        }
+    },
+
+    encode(text, style) {
+        const s = this.styles[style];
+        if (!s) return text;
+        let result = '';
+        for (const char of text) {
+            const idx = s.map.indexOf(char);
+            if (idx !== -1) {
+                result += [...s.to][idx];
+            } else {
+                result += char;
+            }
+        }
+        return result;
+    },
+
+    decode(text) {
+        let result = text;
+        // Build reverse map from all styles
+        for (const style of Object.values(this.styles)) {
+            const toChars = [...style.to];
+            const mapChars = [...style.map];
+            for (let i = 0; i < toChars.length; i++) {
+                if (toChars[i] && mapChars[i]) {
+                    result = result.split(toChars[i]).join(mapChars[i]);
+                }
+            }
+        }
+        return result;
+    },
+
+    renderEncodeResults(input) {
+        const grid = document.getElementById('fancy-styles-grid');
+        if (!input) {
+            grid.innerHTML = '<p class="text-gray-500 dark:text-gray-400 col-span-2">Nhập văn bản để xem các kiểu chữ</p>';
+            return;
+        }
+
+        let html = '';
+        for (const [key, style] of Object.entries(this.styles)) {
+            const converted = this.encode(input, key);
+            html += `
+                <div class="glass-card rounded-xl p-4 hover:shadow-lg transition-all cursor-pointer group" onclick="FancyText.copy('${this.escapeAttr(converted)}')">
+                    <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">${key}</div>
+                    <div class="text-lg text-gray-800 dark:text-white break-all">${this.escapeHtml(converted)}</div>
+                    <div class="text-xs text-[#0d544c] dark:text-[#4ade80] mt-2 opacity-0 group-hover:opacity-100 transition-opacity">📋 Click để sao chép</div>
+                </div>
+            `;
+        }
+        grid.innerHTML = html;
+    },
+
+    renderDecodeResult(input) {
+        const decoded = this.decode(input);
+        document.getElementById('fancy-decoded-text').textContent = decoded || '—';
+    },
+
+    copy(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Đã sao chép!');
+        });
+    },
+
+    copyDecoded() {
+        const text = document.getElementById('fancy-decoded-text').textContent;
+        if (text && text !== '—') {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Đã sao chép!');
+            });
+        }
+    },
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    },
+
+    escapeAttr(text) {
+        return text.replace(/'/g, "\\'").replace(/\n/g, '\\n');
+    }
+};
+
+// Init fancy text grid on page load
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('fancy-styles-grid')) {
+        FancyText.renderEncodeResults('');
+    }
+});

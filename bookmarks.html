@@ -100,6 +100,11 @@
                             <h3 class="font-bold text-gray-800 dark:text-white mb-1">So sánh văn bản</h3>
                             <p class="text-xs text-gray-500 dark:text-gray-400">So sánh & hợp nhất văn bản</p>
                         </div>
+                        <div onclick="ToolsPage.openTool('fancytext')" class="tool-card glass-card rounded-2xl p-5 cursor-pointer hover:scale-[1.02] hover:shadow-lg transition-all duration-300 group">
+                            <div class="text-3xl mb-3 group-hover:scale-110 transition-transform">✨</div>
+                            <h3 class="font-bold text-gray-800 dark:text-white mb-1">Chữ đặc biệt</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Tạo & giải mã chữ Unicode</p>
+                        </div>
                     </div>
                 </div>
 
@@ -1867,6 +1872,58 @@ Vũ Thị F</textarea>
                             <!-- Diff Output -->
                             <div class="glass-card rounded-2xl p-4 overflow-x-auto">
                                 <pre id="diff-output" class="font-mono text-sm whitespace-pre-wrap"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fancy Text Tab -->
+                <div id="tab-fancytext" class="tab-panel hidden">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Chữ đặc biệt Unicode</h2>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Chuyển đổi văn bản thành các kiểu chữ đặc biệt hoặc giải mã chữ đặc biệt về văn bản thường.</p>
+                        </div>
+
+                        <!-- Privacy Notice -->
+                        <div class="p-3 bg-[#0d544c]/10 dark:bg-[#0d544c]/20 rounded-xl mb-6 flex items-start gap-2">
+                            <span class="text-[#0d544c] dark:text-[#4ade80]">🔒</span>
+                            <p class="text-xs text-[#0d544c] dark:text-[#4ade80]">Tất cả xử lý được thực hiện trong trình duyệt. Dữ liệu không được gửi đến máy chủ.</p>
+                        </div>
+
+                        <!-- Mode Toggle -->
+                        <div class="glass-card rounded-2xl p-4 mb-6">
+                            <div class="flex gap-2">
+                                <button onclick="FancyText.setMode('encode')" id="fancy-mode-encode" class="flex-1 px-4 py-2.5 rounded-xl font-medium transition-all bg-[#0d544c] text-white">
+                                    ✨ Tạo chữ đặc biệt
+                                </button>
+                                <button onclick="FancyText.setMode('decode')" id="fancy-mode-decode" class="flex-1 px-4 py-2.5 rounded-xl font-medium transition-all border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">
+                                    🔓 Giải mã về chữ thường
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Input -->
+                        <div class="glass-card rounded-2xl p-5 mb-6">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nhập văn bản</label>
+                            <textarea id="fancy-input" rows="3" placeholder="Nhập văn bản của bạn..." oninput="FancyText.convert()"
+                                class="w-full p-4 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-[#0d544c] focus:border-transparent resize-none"></textarea>
+                        </div>
+
+                        <!-- Encode Results -->
+                        <div id="fancy-encode-results">
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Chọn kiểu chữ</h3>
+                            <div id="fancy-styles-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                        </div>
+
+                        <!-- Decode Result -->
+                        <div id="fancy-decode-results" class="hidden">
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Kết quả giải mã</h3>
+                            <div class="glass-card rounded-2xl p-5">
+                                <div id="fancy-decoded-text" class="text-lg text-gray-800 dark:text-white mb-4 min-h-[60px]">—</div>
+                                <button onclick="FancyText.copyDecoded()" class="px-4 py-2 bg-[#0d544c] text-white rounded-xl hover:bg-[#0a443e] transition-colors text-sm">
+                                    📋 Sao chép
+                                </button>
                             </div>
                         </div>
                     </div>
