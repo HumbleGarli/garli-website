@@ -14,6 +14,19 @@
       "downloadCount": 2890,
       "createdAt": "2025-04-05",
       "image": "assets/images/resources/git-poster.jpg"
+    },
+    {
+      "title": "Quick Magic Tool",
+      "description": "Quick Magic Tool \nTất cả công cụ,một nơi duy nhất\nTừ tải video đến đăng bài - AI chuyển đổi giọng nói, AI subtitle, AI thay đổi trang phục, tích hợp affiliate và tự động đăng đa nền tảng với hàng triệu tài khoản.\nTác giả : Trần Tùng. \nFree. \nTải, đăng ký dễ dàng, sử dụng thôi. Đm thằng nào mang đi bán ( Lời tác giả)",
+      "type": "phan-mem",
+      "format": "zip",
+      "url": "https://quickmagic.vn/",
+      "tags": [],
+      "free": true,
+      "id": 5,
+      "downloadCount": 0,
+      "createdAt": "2026-01-07",
+      "image": "assets/images/resources/default.jpg"
     }
   ],
   "types": [
