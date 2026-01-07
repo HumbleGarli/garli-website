@@ -19,7 +19,7 @@ const ResourcesManager = {
             this.resources = content.resources || [];
             this.types = content.types || [];
         } catch (e) {
-            const res = await fetch('data/resources.json');
+            const res = await fetch(SiteConfig.getNoCacheUrl('data/resources.json'));
             const data = await res.json();
             this.resources = data.resources || [];
             this.types = data.types || [];
@@ -62,7 +62,7 @@ const ResourcesManager = {
     renderList(filter = '') {
         const list = document.getElementById('resources-list');
         let filtered = this.resources;
-        
+
         if (filter) {
             const q = filter.toLowerCase();
             filtered = filtered.filter(r => r.title.toLowerCase().includes(q) || r.type.toLowerCase().includes(q));
@@ -120,7 +120,7 @@ const ResourcesManager = {
             btn.textContent = 'Đang xóa...';
 
             this.resources = this.resources.filter(r => !this.selectedIds.has(r.id));
-            
+
             await GitHubAPI.updateJson('data/resources.json', {
                 resources: this.resources,
                 types: this.types
@@ -130,7 +130,7 @@ const ResourcesManager = {
             this.selectedIds.clear();
             this.renderList();
             this.updateBulkDeleteBtn();
-            
+
             AdminPanel.hardRefresh(`Đã xóa ${count} tài nguyên thành công!`);
         } catch (err) {
             alert('❌ Lỗi: ' + err.message + '\n\n💡 Thử nhấn Ctrl+Shift+R để refresh rồi thử lại.');
@@ -156,7 +156,7 @@ const ResourcesManager = {
     showTypeManager() {
         const modal = document.getElementById('type-modal');
         const content = modal.querySelector('div');
-        
+
         content.innerHTML = `
             <div class="p-6">
                 <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Quản lý loại tài nguyên</h3>
@@ -172,7 +172,7 @@ const ResourcesManager = {
                 </div>
             </div>
         `;
-        
+
         this.renderTypes();
         modal.classList.remove('hidden');
     },
@@ -180,7 +180,7 @@ const ResourcesManager = {
     renderTypes() {
         const list = document.getElementById('types-list');
         if (!list) return;
-        
+
         list.innerHTML = this.types.map(t => `
             <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <div class="flex items-center gap-2">
@@ -196,7 +196,7 @@ const ResourcesManager = {
         const input = document.getElementById('new-type-name');
         const errorEl = document.getElementById('type-error');
         const name = input.value.trim();
-        
+
         if (!name) {
             errorEl.textContent = 'Vui lòng nhập tên loại';
             errorEl.classList.remove('hidden');
@@ -217,14 +217,14 @@ const ResourcesManager = {
 
         try {
             this.types.push({ id, name, icon: 'folder' });
-            
+
             await GitHubAPI.updateJson('data/resources.json', {
                 resources: this.resources,
                 types: this.types
             }, `Add type: ${name}`);
 
             await this.loadData();
-            
+
             input.value = '';
             errorEl.classList.add('hidden');
             this.renderTypes();
@@ -249,7 +249,7 @@ const ResourcesManager = {
 
         try {
             this.types = this.types.filter(t => t.id !== id);
-            
+
             await GitHubAPI.updateJson('data/resources.json', {
                 resources: this.resources,
                 types: this.types
@@ -271,7 +271,7 @@ const ResourcesManager = {
         this.editingId = resource?.id || null;
         const modal = document.getElementById('resource-modal');
         const content = modal.querySelector('div');
-        
+
         content.innerHTML = `
             <div class="p-6">
                 <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">${resource ? 'Sửa' : 'Thêm'} tài nguyên</h3>
@@ -326,7 +326,7 @@ const ResourcesManager = {
         e.preventDefault();
         const form = e.target;
         const errorEl = document.getElementById('form-error');
-        
+
         const data = {
             title: form.title.value.trim(),
             description: form.description.value.trim(),
@@ -399,13 +399,13 @@ const ResourcesManager = {
         try {
             // Reload data trước để có SHA mới nhất
             await this.loadData();
-            
+
             this.resources = this.resources.filter(r => r.id !== id);
             await GitHubAPI.updateJson('data/resources.json', {
                 resources: this.resources,
                 types: this.types
             }, `Delete resource #${id}`);
-            
+
             // Reload lại sau khi xóa
             await this.loadData();
             this.renderList();

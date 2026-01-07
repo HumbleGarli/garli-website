@@ -17,7 +17,7 @@ const ConfigManager = {
             const { content } = await GitHubAPI.getJson('data/config.json');
             this.config = content;
         } catch (e) {
-            const res = await fetch('data/config.json');
+            const res = await fetch(SiteConfig.getNoCacheUrl('data/config.json'));
             this.config = await res.json();
         }
     },
@@ -26,7 +26,7 @@ const ConfigManager = {
         const container = document.getElementById('tab-content');
         const c = this.config;
         const logo = c.logo || { type: 'text', text: '', image: '' };
-        
+
         container.innerHTML = `
             <form id="config-form" class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -134,7 +134,7 @@ const ConfigManager = {
     renderBanners() {
         const container = document.getElementById('banners-list');
         const banners = this.config.banners || [];
-        
+
         container.innerHTML = banners.map((b, i) => `
             <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg space-y-3" data-banner-index="${i}">
                 <div class="flex justify-between items-center">
@@ -412,7 +412,7 @@ const ConfigManager = {
 
             // Reload data để lấy SHA mới
             await this.loadData();
-            
+
             AdminPanel.hardRefresh('Đã lưu cấu hình thành công!');
             this.renderBanners(); // Refresh để hiện path ảnh mới
 

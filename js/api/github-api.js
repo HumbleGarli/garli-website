@@ -47,7 +47,14 @@ const GitHubAPI = {
 
         const url = `https://api.github.com/repos/${this.config.owner}/${this.config.repo}${endpoint}`;
 
-        const res = await fetch(url, {
+        // Add cache busting for GET requests to GitHub API
+        let finalUrl = url;
+        if (!options.method || options.method === 'GET') {
+            const separator = url.includes('?') ? '&' : '?';
+            finalUrl = `${url}${separator}t=${Date.now()}`;
+        }
+
+        const res = await fetch(finalUrl, {
             ...options,
             headers: {
                 'Authorization': `Bearer ${this.config.token}`,
@@ -86,16 +93,16 @@ const GitHubAPI = {
     // ==========================================
     async updateJson(path, json, message = 'Update via admin') {
         const maxRetries = 5;
-        
+
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
             try {
                 // Luôn lấy SHA mới nhất từ GitHub trước mỗi lần thử
                 const { sha } = await this.getJson(path);
-                
+
                 // Encode content với UTF-8 support
                 const jsonStr = JSON.stringify(json, null, 2);
                 const content = btoa(unescape(encodeURIComponent(jsonStr)));
-                
+
                 // Update file
                 const result = await this.request(`/contents/${path}`, {
                     method: 'PUT',
@@ -106,21 +113,21 @@ const GitHubAPI = {
                         branch: this.config.branch
                     })
                 });
-                
+
                 return { success: true, sha: result.content.sha };
             } catch (e) {
-                const isShaError = e.message.includes('does not match') || 
-                                   e.message.includes('SHA') || 
-                                   e.message.includes('409') ||
-                                   e.message.includes('conflict');
-                
+                const isShaError = e.message.includes('does not match') ||
+                    e.message.includes('SHA') ||
+                    e.message.includes('409') ||
+                    e.message.includes('conflict');
+
                 if (isShaError && attempt < maxRetries) {
                     console.warn(`[GitHubAPI] SHA conflict (attempt ${attempt}/${maxRetries}), retrying...`);
                     // Đợi trước khi retry (exponential backoff)
                     await new Promise(resolve => setTimeout(resolve, 500 * attempt));
                     continue;
                 }
-                
+
                 console.error(`[GitHubAPI] updateJson error (${path}):`, e);
                 throw e;
             }
@@ -133,7 +140,7 @@ const GitHubAPI = {
     async createOrUpdateFile(path, contentBase64, message = 'Create/update file via admin') {
         try {
             let sha = null;
-            
+
             // Kiểm tra file đã tồn tại chưa
             try {
                 const existing = await this.request(`/contents/${path}?ref=${this.config.branch}`);
@@ -147,7 +154,7 @@ const GitHubAPI = {
                 content: contentBase64,
                 branch: this.config.branch
             };
-            
+
             if (sha) body.sha = sha;
 
             const result = await this.request(`/contents/${path}`, {
@@ -155,8 +162,8 @@ const GitHubAPI = {
                 body: JSON.stringify(body)
             });
 
-            return { 
-                success: true, 
+            return {
+                success: true,
                 sha: result.content.sha,
                 url: result.content.download_url,
                 path: result.content.path
@@ -191,7 +198,7 @@ const GitHubAPI = {
 
             // Convert to base64
             const base64 = await this.fileToBase64(file);
-            
+
             // Upload
             const result = await this.createOrUpdateFile(
                 path,
@@ -233,7 +240,7 @@ const GitHubAPI = {
     async deleteFile(path, message = 'Delete file via admin') {
         try {
             const { sha } = await this.request(`/contents/${path}?ref=${this.config.branch}`);
-            
+
             await this.request(`/contents/${path}`, {
                 method: 'DELETE',
                 body: JSON.stringify({

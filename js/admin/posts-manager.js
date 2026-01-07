@@ -23,7 +23,7 @@ const PostsManager = {
             this.posts = content.posts || [];
             this.categories = content.categories || [];
         } catch (e) {
-            const res = await fetch('data/posts-index.json');
+            const res = await fetch(SiteConfig.getNoCacheUrl('data/posts-index.json'));
             const data = await res.json();
             this.posts = data.posts || [];
             this.categories = data.categories || [];
@@ -66,7 +66,7 @@ const PostsManager = {
     renderList(filter = '') {
         const list = document.getElementById('posts-list');
         let filtered = [...this.posts].sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
-        
+
         if (filter) {
             const q = filter.toLowerCase();
             filtered = filtered.filter(p => p.title.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
@@ -118,7 +118,7 @@ const PostsManager = {
         if (count === 0) return;
 
         const deleteFiles = confirm(`Bạn có muốn xóa cả file markdown không?\n\nOK = Xóa cả file\nCancel = Chỉ xóa khỏi index`);
-        
+
         if (!confirm(`Bạn có chắc muốn xóa ${count} bài viết đã chọn?\n\n⚠️ Hành động này không thể hoàn tác!`)) return;
 
         try {
@@ -131,10 +131,10 @@ const PostsManager = {
 
             // Get posts to delete (for file deletion)
             const postsToDelete = this.posts.filter(p => this.selectedIds.has(p.id));
-            
+
             // Remove from index
             this.posts = this.posts.filter(p => !this.selectedIds.has(p.id));
-            
+
             await GitHubAPI.updateJson('data/posts-index.json', {
                 posts: this.posts,
                 categories: this.categories
@@ -158,7 +158,7 @@ const PostsManager = {
             this.selectedIds.clear();
             this.renderList();
             this.updateBulkDeleteBtn();
-            
+
             AdminPanel.hardRefresh(`Đã xóa ${count} bài viết thành công!`);
         } catch (err) {
             console.error('Bulk delete error:', err);
@@ -190,7 +190,7 @@ const PostsManager = {
     showCategoryManager() {
         const modal = document.getElementById('post-category-modal');
         const content = modal.querySelector('div');
-        
+
         content.innerHTML = `
             <div class="p-6">
                 <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Quản lý danh mục bài viết</h3>
@@ -206,7 +206,7 @@ const PostsManager = {
                 </div>
             </div>
         `;
-        
+
         this.renderCategories();
         modal.classList.remove('hidden');
     },
@@ -214,7 +214,7 @@ const PostsManager = {
     renderCategories() {
         const list = document.getElementById('post-categories-list');
         if (!list) return;
-        
+
         list.innerHTML = this.categories.map(c => `
             <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <div class="flex items-center gap-2">
@@ -231,7 +231,7 @@ const PostsManager = {
         const input = document.getElementById('new-post-category-name');
         const errorEl = document.getElementById('post-category-error');
         const name = input.value.trim();
-        
+
         if (!name) {
             errorEl.textContent = 'Vui lòng nhập tên danh mục';
             errorEl.classList.remove('hidden');
@@ -255,14 +255,14 @@ const PostsManager = {
 
         try {
             this.categories.push({ id, name, color: randomColor });
-            
+
             await GitHubAPI.updateJson('data/posts-index.json', {
                 posts: this.posts,
                 categories: this.categories
             }, `Add category: ${name}`);
 
             await this.loadData();
-            
+
             input.value = '';
             errorEl.classList.add('hidden');
             this.renderCategories();
@@ -287,7 +287,7 @@ const PostsManager = {
 
         try {
             this.categories = this.categories.filter(c => c.id !== id);
-            
+
             await GitHubAPI.updateJson('data/posts-index.json', {
                 posts: this.posts,
                 categories: this.categories
@@ -308,7 +308,7 @@ const PostsManager = {
     async showForm(post = null) {
         this.editingId = post?.id || null;
         this.editingContent = '';
-        
+
         // Load markdown content nếu edit
         if (post?.content) {
             try {
@@ -321,7 +321,7 @@ const PostsManager = {
 
         const modal = document.getElementById('post-modal');
         const container = modal.querySelector('div');
-        
+
         container.innerHTML = `
             <div class="p-6 relative">
                 <button type="button" onclick="PostsManager.closeForm()" 
@@ -407,20 +407,20 @@ const PostsManager = {
         `;
 
         modal.classList.remove('hidden');
-        
+
         // Initialize Quill Editor
         this.initQuillEditor();
-        
+
         // Auto generate slug from title
         document.getElementById('post-title')?.addEventListener('input', (e) => {
             if (!this.editingId) {
                 document.getElementById('post-slug').value = Validators.slugify(e.target.value);
             }
         });
-        
+
         // Setup import Word handler
         document.getElementById('import-docx')?.addEventListener('change', (e) => this.handleWordImport(e));
-        
+
         document.getElementById('post-form').addEventListener('submit', (e) => this.handleSubmit(e));
         document.getElementById('post-image')?.addEventListener('change', (e) => this.handleImageChange(e));
     },
@@ -440,7 +440,7 @@ const PostsManager = {
 
         try {
             const arrayBuffer = await file.arrayBuffer();
-            
+
             // Convert Word to HTML with embedded images
             const result = await mammoth.convertToHtml(
                 { arrayBuffer },
@@ -461,12 +461,12 @@ const PostsManager = {
                 // Insert HTML into Quill
                 this.quillEditor.root.innerHTML = result.value;
                 this.updateReadTime();
-                
+
                 // Show warnings if any
                 if (result.messages.length > 0) {
                     console.warn('Word import warnings:', result.messages);
                 }
-                
+
                 alert('✅ Import thành công!\n\nHình ảnh được nhúng dạng base64.');
             }
         } catch (err) {
@@ -489,8 +489,8 @@ const PostsManager = {
                     [{ 'header': [1, 2, 3, false] }],
                     ['bold', 'italic', 'underline', 'strike'],
                     [{ 'color': [] }, { 'background': [] }],
-                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                    [{ 'indent': '-1'}, { 'indent': '+1' }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    [{ 'indent': '-1' }, { 'indent': '+1' }],
                     ['blockquote', 'code-block'],
                     ['link', 'image'],
                     [{ 'align': [] }],
@@ -512,7 +512,7 @@ const PostsManager = {
             const htmlContent = this.markdownToHtml(this.editingContent);
             this.quillEditor.root.innerHTML = htmlContent;
         }
-        
+
         // Initial read time calculation
         setTimeout(() => this.updateReadTime(), 100);
     },
@@ -591,7 +591,7 @@ const PostsManager = {
 
         try {
             let imageUrl;
-            
+
             // Try to compress if it's a supported format
             try {
                 const result = await ImageTools.compress(file, {
@@ -599,7 +599,7 @@ const PostsManager = {
                     maxHeight: 800,
                     quality: 0.85
                 });
-                
+
                 // Try upload to GitHub
                 try {
                     const uploadResult = await GitHubAPI.uploadImage(result.file, 'assets/images/posts');
@@ -618,7 +618,7 @@ const PostsManager = {
             const delta = this.quillEditor.getContents();
             let loadingIndex = -1;
             let currentIndex = 0;
-            
+
             for (const op of delta.ops) {
                 if (op.insert && op.insert.image && op.insert.image.includes('PHN2ZyB3aWR0aD0i')) {
                     loadingIndex = currentIndex;
@@ -641,7 +641,7 @@ const PostsManager = {
         } catch (err) {
             console.error('Image insert error:', err);
             alert('Lỗi chèn ảnh: ' + err.message);
-            
+
             // Remove loading placeholder on error
             const content = this.quillEditor.root.innerHTML;
             this.quillEditor.root.innerHTML = content.replace(/<img[^>]*PHN2ZyB3aWR0aD0i[^>]*>/g, '');
@@ -662,7 +662,7 @@ const PostsManager = {
         const text = this.quillEditor.getText().trim();
         const wordCount = text.split(/\s+/).filter(w => w.length > 0).length;
         const readTime = Math.max(1, Math.ceil(wordCount / 200)); // Min 1 minute
-        
+
         const readTimeInput = document.querySelector('input[name="readTime"]');
         if (readTimeInput) {
             readTimeInput.value = readTime;
@@ -696,12 +696,12 @@ const PostsManager = {
             // Line breaks
             .replace(/\n\n/gim, '</p><p>')
             .replace(/\n/gim, '<br>');
-        
+
         // Wrap in paragraph if not already wrapped
         if (!html.startsWith('<')) {
             html = '<p>' + html + '</p>';
         }
-        
+
         return html;
     },
 
@@ -748,7 +748,7 @@ const PostsManager = {
             .replace(/&amp;/g, '&')
             .replace(/\n{3,}/g, '\n\n') // Max 2 newlines
             .trim();
-        
+
         return md;
     },
 
@@ -771,9 +771,9 @@ const PostsManager = {
                 maxHeight: 630,
                 quality: 0.85
             });
-            
+
             const preview = await ImageTools.getPreview(result.file);
-            
+
             previewEl.innerHTML = `
                 <img src="${preview}" class="h-32 rounded-lg object-cover">
                 <p class="text-xs text-gray-500 mt-1">
@@ -781,7 +781,7 @@ const PostsManager = {
                     <span class="text-green-600">(giảm ${result.savings}%)</span>
                 </p>
             `;
-            
+
             this.pendingImage = result.file;
         } catch (err) {
             previewEl.innerHTML = `<p class="text-red-500 text-sm">${err.message}</p>`;
@@ -794,14 +794,14 @@ const PostsManager = {
         const form = e.target;
         const errorEl = document.getElementById('form-error');
         const submitBtn = document.getElementById('post-submit-btn');
-        
+
         const slug = form.slug.value.trim();
         const today = new Date().toISOString().split('T')[0];
-        
+
         // Get content from Quill editor and convert to markdown
         const htmlContent = this.quillEditor.root.innerHTML;
         const content = this.htmlToMarkdown(htmlContent);
-        
+
         const metadata = {
             title: form.title.value.trim(),
             slug: slug,
@@ -846,7 +846,7 @@ const PostsManager = {
 
             // Generate file path
             const mdPath = `content/posts/${today}-${slug}.md`;
-            
+
             // Encode markdown content to base64
             const contentBase64 = btoa(unescape(encodeURIComponent(content)));
 
@@ -855,7 +855,7 @@ const PostsManager = {
                 const idx = this.posts.findIndex(p => p.id === this.editingId);
                 if (idx !== -1) {
                     const oldPost = this.posts[idx];
-                    
+
                     // Update markdown file
                     await GitHubAPI.createOrUpdateFile(
                         oldPost.content, // Use existing path
@@ -931,16 +931,16 @@ const PostsManager = {
         if (!post) return;
 
         const deleteFile = confirm('Bạn có muốn xóa cả file markdown không?\n\nOK = Xóa cả file\nCancel = Chỉ xóa khỏi index');
-        
+
         if (!confirm(`Xác nhận xóa bài viết "${post.title}"?`)) return;
 
         try {
             // Reload data trước để có SHA mới nhất
             await this.loadData();
-            
+
             // Remove from index
             this.posts = this.posts.filter(p => p.id !== id);
-            
+
             // Update index
             await GitHubAPI.updateJson('data/posts-index.json', {
                 posts: this.posts,

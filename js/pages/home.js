@@ -15,7 +15,7 @@ const HomePage = {
 
     async loadConfig() {
         try {
-            const res = await fetch('data/config.json');
+            const res = await fetch(SiteConfig.getNoCacheUrl('data/config.json'));
             return await res.json();
         } catch (e) {
             console.error('[Home] Error loading config:', e);
@@ -29,7 +29,7 @@ const HomePage = {
 
         // Chỉ lọc banner có ảnh (không lọc theo active nữa)
         const validBanners = banners.filter(b => b.image);
-        
+
         container.innerHTML = `
             <style>
                 .banner-swiper .swiper-slide-active img {
@@ -68,9 +68,9 @@ const HomePage = {
         // Init Swiper với autoplay 4 giây
         new Swiper('.banner-swiper', {
             loop: true,
-            autoplay: { 
+            autoplay: {
                 delay: 4000,
-                disableOnInteraction: false 
+                disableOnInteraction: false
             },
             pagination: { el: '.swiper-pagination', clickable: true },
             navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' }
@@ -109,7 +109,7 @@ const HomePage = {
         if (!container) return;
 
         try {
-            const res = await fetch('data/products.json');
+            const res = await fetch(SiteConfig.getNoCacheUrl('data/products.json'));
             const { products } = await res.json();
             const featured = products.filter(p => p.featured && p.active).slice(0, 3);
 
@@ -130,14 +130,14 @@ const HomePage = {
     renderProductCard(p) {
         const discount = Math.round((1 - p.price / p.originalPrice) * 100);
         const hasImage = p.image && !p.image.includes('default');
-        
+
         return `
             <a href="/product?slug=${p.slug}" class="glass-card bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden group block hover:shadow-lg transition-shadow flex flex-col h-full">
                 <div class="aspect-[920/430] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center overflow-hidden flex-shrink-0">
-                    ${hasImage 
-                        ? `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">` 
-                        : '<span class="text-4xl">📦</span>'
-                    }
+                    ${hasImage
+                ? `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">`
+                : '<span class="text-4xl">📦</span>'
+            }
                 </div>
                 <div class="p-4 flex flex-col flex-1">
                     <h3 class="font-semibold text-gray-800 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors h-12">${p.name}</h3>
@@ -158,7 +158,7 @@ const HomePage = {
         if (!container) return;
 
         try {
-            const res = await fetch('data/posts-index.json');
+            const res = await fetch(SiteConfig.getNoCacheUrl('data/posts-index.json'));
             const { posts } = await res.json();
             const latest = posts.slice(0, 3);
 
@@ -166,14 +166,14 @@ const HomePage = {
                 <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Bài viết mới</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     ${latest.map(p => {
-                        const hasImage = p.image && !p.image.includes('default');
-                        return `
+                const hasImage = p.image && !p.image.includes('default');
+                return `
                             <a href="/post?slug=${p.slug}" class="glass-card bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden group">
                                 <div class="h-40 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 flex items-center justify-center overflow-hidden">
-                                    ${hasImage 
-                                        ? `<img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">` 
-                                        : '<span class="text-4xl">📝</span>'
-                                    }
+                                    ${hasImage
+                        ? `<img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">`
+                        : '<span class="text-4xl">📝</span>'
+                    }
                                 </div>
                                 <div class="p-4">
                                     <span class="text-xs text-blue-600 dark:text-blue-400 uppercase">${p.category}</span>
@@ -187,7 +187,7 @@ const HomePage = {
                                 </div>
                             </a>
                         `;
-                    }).join('')}
+            }).join('')}
                 </div>
                 <div class="text-center mt-8">
                     <a href="/blog" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Xem tất cả bài viết</a>

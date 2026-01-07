@@ -19,7 +19,7 @@ const ResourcesPage = {
 
     async loadData() {
         try {
-            const res = await fetch('data/resources.json');
+            const res = await fetch(SiteConfig.getNoCacheUrl('data/resources.json'));
             const data = await res.json();
             this.resources = data.resources;
             this.types = data.types;
@@ -44,7 +44,7 @@ const ResourcesPage = {
                 <input type="text" id="resources-search" placeholder="Tìm tài nguyên..." class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
         `;
-        
+
         setTimeout(() => this.initTabIndicator('resources-tabs'), 0);
     },
 
@@ -77,8 +77,8 @@ const ResourcesPage = {
 
         if (this.filters.search) {
             const q = this.filters.search.toLowerCase();
-            filtered = filtered.filter(r => 
-                r.title.toLowerCase().includes(q) || 
+            filtered = filtered.filter(r =>
+                r.title.toLowerCase().includes(q) ||
                 r.description.toLowerCase().includes(q) ||
                 r.tags.some(t => t.toLowerCase().includes(q))
             );
@@ -137,16 +137,16 @@ const ResourcesPage = {
     setupEvents() {
         const container = document.getElementById('resources-tabs');
         const indicator = container?.querySelector('.tab-indicator');
-        
+
         document.querySelectorAll('.type-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                
+
                 if (indicator) {
                     this.moveIndicator(indicator, btn);
                 }
-                
+
                 this.filters.type = btn.dataset.type;
                 this.renderResources();
             });
@@ -160,7 +160,7 @@ const ResourcesPage = {
                 this.renderResources();
             }, 300);
         });
-        
+
         window.addEventListener('resize', () => {
             const activeBtn = container?.querySelector('.tab-btn.active');
             if (indicator && activeBtn) {

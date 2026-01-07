@@ -23,7 +23,7 @@ const ProductsManager = {
             this.currentSha = sha;
         } catch (e) {
             // Fallback to local fetch
-            const res = await fetch('data/products.json');
+            const res = await fetch(SiteConfig.getNoCacheUrl('data/products.json'));
             const data = await res.json();
             this.products = data.products || [];
             this.categories = data.categories || [];
@@ -72,11 +72,11 @@ const ProductsManager = {
     renderList(filter = '') {
         const list = document.getElementById('products-list');
         let filtered = this.products;
-        
+
         if (filter) {
             const q = filter.toLowerCase();
-            filtered = filtered.filter(p => 
-                p.name.toLowerCase().includes(q) || 
+            filtered = filtered.filter(p =>
+                p.name.toLowerCase().includes(q) ||
                 p.category.toLowerCase().includes(q)
             );
         }
@@ -134,7 +134,7 @@ const ProductsManager = {
             btn.textContent = 'Đang xóa...';
 
             this.products = this.products.filter(p => !this.selectedIds.has(p.id));
-            
+
             await GitHubAPI.updateJson('data/products.json', {
                 products: this.products,
                 categories: this.categories
@@ -144,7 +144,7 @@ const ProductsManager = {
             this.selectedIds.clear();
             this.renderList();
             this.updateBulkDeleteBtn();
-            
+
             AdminPanel.hardRefresh(`Đã xóa ${count} sản phẩm thành công!`);
         } catch (err) {
             alert('❌ Lỗi: ' + err.message + '\n\n💡 Thử nhấn Ctrl+Shift+R để refresh rồi thử lại.');
@@ -173,7 +173,7 @@ const ProductsManager = {
     showImportModal() {
         const modal = document.getElementById('import-modal');
         const content = modal.querySelector('div');
-        
+
         content.innerHTML = `
             <div class="p-6">
                 <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">📥 Import sản phẩm hàng loạt</h3>
@@ -213,7 +213,7 @@ const ProductsManager = {
                 </div>
             </div>
         `;
-        
+
         modal.classList.remove('hidden');
     },
 
@@ -221,14 +221,14 @@ const ProductsManager = {
         const lines = text.trim().split('\n').filter(line => line.trim());
         const products = [];
         const defaultCategory = document.getElementById('import-default-category')?.value || this.categories[0]?.id || 'course';
-        
+
         for (const line of lines) {
             // Hỗ trợ cả Tab và | làm separator
             const parts = line.includes('\t') ? line.split('\t') : line.split('|');
             const [name, price, originalPrice, category, description] = parts.map(p => p?.trim());
-            
+
             if (!name) continue;
-            
+
             products.push({
                 name,
                 slug: Validators.slugify(name),
@@ -248,7 +248,7 @@ const ProductsManager = {
                 createdAt: new Date().toISOString().split('T')[0]
             });
         }
-        
+
         return products;
     },
 
@@ -258,7 +258,7 @@ const ProductsManager = {
         const listEl = document.getElementById('import-preview-list');
         const countEl = document.getElementById('import-count');
         const errorEl = document.getElementById('import-error');
-        
+
         if (!text.trim()) {
             errorEl.textContent = 'Vui lòng nhập dữ liệu sản phẩm';
             errorEl.classList.remove('hidden');
@@ -267,7 +267,7 @@ const ProductsManager = {
         }
 
         const products = this.parseImportData(text);
-        
+
         if (products.length === 0) {
             errorEl.textContent = 'Không tìm thấy sản phẩm hợp lệ';
             errorEl.classList.remove('hidden');
@@ -284,7 +284,7 @@ const ProductsManager = {
             </div>
         `).join('');
         previewEl.classList.remove('hidden');
-        
+
         this.pendingImport = products;
     },
 
@@ -314,7 +314,7 @@ const ProductsManager = {
             await this.loadData();
             this.closeImportModal();
             this.renderList();
-            
+
             AdminPanel.hardRefresh(`Đã import ${this.pendingImport.length} sản phẩm thành công!`);
             this.pendingImport = null;
         } catch (err) {
@@ -337,7 +337,7 @@ const ProductsManager = {
     showCategoryManager() {
         const modal = document.getElementById('category-modal');
         const content = modal.querySelector('div');
-        
+
         content.innerHTML = `
             <div class="p-6">
                 <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Quản lý danh mục sản phẩm</h3>
@@ -353,7 +353,7 @@ const ProductsManager = {
                 </div>
             </div>
         `;
-        
+
         this.renderCategories();
         modal.classList.remove('hidden');
     },
@@ -361,7 +361,7 @@ const ProductsManager = {
     renderCategories() {
         const list = document.getElementById('categories-list');
         if (!list) return;
-        
+
         list.innerHTML = this.categories.map(c => `
             <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <div class="flex items-center gap-2">
@@ -377,7 +377,7 @@ const ProductsManager = {
         const input = document.getElementById('new-category-name');
         const errorEl = document.getElementById('category-error');
         const name = input.value.trim();
-        
+
         if (!name) {
             errorEl.textContent = 'Vui lòng nhập tên danh mục';
             errorEl.classList.remove('hidden');
@@ -399,14 +399,14 @@ const ProductsManager = {
 
         try {
             this.categories.push({ id, name, icon: 'folder' });
-            
+
             await GitHubAPI.updateJson('data/products.json', {
                 products: this.products,
                 categories: this.categories
             }, `Add category: ${name}`);
 
             await this.loadData();
-            
+
             input.value = '';
             errorEl.classList.add('hidden');
             this.renderCategories();
@@ -432,7 +432,7 @@ const ProductsManager = {
 
         try {
             this.categories = this.categories.filter(c => c.id !== id);
-            
+
             await GitHubAPI.updateJson('data/products.json', {
                 products: this.products,
                 categories: this.categories
@@ -455,7 +455,7 @@ const ProductsManager = {
         this.tempPackages = product?.packages ? [...product.packages] : [];
         const modal = document.getElementById('product-modal');
         const content = modal.querySelector('div');
-        
+
         content.innerHTML = `
             <div class="p-6">
                 <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">${product ? 'Sửa' : 'Thêm'} sản phẩm</h3>
@@ -618,9 +618,9 @@ const ProductsManager = {
                 maxHeight: 800,
                 quality: 0.8
             });
-            
+
             const preview = await ImageTools.getPreview(result.file);
-            
+
             previewEl.innerHTML = `
                 <img src="${preview}" class="h-32 rounded-lg object-cover">
                 <p class="text-xs text-gray-500 mt-1">
@@ -628,7 +628,7 @@ const ProductsManager = {
                     <span class="text-green-600">(giảm ${result.savings}%)</span>
                 </p>
             `;
-            
+
             // Lưu file đã nén để upload sau
             this.pendingImage = result.file;
         } catch (err) {
@@ -641,7 +641,7 @@ const ProductsManager = {
         e.preventDefault();
         const form = e.target;
         const errorEl = document.getElementById('form-error');
-        
+
         const data = {
             name: form.name.value.trim(),
             slug: Validators.slugify(form.name.value),
@@ -741,13 +741,13 @@ const ProductsManager = {
         try {
             // Reload data trước để có SHA mới nhất
             await this.loadData();
-            
+
             this.products = this.products.filter(p => p.id !== id);
             await GitHubAPI.updateJson('data/products.json', {
                 products: this.products,
                 categories: this.categories
             }, `Delete product #${id}`);
-            
+
             // Reload lại sau khi xóa
             await this.loadData();
             this.renderList();

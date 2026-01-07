@@ -20,7 +20,7 @@ const ShopPage = {
 
     async loadData() {
         try {
-            const res = await fetch('data/products.json');
+            const res = await fetch(SiteConfig.getNoCacheUrl('data/products.json'));
             const data = await res.json();
             this.products = data.products.filter(p => p.active);
             this.categories = data.categories;
@@ -58,7 +58,7 @@ const ShopPage = {
                 </div>
             </div>
         `;
-        
+
         // Initialize tab indicator
         setTimeout(() => this.initTabIndicator('category-tabs'), 0);
     },
@@ -66,10 +66,10 @@ const ShopPage = {
     initTabIndicator(containerId) {
         const container = document.getElementById(containerId);
         if (!container) return;
-        
+
         const indicator = container.querySelector('.tab-indicator');
         const activeBtn = container.querySelector('.tab-btn.active');
-        
+
         if (indicator && activeBtn) {
             this.moveIndicator(indicator, activeBtn, container);
         }
@@ -80,7 +80,7 @@ const ShopPage = {
         const btnRect = btn.getBoundingClientRect();
         const containerRect = container.getBoundingClientRect();
         const scrollLeft = container.scrollLeft || 0;
-        
+
         indicator.style.width = `${btn.offsetWidth}px`;
         indicator.style.height = `${btn.offsetHeight}px`;
         indicator.style.left = `${btn.offsetLeft}px`;
@@ -101,8 +101,8 @@ const ShopPage = {
         // Filter by search
         if (this.filters.search) {
             const q = this.filters.search.toLowerCase();
-            filtered = filtered.filter(p => 
-                p.name.toLowerCase().includes(q) || 
+            filtered = filtered.filter(p =>
+                p.name.toLowerCase().includes(q) ||
                 p.description.toLowerCase().includes(q) ||
                 p.tags.some(t => t.toLowerCase().includes(q))
             );
@@ -132,14 +132,14 @@ const ShopPage = {
     renderProductCard(p) {
         const discount = Math.round((1 - p.price / p.originalPrice) * 100);
         const hasImage = p.image && !p.image.includes('default');
-        
+
         return `
             <a href="/product?slug=${p.slug}" class="glass-card bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden group hover:shadow-lg transition-shadow flex flex-col h-full">
                 <div class="relative aspect-[4/3] sm:aspect-[920/430] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center overflow-hidden flex-shrink-0">
-                    ${hasImage 
-                        ? `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">` 
-                        : '<span class="text-4xl sm:text-5xl">📦</span>'
-                    }
+                    ${hasImage
+                ? `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">`
+                : '<span class="text-4xl sm:text-5xl">📦</span>'
+            }
                     ${p.featured ? '<span class="absolute top-2 left-2 bg-yellow-500 text-white text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded">HOT</span>' : ''}
                     ${discount > 0 ? `<span class="absolute top-2 right-2 bg-red-500 text-white text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded">-${discount}%</span>` : ''}
                 </div>
@@ -162,19 +162,19 @@ const ShopPage = {
     setupEvents() {
         const container = document.getElementById('category-tabs');
         const indicator = container?.querySelector('.tab-indicator');
-        
+
         // Category filter
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                
+
                 if (indicator && container) {
                     this.moveIndicator(indicator, btn, container);
                     // Scroll button into view on mobile
                     btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
                 }
-                
+
                 this.filters.category = btn.dataset.category;
                 this.renderProducts();
             });
@@ -195,7 +195,7 @@ const ShopPage = {
                 this.renderProducts();
             }, 300);
         });
-        
+
         // Recalculate indicator on resize
         window.addEventListener('resize', () => {
             const activeBtn = container?.querySelector('.tab-btn.active');

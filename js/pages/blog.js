@@ -16,7 +16,7 @@ const BlogPage = {
 
     async loadData() {
         try {
-            const res = await fetch('data/posts-index.json');
+            const res = await fetch(SiteConfig.getNoCacheUrl('data/posts-index.json'));
             const data = await res.json();
             this.posts = data.posts;
             this.categories = data.categories;
@@ -37,7 +37,7 @@ const BlogPage = {
                 </div>
                 <input type="text" id="blog-search" placeholder="Tìm bài viết..." class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
             </div>`;
-        
+
         setTimeout(() => this.initTabIndicator('blog-tabs'), 0);
     },
 
@@ -78,14 +78,14 @@ const BlogPage = {
         const catInfo = this.categories.find(c => c.id === p.category) || {};
         const colors = { blue: 'bg-blue-100 text-blue-600', green: 'bg-green-100 text-green-600', purple: 'bg-purple-100 text-purple-600', pink: 'bg-pink-100 text-pink-600' };
         const hasImage = p.image && !p.image.includes('default');
-        
+
         return `
             <a href="/post?slug=${p.slug}" class="glass-card bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden group hover:shadow-lg transition-shadow">
                 <div class="h-48 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 flex items-center justify-center overflow-hidden">
-                    ${hasImage 
-                        ? `<img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">` 
-                        : '<span class="text-5xl">📝</span>'
-                    }
+                    ${hasImage
+                ? `<img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">`
+                : '<span class="text-5xl">📝</span>'
+            }
                 </div>
                 <div class="p-5">
                     <div class="flex items-center gap-2 mb-2">
@@ -105,30 +105,30 @@ const BlogPage = {
     setupEvents() {
         const container = document.getElementById('blog-tabs');
         const indicator = container?.querySelector('.tab-indicator');
-        
+
         document.querySelectorAll('.cat-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                
+
                 if (indicator) {
                     this.moveIndicator(indicator, btn);
                 }
-                
+
                 this.filters.category = btn.dataset.cat;
                 this.renderPosts();
             });
         });
-        
-        let t; 
-        document.getElementById('blog-search')?.addEventListener('input', e => { 
-            clearTimeout(t); 
-            t = setTimeout(() => { 
-                this.filters.search = e.target.value; 
-                this.renderPosts(); 
-            }, 300); 
+
+        let t;
+        document.getElementById('blog-search')?.addEventListener('input', e => {
+            clearTimeout(t);
+            t = setTimeout(() => {
+                this.filters.search = e.target.value;
+                this.renderPosts();
+            }, 300);
         });
-        
+
         window.addEventListener('resize', () => {
             const activeBtn = container?.querySelector('.tab-btn.active');
             if (indicator && activeBtn) {

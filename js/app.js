@@ -31,7 +31,7 @@ const App = {
             this.loadComponent('header-placeholder', this.config.headerPath),
             this.loadComponent('footer-placeholder', this.config.footerPath)
         ]);
-        
+
         // Load config vào footer sau khi footer đã load
         await this.loadFooterConfig();
     },
@@ -41,7 +41,7 @@ const App = {
     // ==========================================
     applyColors(colors) {
         const root = document.documentElement;
-        
+
         // Set CSS variables
         root.style.setProperty('--color-primary', colors.primary || '#2563eb');
         root.style.setProperty('--color-primary-hover', colors.primaryHover || '#1d4ed8');
@@ -64,7 +64,7 @@ const App = {
             styleEl.id = 'custom-colors';
             document.head.appendChild(styleEl);
         }
-        
+
         styleEl.textContent = `
             /* Primary colors */
             .bg-blue-600, .bg-primary { background-color: ${colors.primary} !important; }
@@ -101,14 +101,14 @@ const App = {
     // ==========================================
     async loadFooterConfig() {
         try {
-            const res = await fetch('data/config.json');
+            const res = await fetch(SiteConfig.getNoCacheUrl('data/config.json'));
             const config = await res.json();
-            
+
             // Apply custom colors
             if (config.colors) {
                 this.applyColors(config.colors);
             }
-            
+
             // Update logo
             const logoText = document.getElementById('logo-text');
             const logoImage = document.getElementById('logo-image');
@@ -123,18 +123,18 @@ const App = {
                     logoImage.classList.add('hidden');
                 }
             }
-            
+
             // Update contact info
             const emailEl = document.getElementById('footer-email');
             const phoneEl = document.getElementById('footer-phone');
             const addressEl = document.getElementById('footer-address');
             const sitenameEl = document.getElementById('footer-sitename');
-            
+
             if (emailEl) emailEl.textContent = config.email || 'N/A';
             if (phoneEl) phoneEl.textContent = config.phone || 'N/A';
             if (addressEl) addressEl.textContent = config.address || 'N/A';
             if (sitenameEl) sitenameEl.textContent = config.siteName || 'Website';
-            
+
             // Update social links
             const socialContainer = document.getElementById('footer-social');
             if (socialContainer && config.socialLinks) {
@@ -146,7 +146,7 @@ const App = {
                     youtube: '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>',
                     discord: '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>'
                 };
-                
+
                 let socialHTML = '';
                 for (const [key, url] of Object.entries(config.socialLinks)) {
                     if (url && socialIcons[key]) {
@@ -172,7 +172,7 @@ const App = {
     initDarkMode() {
         const saved = localStorage.getItem('theme');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        
+
         if (saved === 'dark' || (!saved && prefersDark)) {
             document.documentElement.classList.add('dark');
         } else {
@@ -201,17 +201,17 @@ const App = {
         if (currentPath === '' || currentPath === '/index') {
             currentPath = '/';
         }
-        
+
         const navLinks = document.querySelectorAll('.nav-link');
-        
+
         navLinks.forEach(link => {
             let href = link.getAttribute('href');
             // Normalize href
             href = href.replace(/\.html$/, '');
             if (href === 'index' || href === '/index') href = '/';
-            
+
             link.classList.remove('active');
-            
+
             if (href === currentPath || (currentPath === '/' && (href === '/' || href === ''))) {
                 link.classList.add('active');
             }
@@ -225,7 +225,7 @@ const App = {
         const searchInput = document.getElementById('search-input');
         const searchToggle = document.getElementById('search-toggle');
         const searchContainer = document.getElementById('search-container');
-        
+
         // Toggle search on mobile
         if (searchToggle && searchContainer) {
             searchToggle.addEventListener('click', () => {
@@ -285,13 +285,13 @@ const App = {
     // ==========================================
     async loadDonateWidget() {
         try {
-            const res = await fetch('data/config.json');
+            const res = await fetch(SiteConfig.getNoCacheUrl('data/config.json'));
             const config = await res.json();
-            
+
             if (!config.donate || !config.donate.enabled) return;
-            
+
             const donate = config.donate;
-            
+
             // Create widget container
             const widget = document.createElement('div');
             widget.id = 'donate-widget';
@@ -304,10 +304,10 @@ const App = {
                     </div>
                     <div class="donate-chat-body">
                         <p class="text-sm text-gray-600 dark:text-gray-300 mb-3">${donate.message || ''}</p>
-                        ${donate.qrCode 
-                            ? `<img src="${donate.qrCode}" alt="QR Code" class="donate-qr-img">`
-                            : '<div class="donate-qr-placeholder">📱</div>'
-                        }
+                        ${donate.qrCode
+                    ? `<img src="${donate.qrCode}" alt="QR Code" class="donate-qr-img">`
+                    : '<div class="donate-qr-placeholder">📱</div>'
+                }
                         <p class="text-xs text-center text-gray-500 dark:text-gray-400 mt-3">${donate.thankYou || 'Cảm ơn bạn!'}</p>
                     </div>
                 </div>
@@ -315,29 +315,29 @@ const App = {
                 <!-- Floating Button -->
                 <div class="donate-float-wrapper">
                     <button id="donate-btn" class="donate-float-btn" title="Ủng hộ tác giả">
-                        ${donate.avatar 
-                            ? `<img src="${donate.avatar}" alt="Donate" class="w-full h-full rounded-full object-cover">`
-                            : '<span class="text-2xl">🎁</span>'
-                        }
+                        ${donate.avatar
+                    ? `<img src="${donate.avatar}" alt="Donate" class="w-full h-full rounded-full object-cover">`
+                    : '<span class="text-2xl">🎁</span>'
+                }
                         <span class="donate-ping"></span>
                     </button>
                     <span class="donate-label">${donate.buttonLabel || 'Donate'}</span>
                 </div>
             `;
-            
+
             document.body.appendChild(widget);
-            
+
             // Event listeners
             const btn = document.getElementById('donate-btn');
             const popup = document.getElementById('donate-popup');
             const closeBtn = document.getElementById('donate-close');
-            
+
             const openPopup = () => {
                 popup.classList.remove('hidden', 'hide');
                 popup.classList.add('show');
                 btn.style.animation = 'none';
             };
-            
+
             const closePopup = () => {
                 popup.classList.remove('show');
                 popup.classList.add('hide');
@@ -348,7 +348,7 @@ const App = {
                     popup.classList.remove('hide');
                 }, 250);
             };
-            
+
             btn?.addEventListener('click', () => {
                 if (popup.classList.contains('hidden')) {
                     openPopup();
@@ -356,7 +356,7 @@ const App = {
                     closePopup();
                 }
             });
-            
+
             closeBtn?.addEventListener('click', (e) => {
                 e.stopPropagation();
                 closePopup();
@@ -402,37 +402,37 @@ const App = {
         for (let i = 0; i < iconCount; i++) {
             const icon = document.createElement('div');
             icon.className = 'floating-icon';
-            
+
             // Create img element
             const img = document.createElement('img');
             img.src = iconFiles[i % iconFiles.length];
             img.alt = '';
-            
+
             // Handle load error - hide broken images
             img.onerror = () => {
                 icon.style.display = 'none';
             };
-            
+
             icon.appendChild(img);
-            
+
             // Random position
             icon.style.left = Math.random() * 100 + '%';
             icon.style.top = Math.random() * 100 + '%';
-            
+
             // Random size (40-80px)
             const size = 40 + Math.random() * 40;
             icon.style.width = size + 'px';
             icon.style.height = size + 'px';
-            
+
             // Random animation duration and delay (slower: 30-60s)
             const duration = 30 + Math.random() * 30;
             const delay = Math.random() * -30;
             icon.style.animationDuration = duration + 's';
             icon.style.animationDelay = delay + 's';
-            
+
             // Random opacity (0.08-0.2 for subtle effect)
             icon.style.opacity = 0.08 + Math.random() * 0.12;
-            
+
             container.appendChild(icon);
         }
     },
@@ -443,7 +443,7 @@ const App = {
     async init() {
         // 1. Init dark mode ngay lập tức (tránh flash)
         this.initDarkMode();
-        
+
         // 2. Init floating icons background
         this.initFloatingIcons();
 
@@ -455,7 +455,7 @@ const App = {
         this.setActiveNav();
         this.setupSearch();
         this.setupMobileMenu();
-        
+
         // 5. Load donate widget
         await this.loadDonateWidget();
     }

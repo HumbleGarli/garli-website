@@ -2847,11 +2847,14 @@ const FancyText = {
     encode(text, style) {
         const s = this.styles[style];
         if (!s) return text;
+        
         let result = '';
         for (const char of text) {
             const idx = s.map.indexOf(char);
             if (idx !== -1) {
-                result += [...s.to][idx];
+                // Get character at index from 'to' string
+                const toChars = [...s.to];
+                result += toChars[idx] || char;
             } else {
                 result += char;
             }

@@ -15,7 +15,7 @@ const AboutManager = {
             const { content } = await GitHubAPI.getJson('data/config.json');
             this.config = content;
         } catch (e) {
-            const res = await fetch('data/config.json');
+            const res = await fetch(SiteConfig.getNoCacheUrl('data/config.json'));
             this.config = await res.json();
         }
     },

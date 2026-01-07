@@ -34,6 +34,12 @@ const SiteConfig = {
         return path.startsWith('/') ? path.slice(1) : path;
     },
 
+    // Get URL with cache busting param
+    getNoCacheUrl(url) {
+        const separator = url.includes('?') ? '&' : '?';
+        return `${url}${separator}t=${Date.now()}`;
+    },
+
     // Check if running locally
     isLocal() {
         return window.location.hostname === 'localhost' || 

@@ -24,15 +24,15 @@ const AdminAuth = {
     getSession() {
         const data = sessionStorage.getItem(this.SESSION_KEY);
         if (!data) return null;
-        
+
         const session = JSON.parse(data);
-        
+
         // Check expiry
         if (Date.now() > session.expiresAt) {
             this.clearSession();
             return null;
         }
-        
+
         return session;
     },
 
@@ -117,7 +117,7 @@ const AdminPanel = {
     showDashboard() {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('admin-dashboard').classList.remove('hidden');
-        
+
         const session = AdminAuth.getSession();
         if (session) {
             document.getElementById('user-info').textContent = `${session.owner}/${session.repo}`;
@@ -129,7 +129,7 @@ const AdminPanel = {
     // ==========================================
     async handleLogin(e) {
         e.preventDefault();
-        
+
         const owner = document.getElementById('input-owner').value.trim();
         const repo = document.getElementById('input-repo').value.trim();
         const token = document.getElementById('input-token').value.trim();
@@ -147,7 +147,7 @@ const AdminPanel = {
 
             // Lưu session
             AdminAuth.saveSession(owner, repo, token);
-            
+
             // Show dashboard
             this.showDashboard();
             this.startSessionTimer();
@@ -178,10 +178,10 @@ const AdminPanel = {
     // ==========================================
     startSessionTimer() {
         const timerEl = document.getElementById('session-timer');
-        
+
         const updateTimer = () => {
             const remaining = AdminAuth.getRemainingTime();
-            
+
             if (remaining <= 0) {
                 this.handleLogout();
                 alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
@@ -189,7 +189,7 @@ const AdminPanel = {
             }
 
             timerEl.textContent = `Còn ${AdminAuth.formatTime(remaining)}`;
-            
+
             // Warning khi còn 5 phút
             if (remaining < 5 * 60 * 1000) {
                 timerEl.classList.add('text-red-500');
@@ -219,9 +219,9 @@ const AdminPanel = {
     async loadStats() {
         try {
             const [products, posts, resources] = await Promise.all([
-                fetch('data/products.json').then(r => r.json()),
-                fetch('data/posts-index.json').then(r => r.json()),
-                fetch('data/resources.json').then(r => r.json())
+                fetch(SiteConfig.getNoCacheUrl('data/products.json')).then(r => r.json()),
+                fetch(SiteConfig.getNoCacheUrl('data/posts-index.json')).then(r => r.json()),
+                fetch(SiteConfig.getNoCacheUrl('data/resources.json')).then(r => r.json())
             ]);
 
             document.getElementById('stat-products').textContent = products.products?.length || 0;
@@ -238,7 +238,7 @@ const AdminPanel = {
     setupEventListeners() {
         // Login form
         document.getElementById('login-form').addEventListener('submit', (e) => this.handleLogin(e));
-        
+
         // Logout button
         document.getElementById('logout-btn').addEventListener('click', () => this.handleLogout());
 
@@ -260,7 +260,7 @@ const AdminPanel = {
             btn.classList.remove('active', 'text-blue-600', 'border-b-2', 'border-blue-600');
             btn.classList.add('text-gray-500');
         });
-        
+
         const activeBtn = document.querySelector(`[data-tab="${tab}"]`);
         activeBtn.classList.add('active', 'text-blue-600', 'border-b-2', 'border-blue-600');
         activeBtn.classList.remove('text-gray-500');

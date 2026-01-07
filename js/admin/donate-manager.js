@@ -17,7 +17,7 @@ const DonateManager = {
             const { content } = await GitHubAPI.getJson('data/config.json');
             this.config = content;
         } catch (e) {
-            const res = await fetch('data/config.json');
+            const res = await fetch(SiteConfig.getNoCacheUrl('data/config.json'));
             this.config = await res.json();
         }
     },
@@ -162,7 +162,7 @@ const DonateManager = {
 
             const result = await ImageTools.compress(file, { maxWidth: 200, maxHeight: 200, quality: 0.9 });
             const preview = await ImageTools.getPreview(result.file);
-            
+
             previewEl.innerHTML = `<img src="${preview}" class="w-16 h-16 rounded-full object-cover border-2 border-white shadow-lg">`;
             this.pendingAvatar = result.file;
         } catch (err) {
@@ -184,7 +184,7 @@ const DonateManager = {
 
             const result = await ImageTools.compress(file, { maxWidth: 400, maxHeight: 400, quality: 0.9 });
             const preview = await ImageTools.getPreview(result.file);
-            
+
             previewEl.innerHTML = `<img src="${preview}" class="w-32 h-32 rounded-lg object-cover border">`;
             this.pendingQR = result.file;
         } catch (err) {
