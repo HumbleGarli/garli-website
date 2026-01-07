@@ -926,17 +926,17 @@ const PostsManager = {
         if (!confirm(`Xác nhận xóa bài viết "${post.title}"?`)) return;
 
         try {
+            // Reload data trước để có SHA mới nhất
+            await this.loadData();
+            
             // Remove from index
             this.posts = this.posts.filter(p => p.id !== id);
             
-            // Update index first
+            // Update index
             await GitHubAPI.updateJson('data/posts-index.json', {
                 posts: this.posts,
                 categories: this.categories
             }, `Delete post from index: ${post.title}`);
-
-            // Reload data để lấy SHA mới
-            await this.loadData();
 
             // Optionally delete markdown file
             if (deleteFile && post.content) {
@@ -947,10 +947,16 @@ const PostsManager = {
                 }
             }
 
+            // Reload lại data sau khi xóa
+            await this.loadData();
             this.renderList();
             alert('Đã xóa thành công!');
         } catch (err) {
-            alert('Lỗi: ' + err.message);
+            console.error('Delete error:', err);
+            // Reload lại data nếu lỗi
+            await this.loadData();
+            this.renderList();
+            alert('Lỗi: ' + err.message + '\n\nThử refresh trang (Ctrl+Shift+R) và xóa lại.');
         }
     }
 };
