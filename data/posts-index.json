@@ -1,28 +1,5 @@
 {
-  "posts": [
-    {
-      "id": 6,
-      "title": "Tối ưu performance cho website",
-      "slug": "toi-uu-performance-website",
-      "excerpt": "Các kỹ thuật tối ưu tốc độ load trang và Core Web Vitals",
-      "content": "content/posts/2025-11-20-web-performance.md",
-      "image": "assets/images/posts/performance.jpg",
-      "author": {
-        "name": "Minh Dev",
-        "avatar": "assets/images/authors/minh.jpg"
-      },
-      "category": "tutorial",
-      "tags": [
-        "performance",
-        "optimization",
-        "seo"
-      ],
-      "readTime": 15,
-      "views": 1890,
-      "featured": false,
-      "publishedAt": "2025-11-20"
-    }
-  ],
+  "posts": [],
   "categories": [
     {
       "id": "tutorial",
