@@ -126,6 +126,9 @@ const PostsManager = {
             btn.disabled = true;
             btn.textContent = 'Đang xóa...';
 
+            // Reload data trước để có SHA mới nhất
+            await this.loadData();
+
             // Get posts to delete (for file deletion)
             const postsToDelete = this.posts.filter(p => this.selectedIds.has(p.id));
             
@@ -136,8 +139,6 @@ const PostsManager = {
                 posts: this.posts,
                 categories: this.categories
             }, `Bulk delete ${count} posts`);
-
-            await this.loadData();
 
             // Optionally delete markdown files
             if (deleteFiles) {
@@ -152,12 +153,20 @@ const PostsManager = {
                 }
             }
 
+            // Reload lại sau khi xóa
+            await this.loadData();
             this.selectedIds.clear();
             this.renderList();
             this.updateBulkDeleteBtn();
             
             alert(`✅ Đã xóa ${count} bài viết thành công!`);
         } catch (err) {
+            console.error('Bulk delete error:', err);
+            // Reload lại nếu lỗi
+            await this.loadData();
+            this.selectedIds.clear();
+            this.renderList();
+            this.updateBulkDeleteBtn();
             alert('❌ Lỗi: ' + err.message + '\n\n💡 Thử nhấn Ctrl+Shift+R để refresh rồi thử lại.');
         } finally {
             const btn = document.getElementById('bulk-delete-posts-btn');

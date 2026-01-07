@@ -740,19 +740,24 @@ const ProductsManager = {
         if (!confirm('Bạn có chắc muốn xóa sản phẩm này?')) return;
 
         try {
+            // Reload data trước để có SHA mới nhất
+            await this.loadData();
+            
             this.products = this.products.filter(p => p.id !== id);
             await GitHubAPI.updateJson('data/products.json', {
                 products: this.products,
                 categories: this.categories
             }, `Delete product #${id}`);
             
-            // Reload data để lấy SHA mới
+            // Reload lại sau khi xóa
             await this.loadData();
-            
             this.renderList();
             alert('Đã xóa thành công!');
         } catch (err) {
-            alert('Lỗi: ' + err.message);
+            console.error('Delete product error:', err);
+            await this.loadData();
+            this.renderList();
+            alert('Lỗi: ' + err.message + '\n\nThử refresh trang (Ctrl+Shift+R) và xóa lại.');
         }
     }
 };

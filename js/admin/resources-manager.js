@@ -398,19 +398,24 @@ const ResourcesManager = {
     async delete(id) {
         if (!confirm('Bạn có chắc muốn xóa tài nguyên này?')) return;
         try {
+            // Reload data trước để có SHA mới nhất
+            await this.loadData();
+            
             this.resources = this.resources.filter(r => r.id !== id);
             await GitHubAPI.updateJson('data/resources.json', {
                 resources: this.resources,
                 types: this.types
             }, `Delete resource #${id}`);
             
-            // Reload data để lấy SHA mới
+            // Reload lại sau khi xóa
             await this.loadData();
-            
             this.renderList();
             alert('Đã xóa thành công!');
         } catch (err) {
-            alert('Lỗi: ' + err.message);
+            console.error('Delete resource error:', err);
+            await this.loadData();
+            this.renderList();
+            alert('Lỗi: ' + err.message + '\n\nThử refresh trang (Ctrl+Shift+R) và xóa lại.');
         }
     }
 };
