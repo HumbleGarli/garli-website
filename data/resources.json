@@ -41,6 +41,11 @@
       "id": "video",
       "name": "Video",
       "icon": "play-circle"
+    },
+    {
+      "id": "phan-mem",
+      "name": "Phần mềm",
+      "icon": "folder"
     }
   ]
 }
