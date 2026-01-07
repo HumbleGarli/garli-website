@@ -2862,6 +2862,9 @@ const FancyText = {
     decode(text) {
         let result = text;
         
+        // Create a comprehensive reverse map
+        const reverseMap = new Map();
+        
         // Build reverse map from all styles
         for (const style of Object.values(this.styles)) {
             const toChars = [...style.to];
@@ -2869,18 +2872,21 @@ const FancyText = {
             
             for (let i = 0; i < toChars.length; i++) {
                 if (toChars[i] && mapChars[i]) {
-                    // Replace all occurrences of fancy character with normal character
-                    const regex = new RegExp(this.escapeRegex(toChars[i]), 'g');
-                    result = result.replace(regex, mapChars[i]);
+                    // Only add if not already mapped (first match wins)
+                    if (!reverseMap.has(toChars[i])) {
+                        reverseMap.set(toChars[i], mapChars[i]);
+                    }
                 }
             }
         }
         
-        return result;
-    },
-    
-    escapeRegex(str) {
-        return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        // Replace each fancy character with normal character
+        let decoded = '';
+        for (const char of text) {
+            decoded += reverseMap.get(char) || char;
+        }
+        
+        return decoded;
     },
 
     renderEncodeResults(input) {
