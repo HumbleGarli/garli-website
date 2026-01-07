@@ -77,10 +77,15 @@ const BlogPage = {
     renderPostCard(p) {
         const catInfo = this.categories.find(c => c.id === p.category) || {};
         const colors = { blue: 'bg-blue-100 text-blue-600', green: 'bg-green-100 text-green-600', purple: 'bg-purple-100 text-purple-600', pink: 'bg-pink-100 text-pink-600' };
+        const hasImage = p.image && !p.image.includes('default');
+        
         return `
             <a href="/post?slug=${p.slug}" class="glass-card bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden group hover:shadow-lg transition-shadow">
-                <div class="h-48 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 flex items-center justify-center">
-                    <span class="text-5xl">📝</span>
+                <div class="h-48 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 flex items-center justify-center overflow-hidden">
+                    ${hasImage 
+                        ? `<img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">` 
+                        : '<span class="text-5xl">📝</span>'
+                    }
                 </div>
                 <div class="p-5">
                     <div class="flex items-center gap-2 mb-2">
