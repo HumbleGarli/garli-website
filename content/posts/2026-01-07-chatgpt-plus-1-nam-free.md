@@ -1,6 +1,6 @@
 CÁCH LẤY CHATGPT PLUS 1 NĂM FREE ( MỚI NHẤT)
 
-Bước 1: Lấy Link xác minh
+Bước 1: Lấy Link xác minhDùng trình duyệt ẩn danh ( Khuyến nghị Brave, DuckduckGo), Fake VPN United State ( Dùng VPN nào ít người biết, VPN nhiều người dùng như NordVPN,... sẽ bị dính IP bẩn do bị spam)
 
 Truy cập vào trang:[ chatgpt.com/veterans-claim](http://chatgpt.com/veterans-claim)
 
