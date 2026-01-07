@@ -420,7 +420,11 @@ const PostsManager = {
         const file = e.target.files[0];
         if (!file) return;
 
-        const btn = e.target.previousElementSibling;
+        const btn = e.target.nextElementSibling;
+        if (!btn) {
+            console.error('Import button not found');
+            return;
+        }
         const originalText = btn.innerHTML;
         btn.innerHTML = '⏳ Đang import...';
         btn.disabled = true;
