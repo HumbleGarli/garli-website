@@ -81,6 +81,10 @@ body.dark {
 .prose-content {
     color: #374151;
     line-height: 1.8;
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .prose-content h1,
@@ -176,6 +180,8 @@ body.dark {
 /* Dark mode prose */
 .dark .prose-content {
     color: #e5e7eb;
+    background: #1f2937;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .dark .prose-content h1,
