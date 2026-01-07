@@ -159,7 +159,7 @@ const PostsManager = {
             this.renderList();
             this.updateBulkDeleteBtn();
             
-            alert(`✅ Đã xóa ${count} bài viết thành công!`);
+            AdminPanel.hardRefresh(`Đã xóa ${count} bài viết thành công!`);
         } catch (err) {
             console.error('Bulk delete error:', err);
             // Reload lại nếu lỗi
@@ -266,7 +266,7 @@ const PostsManager = {
             input.value = '';
             errorEl.classList.add('hidden');
             this.renderCategories();
-            alert('Đã thêm danh mục!');
+            AdminPanel.hardRefresh('Đã thêm danh mục!');
         } catch (err) {
             errorEl.textContent = 'Lỗi: ' + err.message;
             errorEl.classList.remove('hidden');
@@ -295,7 +295,7 @@ const PostsManager = {
 
             await this.loadData();
             this.renderCategories();
-            alert('Đã xóa danh mục!');
+            AdminPanel.hardRefresh('Đã xóa danh mục!');
         } catch (err) {
             alert('Lỗi: ' + err.message);
         }
@@ -901,9 +901,9 @@ const PostsManager = {
             // Reload data để lấy SHA mới (tránh lỗi SHA mismatch khi save tiếp)
             await this.loadData();
 
+            // Close form and refresh
             this.closeForm();
-            this.renderList();
-            alert('Đã lưu thành công!');
+            AdminPanel.hardRefresh('Đã lưu bài viết thành công!');
 
         } catch (err) {
             errorEl.textContent = 'Lỗi: ' + err.message;
@@ -959,7 +959,7 @@ const PostsManager = {
             // Reload lại data sau khi xóa
             await this.loadData();
             this.renderList();
-            alert('Đã xóa thành công!');
+            AdminPanel.hardRefresh('Đã xóa bài viết thành công!');
         } catch (err) {
             console.error('Delete error:', err);
             // Reload lại data nếu lỗi

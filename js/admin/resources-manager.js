@@ -131,7 +131,7 @@ const ResourcesManager = {
             this.renderList();
             this.updateBulkDeleteBtn();
             
-            alert(`✅ Đã xóa ${count} tài nguyên thành công!`);
+            AdminPanel.hardRefresh(`Đã xóa ${count} tài nguyên thành công!`);
         } catch (err) {
             alert('❌ Lỗi: ' + err.message + '\n\n💡 Thử nhấn Ctrl+Shift+R để refresh rồi thử lại.');
         } finally {
@@ -228,7 +228,7 @@ const ResourcesManager = {
             input.value = '';
             errorEl.classList.add('hidden');
             this.renderTypes();
-            alert('Đã thêm loại!');
+            AdminPanel.hardRefresh('Đã thêm loại!');
         } catch (err) {
             errorEl.textContent = 'Lỗi: ' + err.message;
             errorEl.classList.remove('hidden');
@@ -257,7 +257,7 @@ const ResourcesManager = {
 
             await this.loadData();
             this.renderTypes();
-            alert('Đã xóa loại!');
+            AdminPanel.hardRefresh('Đã xóa loại!');
         } catch (err) {
             alert('Lỗi: ' + err.message);
         }
@@ -374,8 +374,7 @@ const ResourcesManager = {
             await this.loadData();
 
             this.closeForm();
-            this.renderList();
-            alert('Đã lưu thành công!');
+            AdminPanel.hardRefresh('Đã lưu tài nguyên thành công!');
         } catch (err) {
             errorEl.textContent = 'Lỗi: ' + err.message;
             errorEl.classList.remove('hidden');
@@ -410,7 +409,7 @@ const ResourcesManager = {
             // Reload lại sau khi xóa
             await this.loadData();
             this.renderList();
-            alert('Đã xóa thành công!');
+            AdminPanel.hardRefresh('Đã xóa tài nguyên thành công!');
         } catch (err) {
             console.error('Delete resource error:', err);
             await this.loadData();

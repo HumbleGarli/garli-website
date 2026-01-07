@@ -413,7 +413,7 @@ const ConfigManager = {
             // Reload data để lấy SHA mới
             await this.loadData();
             
-            alert('Đã lưu cấu hình thành công!');
+            AdminPanel.hardRefresh('Đã lưu cấu hình thành công!');
             this.renderBanners(); // Refresh để hiện path ảnh mới
 
         } catch (err) {

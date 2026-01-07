@@ -146,7 +146,7 @@ const AboutManager = {
 
             await GitHubAPI.updateJson('data/config.json', this.config, 'Update about page content');
 
-            alert('✅ Đã lưu thành công!');
+            AdminPanel.hardRefresh('Đã lưu trang giới thiệu thành công!');
             await this.loadData();
         } catch (err) {
             errorEl.textContent = 'Lỗi: ' + err.message;

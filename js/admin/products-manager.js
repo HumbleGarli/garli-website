@@ -145,7 +145,7 @@ const ProductsManager = {
             this.renderList();
             this.updateBulkDeleteBtn();
             
-            alert(`✅ Đã xóa ${count} sản phẩm thành công!`);
+            AdminPanel.hardRefresh(`Đã xóa ${count} sản phẩm thành công!`);
         } catch (err) {
             alert('❌ Lỗi: ' + err.message + '\n\n💡 Thử nhấn Ctrl+Shift+R để refresh rồi thử lại.');
         } finally {
@@ -315,7 +315,7 @@ const ProductsManager = {
             this.closeImportModal();
             this.renderList();
             
-            alert(`✅ Đã import ${this.pendingImport.length} sản phẩm thành công!`);
+            AdminPanel.hardRefresh(`Đã import ${this.pendingImport.length} sản phẩm thành công!`);
             this.pendingImport = null;
         } catch (err) {
             document.getElementById('import-error').textContent = 'Lỗi: ' + err.message;
@@ -410,7 +410,7 @@ const ProductsManager = {
             input.value = '';
             errorEl.classList.add('hidden');
             this.renderCategories();
-            alert('Đã thêm danh mục!');
+            AdminPanel.hardRefresh('Đã thêm danh mục!');
         } catch (err) {
             errorEl.textContent = 'Lỗi: ' + err.message;
             errorEl.classList.remove('hidden');
@@ -440,7 +440,7 @@ const ProductsManager = {
 
             await this.loadData();
             this.renderCategories();
-            alert('Đã xóa danh mục!');
+            AdminPanel.hardRefresh('Đã xóa danh mục!');
         } catch (err) {
             alert('Lỗi: ' + err.message);
         }
@@ -712,8 +712,7 @@ const ProductsManager = {
             await this.loadData();
 
             this.closeForm();
-            this.renderList();
-            alert('Đã lưu thành công!');
+            AdminPanel.hardRefresh('Đã lưu sản phẩm thành công!');
 
         } catch (err) {
             errorEl.textContent = 'Lỗi: ' + err.message;
@@ -752,7 +751,7 @@ const ProductsManager = {
             // Reload lại sau khi xóa
             await this.loadData();
             this.renderList();
-            alert('Đã xóa thành công!');
+            AdminPanel.hardRefresh('Đã xóa sản phẩm thành công!');
         } catch (err) {
             console.error('Delete product error:', err);
             await this.loadData();

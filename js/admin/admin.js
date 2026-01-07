@@ -66,6 +66,16 @@ const AdminAuth = {
 
 const AdminPanel = {
     // ==========================================
+    // HELPER - AUTO HARD REFRESH
+    // ==========================================
+    hardRefresh(message = 'Thao tác thành công!', delay = 1000) {
+        alert(message);
+        setTimeout(() => {
+            location.reload(true); // Hard refresh
+        }, delay);
+    },
+
+    // ==========================================
     // INIT
     // ==========================================
     init() {

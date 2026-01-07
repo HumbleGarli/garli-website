@@ -236,7 +236,7 @@ const DonateManager = {
             await GitHubAPI.updateJson('data/config.json', this.config, 'Update donate widget config');
 
             await this.loadData();
-            alert('✅ Đã lưu cấu hình donate!');
+            AdminPanel.hardRefresh('Đã lưu cấu hình donate!');
             this.render();
 
         } catch (err) {
