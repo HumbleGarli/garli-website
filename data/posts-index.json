@@ -1,28 +1,6 @@
 {
   "posts": [
     {
-      "id": 4,
-      "title": "Hướng dẫn deploy website lên GitHub Pages",
-      "slug": "deploy-github-pages",
-      "excerpt": "Step-by-step hướng dẫn deploy website tĩnh lên GitHub Pages miễn phí",
-      "content": "content/posts/2025-12-05-github-pages.md",
-      "image": "assets/images/posts/github-pages.jpg",
-      "author": {
-        "name": "Minh Dev",
-        "avatar": "assets/images/authors/minh.jpg"
-      },
-      "category": "tutorial",
-      "tags": [
-        "github",
-        "deploy",
-        "hosting"
-      ],
-      "readTime": 6,
-      "views": 4560,
-      "featured": false,
-      "publishedAt": "2025-12-05"
-    },
-    {
       "id": 5,
       "title": "React 19: Những tính năng mới đáng chú ý",
       "slug": "react-19-new-features",
