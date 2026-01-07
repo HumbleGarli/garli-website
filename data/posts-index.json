@@ -1,5 +1,24 @@
 {
-  "posts": [],
+  "posts": [
+    {
+      "title": "CHATGPT PLUS 1 NĂM FREE",
+      "slug": "chatgpt-plus-1-nam-free",
+      "excerpt": "",
+      "category": "tutorial",
+      "author": {
+        "name": "Garli Le",
+        "avatar": "assets/images/authors/default.jpg"
+      },
+      "tags": [],
+      "readTime": 1,
+      "featured": false,
+      "id": 1,
+      "content": "content/posts/2026-01-07-chatgpt-plus-1-nam-free.md",
+      "image": "assets/images/posts/1767777318976-wpackwhn6efet2wrdfaefh.webp",
+      "views": 0,
+      "publishedAt": "2026-01-07"
+    }
+  ],
   "categories": [
     {
       "id": "tutorial",
