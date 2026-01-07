@@ -17,6 +17,24 @@
       "image": "assets/images/posts/1767777318976-wpackwhn6efet2wrdfaefh.webp",
       "views": 0,
       "publishedAt": "2026-01-07"
+    },
+    {
+      "title": "Quick Magic Tool",
+      "slug": "quick-magic-tool",
+      "excerpt": "",
+      "category": "tutorial",
+      "author": {
+        "name": "Garli Le",
+        "avatar": "assets/images/authors/default.jpg"
+      },
+      "tags": [],
+      "readTime": 1,
+      "featured": false,
+      "id": 2,
+      "content": "content/posts/2026-01-07-quick-magic-tool.md",
+      "image": "assets/images/posts/1767808483101-z7408130903034-49aa7682ae5b0bffa164bfdd9f287478.webp",
+      "views": 0,
+      "publishedAt": "2026-01-07"
     }
   ],
   "categories": [
