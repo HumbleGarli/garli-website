@@ -1,48 +1,26 @@
 {
   "posts": [
     {
-      "id": 4,
-      "title": "Hướng dẫn deploy website lên GitHub Pages",
-      "slug": "deploy-github-pages",
-      "excerpt": "Step-by-step hướng dẫn deploy website tĩnh lên GitHub Pages miễn phí",
-      "content": "content/posts/2025-12-05-github-pages.md",
-      "image": "assets/images/posts/github-pages.jpg",
+      "id": 6,
+      "title": "Tối ưu performance cho website",
+      "slug": "toi-uu-performance-website",
+      "excerpt": "Các kỹ thuật tối ưu tốc độ load trang và Core Web Vitals",
+      "content": "content/posts/2025-11-20-web-performance.md",
+      "image": "assets/images/posts/performance.jpg",
       "author": {
         "name": "Minh Dev",
         "avatar": "assets/images/authors/minh.jpg"
       },
       "category": "tutorial",
       "tags": [
-        "github",
-        "deploy",
-        "hosting"
+        "performance",
+        "optimization",
+        "seo"
       ],
-      "readTime": 6,
-      "views": 4560,
+      "readTime": 15,
+      "views": 1890,
       "featured": false,
-      "publishedAt": "2025-12-05"
-    },
-    {
-      "id": 5,
-      "title": "React 19: Những tính năng mới đáng chú ý",
-      "slug": "react-19-new-features",
-      "excerpt": "Tổng hợp các tính năng mới trong React 19 và cách áp dụng vào dự án",
-      "content": "content/posts/2025-11-28-react-19.md",
-      "image": "assets/images/posts/react-19.jpg",
-      "author": {
-        "name": "Lan Frontend",
-        "avatar": "assets/images/authors/lan.jpg"
-      },
-      "category": "news",
-      "tags": [
-        "react",
-        "javascript",
-        "update"
-      ],
-      "readTime": 12,
-      "views": 5230,
-      "featured": true,
-      "publishedAt": "2025-11-28"
+      "publishedAt": "2025-11-20"
     }
   ],
   "categories": [
