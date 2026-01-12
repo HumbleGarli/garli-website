@@ -591,14 +591,15 @@
         "scan",
         "pdf"
       ],
-      "active": true,
+      "active": false,
       "featured": false,
-      "image": "assets/images/products/1767030346710-camscanner.webp",
+      "packages": [],
       "id": 85,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0
+      "sold": 0,
+      "image": "assets/images/products/1767030346710-camscanner.webp"
     },
     {
       "name": "Figma Edu",
