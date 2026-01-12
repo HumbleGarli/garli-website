@@ -81,7 +81,7 @@
       "category": "ai",
       "tags": [],
       "active": true,
-      "featured": true,
+      "featured": false,
       "packages": [
         {
           "name": "ChatGPT Plus 1 Tháng",
