@@ -159,13 +159,21 @@
         "xemphim"
       ],
       "active": true,
-      "featured": true,
-      "image": "assets/images/products/1767029841585-netflix.webp",
+      "featured": false,
+      "packages": [
+        {
+          "name": "Netflix Premium",
+          "price": 80000,
+          "originalPrice": 273000,
+          "description": "Cấp sẵn ( Profile + Pin riêng)"
+        }
+      ],
       "id": 13,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0
+      "sold": 0,
+      "image": "assets/images/products/1767029841585-netflix.webp"
     },
     {
       "name": "Canva Edu",
