@@ -513,23 +513,43 @@
       "sold": 0
     },
     {
-      "name": "Vietmap",
-      "slug": "vietmap",
-      "price": 0,
-      "originalPrice": 0,
-      "category": "Khác",
+      "name": "Vietmap Live",
+      "slug": "vietmap-live",
       "description": "",
       "content": "",
+      "price": 450000,
+      "originalPrice": 590,
       "currency": "VND",
+      "category": "khac",
       "tags": [],
       "active": true,
       "featured": false,
+      "packages": [
+        {
+          "name": "Plus 1 Năm",
+          "price": 450000,
+          "originalPrice": 0,
+          "description": "Không dùng được trên ô tô, chỉ dùng được điện thoại"
+        },
+        {
+          "name": "Pro 1 Năm",
+          "price": 450000,
+          "originalPrice": 590,
+          "description": "Dùng được trên ô tô"
+        },
+        {
+          "name": "Pro 2 Năm",
+          "price": 650000,
+          "originalPrice": 890000,
+          "description": "Dùng được trên ô tô"
+        }
+      ],
+      "id": 77,
+      "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
       "sold": 0,
-      "image": "assets/images/products/default.jpg",
-      "createdAt": "2025-12-28",
-      "id": 77
+      "image": "assets/images/products/default.jpg"
     },
     {
       "name": "Microsoft Office 365",
