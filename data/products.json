@@ -430,12 +430,68 @@
       "tags": [],
       "active": true,
       "featured": false,
-      "image": "assets/images/products/1767030590347-grammaly.webp",
+      "packages": [
+        {
+          "name": "Grammarly 1 Năm Có AI",
+          "price": 150000,
+          "originalPrice": 1500000,
+          "description": "Cấp sẵn, dùng chung, có AI"
+        },
+        {
+          "name": "Grammarly 1 Tháng Không AI",
+          "price": 150000,
+          "originalPrice": 0,
+          "description": "Accounts cấp, mật khẩu khách tự set"
+        },
+        {
+          "name": "Grammarly 3 Tháng Không AI",
+          "price": 250000,
+          "originalPrice": 0,
+          "description": "Accounts cấp, mật khẩu khách tự set"
+        },
+        {
+          "name": "Grammarly 6 Tháng Không AI",
+          "price": 450000,
+          "originalPrice": 0,
+          "description": "Accounts cấp, mật khẩu khách tự set"
+        },
+        {
+          "name": "Grammarly 1 Năm Không AI",
+          "price": 550000,
+          "originalPrice": 0,
+          "description": "Accounts cấp, mật khẩu khách tự set"
+        },
+        {
+          "name": "Grammarly 1 Tháng Có AI",
+          "price": 250000,
+          "originalPrice": 0,
+          "description": "Accounts cấp, mật khẩu khách tự set"
+        },
+        {
+          "name": "Grammarly 3 Tháng Có AI",
+          "price": 350000,
+          "originalPrice": 0,
+          "description": "Accounts cấp, mật khẩu khách tự set"
+        },
+        {
+          "name": "Grammarly 6 Tháng Có AI",
+          "price": 550000,
+          "originalPrice": 0,
+          "description": "Accounts cấp, mật khẩu khách tự set"
+        },
+        {
+          "name": "Grammarly 1 Năm Có AI",
+          "price": 800000,
+          "originalPrice": 0,
+          "description": "Accounts cấp, mật khẩu khách tự set"
+        }
+      ],
       "id": 40,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0
+      "sold": 0,
+      "image": "assets/images/products/1767030590347-grammaly.webp"
     },
     {
       "name": "Truecaller Premium",
