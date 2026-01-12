@@ -262,23 +262,37 @@
       "image": "assets/images/products/1767032401106-gemini.webp"
     },
     {
-      "name": "Super Grok",
-      "slug": "super-grok",
+      "name": "Grok AI",
+      "slug": "grok-ai",
       "description": "SuperGrok AI – bản xịn từ xAI: chat siêu thông minh, phân tích dữ liệu, sáng tạo nội dung cực nhanh.",
       "content": "SuperGrok AI – bản xịn từ xAI: chat siêu thông minh, phân tích dữ liệu, sáng tạo nội dung cực nhanh.",
-      "price": 300000,
+      "price": 280000,
       "originalPrice": 800000,
       "currency": "VND",
       "category": "ai",
       "tags": [],
       "active": true,
       "featured": false,
-      "image": "assets/images/products/1767031930404-grok.webp",
+      "packages": [
+        {
+          "name": "SuperGrok 1 Tháng",
+          "price": 280000,
+          "originalPrice": 800000,
+          "description": "Chính chủ, cấp sẵn bảo hành full"
+        },
+        {
+          "name": "SuperGrok 1 Năm",
+          "price": 2800000,
+          "originalPrice": 8100000,
+          "description": "Chính chủ, cấp sẵn bảo hành full"
+        }
+      ],
       "id": 28,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0
+      "sold": 0,
+      "image": "assets/images/products/1767031930404-grok.webp"
     },
     {
       "name": "Perplexity Pro",
