@@ -178,8 +178,8 @@
     {
       "name": "Canva Edu",
       "slug": "canva-edu",
-      "description": "\"Garli sẽ gửi link invite vào email của bạn, bạn vui lòng kiểm tra và nhấp vào link để kích hoạt gói.",
-      "content": "Canva for Education (Canva Edu) là nền tảng thiết kế và truyền thông thị giác hoàn toàn miễn phí dành riêng cho các trường học, giáo viên và học sinh (từ mẫu giáo đến lớp 12). Gói dịch vụ này không chỉ mở khóa 100% tính năng cao cấp của Canva Pro (như kho ảnh/video khổng lồ, công cụ xóa phông nền, Magic Studio AI) mà còn tích hợp các tiện ích chuyên biệt cho giáo dục như quản lý lớp học, giao bài tập và kết nối trực tiếp với các hệ thống LMS (như Google Classroom, Microsoft Teams). Đây là giải pháp lý tưởng giúp giáo viên tiết kiệm thời gian soạn bài và khơi dậy tư duy sáng tạo, khả năng cộng tác nhóm của học sinh.",
+      "description": "Garli sẽ gửi link invite vào email của bạn, bạn vui lòng kiểm tra và nhấp vào link để kích hoạt gói.",
+      "content": "Canva for Education (Canva Edu) là nền tảng thiết kế và truyền thông thị giác dành riêng cho các trường học, giáo viên và học sinh (từ mẫu giáo đến lớp 12). Gói dịch vụ này không chỉ mở khóa 100% tính năng cao cấp của Canva Pro (như kho ảnh/video khổng lồ, công cụ xóa phông nền, Magic Studio AI) mà còn tích hợp các tiện ích chuyên biệt cho giáo dục như quản lý lớp học, giao bài tập và kết nối trực tiếp với các hệ thống LMS (như Google Classroom, Microsoft Teams). Đây là giải pháp lý tưởng giúp giáo viên tiết kiệm thời gian soạn bài và khơi dậy tư duy sáng tạo, khả năng cộng tác nhóm của học sinh.",
       "price": 30000,
       "originalPrice": 150000,
       "currency": "VND",
@@ -189,12 +189,26 @@
       ],
       "active": true,
       "featured": false,
-      "image": "assets/images/products/1767031184708-canva.webp",
+      "packages": [
+        {
+          "name": "Slot Canva Edu 3 Năm",
+          "price": 30000,
+          "originalPrice": 150000,
+          "description": "Slot Edu"
+        },
+        {
+          "name": "Admin Canva Edu 3 Năm",
+          "price": 200000,
+          "originalPrice": 0,
+          "description": "Admin thêm được 500 slot khác"
+        }
+      ],
       "id": 21,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0
+      "sold": 0,
+      "image": "assets/images/products/1767031184708-canva.webp"
     },
     {
       "name": "Gemini Pro",
