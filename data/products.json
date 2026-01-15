@@ -4,7 +4,7 @@
       "name": "Youtube Premium",
       "slug": "youtube-premium",
       "description": "YouTube Premium là dịch vụ thành viên trả phí mang đến trải nghiệm giải trí mượt mà và đẳng cấp nhất trên nền tảng YouTube.",
-      "content": "YouTube Premium là dịch vụ thành viên trả phí mang đến trải nghiệm giải trí mượt mà và đẳng cấp nhất trên nền tảng YouTube. Khi đăng ký, bạn sẽ được tận hưởng video hoàn toàn không có quảng cáo, tính năng phát trong nền (nghe nhạc khi tắt màn hình hoặc dùng ứng dụng khác), và khả năng tải video xuống để xem khi không có mạng. Đặc biệt, gói này còn bao gồm quyền truy cập miễn phí vào YouTube Music Premium, giúp bạn thưởng thức kho nhạc khổng lồ không giới hạn.",
+      "content": "YouTube Premium là dịch vụ thành viên trả phí mang đến trải nghiệm giải trí mượt mà và đẳng cấp nhất trên nền tảng YouTube. Khi đăng ký, bạn sẽ được tận hưởng video hoàn toàn hình hoặc dùng ứng dụng khác).",
       "price": 45000,
       "originalPrice": 85000,
       "currency": "VND",
@@ -45,7 +45,7 @@
       "price": 30000,
       "originalPrice": 200000,
       "currency": "VND",
-      "category": "do-hoa",
+      "category": "lam-viec",
       "tags": [],
       "active": true,
       "featured": false,
@@ -58,36 +58,92 @@
         },
         {
           "name": "Capcut Pro 6 Tháng",
-          "price": 350000,
+          "price": 300000,
           "originalPrice": 900000,
           "description": "Cấp sẵn"
         }
       ],
-      "image": "assets/images/products/1767599047694-capcut.webp",
       "id": 3,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0
+      "sold": 0,
+      "image": "assets/images/products/1767599047694-capcut.webp"
     },
     {
-      "name": "ChatGPT Plus/ Go/ Teacher K12",
-      "slug": "chatgpt-plus-go-teacher-k12",
+      "name": "ChatGPT",
+      "slug": "chatgpt",
       "description": "ChatGPT là một trong những công cụ AI hàng đầu thế giới đã và đang tạo nên cơn sốt với khả năng xử lý ngôn ngữ tự nhiên, ấn tượng. Với phiên bản miễn phí, người dùng có thể trải nghiệm một phần những tiện ích mà ChatGPT mang lại. Tuy nhiên, để khai thác tối đa tiềm năng của công nghệ AI này bạn cần nâng cấp lên tài khoản ChatGPT Plus",
       "content": "ChatGPT là một trong những công cụ AI hàng đầu thế giới đã và đang tạo nên cơn sốt với khả năng xử lý ngôn ngữ tự nhiên, ấn tượng. Với phiên bản miễn phí, người dùng có thể trải nghiệm một phần những tiện ích mà ChatGPT mang lại. Tuy nhiên, để khai thác tối đa tiềm năng của công nghệ AI này bạn cần nâng cấp lên tài khoản ChatGPT Plus",
-      "price": 150000,
+      "price": 50000,
       "originalPrice": 500000,
       "currency": "VND",
       "category": "ai",
       "tags": [],
       "active": true,
-      "featured": false,
-      "image": "assets/images/products/1767031739380-chatgpt.webp",
+      "featured": true,
+      "packages": [
+        {
+          "name": "ChatGPT Plus 1 Tháng",
+          "price": 150000,
+          "originalPrice": 500000,
+          "description": "Nâng chính chủ"
+        },
+        {
+          "name": "ChatGPT Plus 1 Tháng",
+          "price": 50000,
+          "originalPrice": 500000,
+          "description": "Cấp sẵn tài khoản"
+        },
+        {
+          "name": "ChatGPT Pro 1 Tháng",
+          "price": 200000,
+          "originalPrice": 5,
+          "description": "Chính chủ ( add team)"
+        },
+        {
+          "name": "ChatGPT Go 1 Năm",
+          "price": 80000,
+          "originalPrice": 1600000,
+          "description": "Chính chủ ( Bảo hành 1 tháng)"
+        },
+        {
+          "name": "ChatGPT Go 1 Năm",
+          "price": 200000,
+          "originalPrice": 1600000,
+          "description": "Chính chủ ( Bảo hành 6 tháng)"
+        },
+        {
+          "name": "ChatGPT Go 1 Năm",
+          "price": 400000,
+          "originalPrice": 1600000,
+          "description": "Chính chủ ( Bảo hành 12 tháng)"
+        },
+        {
+          "name": "ChatGPT Teacher 18 Tháng",
+          "price": 100000,
+          "originalPrice": 0,
+          "description": "Chính chủ ( Bảo hành 1 tháng)"
+        },
+        {
+          "name": "ChatGPT Teacher 18 Tháng",
+          "price": 300000,
+          "originalPrice": 0,
+          "description": "Chính chủ ( Bảo hành 6 tháng)"
+        },
+        {
+          "name": "ChatGPT Teacher 18 Tháng",
+          "price": 600000,
+          "originalPrice": 0,
+          "description": "Chính chủ ( Bảo hành 12 tháng)"
+        }
+      ],
       "id": 12,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0
+      "sold": 0,
+      "image": "assets/images/products/1767031739380-chatgpt.webp"
     },
     {
       "name": "Netflix Premium",
@@ -103,19 +159,27 @@
         "xemphim"
       ],
       "active": true,
-      "featured": true,
-      "image": "assets/images/products/1767029841585-netflix.webp",
+      "featured": false,
+      "packages": [
+        {
+          "name": "Netflix Premium",
+          "price": 80000,
+          "originalPrice": 273000,
+          "description": "Cấp sẵn ( Profile + Pin riêng)"
+        }
+      ],
       "id": 13,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0
+      "sold": 0,
+      "image": "assets/images/products/1767029841585-netflix.webp"
     },
     {
       "name": "Canva Edu",
       "slug": "canva-edu",
-      "description": "\"Garli sẽ gửi link invite vào email của bạn, bạn vui lòng kiểm tra và nhấp vào link để kích hoạt gói.",
-      "content": "Canva for Education (Canva Edu) là nền tảng thiết kế và truyền thông thị giác hoàn toàn miễn phí dành riêng cho các trường học, giáo viên và học sinh (từ mẫu giáo đến lớp 12). Gói dịch vụ này không chỉ mở khóa 100% tính năng cao cấp của Canva Pro (như kho ảnh/video khổng lồ, công cụ xóa phông nền, Magic Studio AI) mà còn tích hợp các tiện ích chuyên biệt cho giáo dục như quản lý lớp học, giao bài tập và kết nối trực tiếp với các hệ thống LMS (như Google Classroom, Microsoft Teams). Đây là giải pháp lý tưởng giúp giáo viên tiết kiệm thời gian soạn bài và khơi dậy tư duy sáng tạo, khả năng cộng tác nhóm của học sinh.",
+      "description": "Garli sẽ gửi link invite vào email của bạn, bạn vui lòng kiểm tra và nhấp vào link để kích hoạt gói.",
+      "content": "Canva for Education (Canva Edu) là nền tảng thiết kế và truyền thông thị giác dành riêng cho các trường học, giáo viên và học sinh (từ mẫu giáo đến lớp 12). Gói dịch vụ này không chỉ mở khóa 100% tính năng cao cấp của Canva Pro (như kho ảnh/video khổng lồ, công cụ xóa phông nền, Magic Studio AI) mà còn tích hợp các tiện ích chuyên biệt cho giáo dục như quản lý lớp học, giao bài tập và kết nối trực tiếp với các hệ thống LMS (như Google Classroom, Microsoft Teams). Đây là giải pháp lý tưởng giúp giáo viên tiết kiệm thời gian soạn bài và khơi dậy tư duy sáng tạo, khả năng cộng tác nhóm của học sinh.",
       "price": 30000,
       "originalPrice": 150000,
       "currency": "VND",
@@ -125,18 +189,32 @@
       ],
       "active": true,
       "featured": false,
-      "image": "assets/images/products/1767031184708-canva.webp",
+      "packages": [
+        {
+          "name": "Slot Canva Edu 3 Năm",
+          "price": 30000,
+          "originalPrice": 150000,
+          "description": "Slot Edu"
+        },
+        {
+          "name": "Admin Canva Edu 3 Năm",
+          "price": 200000,
+          "originalPrice": 0,
+          "description": "Admin thêm được 500 slot khác"
+        }
+      ],
       "id": 21,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0
+      "sold": 0,
+      "image": "assets/images/products/1767031184708-canva.webp"
     },
     {
-      "name": "Gemini Pro",
-      "slug": "gemini-pro",
+      "name": "Gemini",
+      "slug": "gemini",
       "description": "\"GeminiPro nằm trong gói Google One AI Premium mới phát hành, người dùng được tận hưởng rất nhiều đặc quyền mà gói trả phí này đem lại",
-      "content": "\"GeminiPro nằm trong gói Google One AI Premium mới phát hành, người dùng được tận hưởng rất nhiều đặc quyền mà gói trả phí này đem lại",
+      "content": "GeminiPro nằm trong gói Google One AI Premium mới phát hành, người dùng được tận hưởng rất nhiều đặc quyền mà gói trả phí này đem lại",
       "price": 200000,
       "originalPrice": 2000000,
       "currency": "VND",
@@ -144,69 +222,143 @@
       "tags": [],
       "active": true,
       "featured": false,
-      "image": "assets/images/products/1767032401106-gemini.webp",
+      "packages": [
+        {
+          "name": "Gemini Pro 1 Năm",
+          "price": 200000,
+          "originalPrice": 1990000,
+          "description": "Chính chủ bảo hành 6 tháng"
+        },
+        {
+          "name": "Gemini Pro 1 Năm ( Pixel)",
+          "price": 250000,
+          "originalPrice": 1990000,
+          "description": "Chính chủ bảo hành 6 tháng"
+        },
+        {
+          "name": "Gemini Pro 1 Năm",
+          "price": 350000,
+          "originalPrice": 1990000,
+          "description": "Chính chủ bảo hành full"
+        },
+        {
+          "name": "Gemini Pro 1 Năm ( Pixel)",
+          "price": 400000,
+          "originalPrice": 1990000,
+          "description": "Chính chủ bảo hành full"
+        },
+        {
+          "name": "Gemini Pro 1 Năm",
+          "price": 250000,
+          "originalPrice": 1990000,
+          "description": "Cấp sẵn tài khoản"
+        }
+      ],
       "id": 23,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0
+      "sold": 0,
+      "image": "assets/images/products/1767032401106-gemini.webp"
     },
     {
-      "name": "Super Grok",
-      "slug": "super-grok",
+      "name": "Grok AI",
+      "slug": "grok-ai",
       "description": "SuperGrok AI – bản xịn từ xAI: chat siêu thông minh, phân tích dữ liệu, sáng tạo nội dung cực nhanh.",
       "content": "SuperGrok AI – bản xịn từ xAI: chat siêu thông minh, phân tích dữ liệu, sáng tạo nội dung cực nhanh.",
-      "price": 300000,
+      "price": 280000,
       "originalPrice": 800000,
       "currency": "VND",
       "category": "ai",
       "tags": [],
       "active": true,
       "featured": false,
-      "image": "assets/images/products/1767031930404-grok.webp",
+      "packages": [
+        {
+          "name": "SuperGrok 1 Tháng",
+          "price": 280000,
+          "originalPrice": 800000,
+          "description": "Chính chủ, cấp sẵn bảo hành full"
+        },
+        {
+          "name": "SuperGrok 1 Năm",
+          "price": 2800000,
+          "originalPrice": 8100000,
+          "description": "Chính chủ, cấp sẵn bảo hành full"
+        }
+      ],
       "id": 28,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0
+      "sold": 0,
+      "image": "assets/images/products/1767031930404-grok.webp"
     },
     {
-      "name": "Perplexity Pro",
-      "slug": "perplexity-pro",
+      "name": "Perplexity",
+      "slug": "perplexity",
       "description": "Perplexity Pro là gói nâng cấp toàn diện giúp biến công cụ tìm kiếm này thành một trợ lý nghiên cứu và xử lý thông tin cực kỳ mạnh mẽ.",
       "content": "Perplexity Pro là gói nâng cấp toàn diện giúp biến công cụ tìm kiếm này thành một trợ lý nghiên cứu và xử lý thông tin cực kỳ mạnh mẽ.\n\nQuyền lợi nổi bật nhất khi nâng cấp là khả năng tùy chọn linh hoạt các mô hình AI thông minh nhất thế giới (như GPT-4o của OpenAI, Claude 3.5 Sonnet của Anthropic, hoặc mô hình Sonar chuyên biệt của chính Perplexity) để xử lý câu hỏi của bạn. Bên cạnh đó, bạn sẽ được sử dụng không giới hạn tính năng Pro Search (tìm kiếm sâu đa bước để giải quyết các vấn đề phức tạp), khả năng phân tích tệp tin (file upload) và tạo hình ảnh chất lượng cao. Đây là lựa chọn tối ưu cho những ai cần thông tin chính xác, cập nhật và có chiều sâu hơn so với các chatbot AI thông thường.",
-      "price": 150000,
+      "price": 200000,
       "originalPrice": 4600000,
       "currency": "VND",
       "category": "ai",
       "tags": [],
       "active": true,
       "featured": false,
-      "image": "assets/images/products/1767032681503-per.webp",
+      "packages": [
+        {
+          "name": "Perplexity Pro 1 Năm",
+          "price": 200000,
+          "originalPrice": 4600000,
+          "description": "Chính chủ "
+        }
+      ],
       "id": 29,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0
+      "sold": 0,
+      "image": "assets/images/products/1767032681503-per.webp"
     },
     {
       "name": "Adobe Full App",
       "slug": "adobe-full-app",
       "description": "Adobe Creative Cloud Full-Apps là gói dịch vụ toàn diện cho sáng tạo, cung cấp hơn 20 ứng dụng chuyên nghiệp như Photoshop, Illustrator, Premiere Pro, và After Effects. Người dùng có thể thiết kế đồ họa, chỉnh sửa video, ảnh, hoặc tạo nội dung 3D với công cụ hàng đầu. Gói này đi kèm 100GB lưu trữ đám mây, giúp đồng bộ và chia sẻ dự án dễ dàng trên nhiều thiết bị. Phù hợp cho nhà thiết kế, nhiếp ảnh gia, và nhà làm phim, Adobe Full-Apps hỗ trợ cập nhật phiên bản mới nhất, đảm bảo hiệu suất cao và bảo mật. Đây là lựa chọn lý tưởng để biến ý tưởng thành hiện thực một cách chuyên nghiệp.",
       "content": "Adobe Creative Cloud Full-Apps là gói dịch vụ toàn diện cho sáng tạo, cung cấp hơn 20 ứng dụng chuyên nghiệp như Photoshop, Illustrator, Premiere Pro, và After Effects. Người dùng có thể thiết kế đồ họa, chỉnh sửa video, ảnh, hoặc tạo nội dung 3D với công cụ hàng đầu. Gói này đi kèm 100GB lưu trữ đám mây, giúp đồng bộ và chia sẻ dự án dễ dàng trên nhiều thiết bị. Phù hợp cho nhà thiết kế, nhiếp ảnh gia, và nhà làm phim, Adobe Full-Apps hỗ trợ cập nhật phiên bản mới nhất, đảm bảo hiệu suất cao và bảo mật. Đây là lựa chọn lý tưởng để biến ý tưởng thành hiện thực một cách chuyên nghiệp.",
-      "price": 500000,
+      "price": 250000,
       "originalPrice": 15000000,
       "currency": "VND",
       "category": "lam-viec",
       "tags": [],
       "active": true,
       "featured": true,
-      "image": "assets/images/products/1767031013127-adobe.webp",
+      "packages": [
+        {
+          "name": "Adobe 1 Năm 1 Thiết bị",
+          "price": 500000,
+          "originalPrice": 15000000,
+          "description": "Cấp sẵn, login ultraview/ teamviewer/anydesk ( Bảo hành full)"
+        },
+        {
+          "name": "Adobe 1 Năm 2 Thiết bị",
+          "price": 800000,
+          "originalPrice": 15000000,
+          "description": "Cấp sẵn ( Bảo hành full)"
+        },
+        {
+          "name": "Adobe 4 Tháng",
+          "price": 250000,
+          "originalPrice": 0,
+          "description": "Cấp sẵn ( Bảo hành full)"
+        }
+      ],
       "id": 30,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0
+      "sold": 0,
+      "image": "assets/images/products/1767031013127-adobe.webp"
     },
     {
       "name": "Spotify Premium",
@@ -218,14 +370,15 @@
       "currency": "VND",
       "category": "giai-tri",
       "tags": [],
-      "active": true,
+      "active": false,
       "featured": false,
-      "image": "assets/images/products/1767033014736-spot.webp",
+      "packages": [],
       "id": 31,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0
+      "sold": 0,
+      "image": "assets/images/products/1767033014736-spot.webp"
     },
     {
       "name": "Elsa",
@@ -277,12 +430,68 @@
       "tags": [],
       "active": true,
       "featured": false,
-      "image": "assets/images/products/1767030590347-grammaly.webp",
+      "packages": [
+        {
+          "name": "Grammarly 1 Năm Có AI",
+          "price": 150000,
+          "originalPrice": 1500000,
+          "description": "Cấp sẵn, dùng chung, có AI"
+        },
+        {
+          "name": "Grammarly 1 Tháng Không AI",
+          "price": 150000,
+          "originalPrice": 0,
+          "description": "Accounts cấp, mật khẩu khách tự set"
+        },
+        {
+          "name": "Grammarly 3 Tháng Không AI",
+          "price": 250000,
+          "originalPrice": 0,
+          "description": "Accounts cấp, mật khẩu khách tự set"
+        },
+        {
+          "name": "Grammarly 6 Tháng Không AI",
+          "price": 450000,
+          "originalPrice": 0,
+          "description": "Accounts cấp, mật khẩu khách tự set"
+        },
+        {
+          "name": "Grammarly 1 Năm Không AI",
+          "price": 550000,
+          "originalPrice": 0,
+          "description": "Accounts cấp, mật khẩu khách tự set"
+        },
+        {
+          "name": "Grammarly 1 Tháng Có AI",
+          "price": 250000,
+          "originalPrice": 0,
+          "description": "Accounts cấp, mật khẩu khách tự set"
+        },
+        {
+          "name": "Grammarly 3 Tháng Có AI",
+          "price": 350000,
+          "originalPrice": 0,
+          "description": "Accounts cấp, mật khẩu khách tự set"
+        },
+        {
+          "name": "Grammarly 6 Tháng Có AI",
+          "price": 550000,
+          "originalPrice": 0,
+          "description": "Accounts cấp, mật khẩu khách tự set"
+        },
+        {
+          "name": "Grammarly 1 Năm Có AI",
+          "price": 800000,
+          "originalPrice": 0,
+          "description": "Accounts cấp, mật khẩu khách tự set"
+        }
+      ],
       "id": 40,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0
+      "sold": 0,
+      "image": "assets/images/products/1767030590347-grammaly.webp"
     },
     {
       "name": "Truecaller Premium",
@@ -304,23 +513,43 @@
       "sold": 0
     },
     {
-      "name": "Vietmap",
-      "slug": "vietmap",
-      "price": 0,
-      "originalPrice": 0,
-      "category": "Khác",
+      "name": "Vietmap Live",
+      "slug": "vietmap-live",
       "description": "",
       "content": "",
+      "price": 450000,
+      "originalPrice": 590,
       "currency": "VND",
+      "category": "khac",
       "tags": [],
       "active": true,
       "featured": false,
+      "packages": [
+        {
+          "name": "Plus 1 Năm",
+          "price": 450000,
+          "originalPrice": 0,
+          "description": "Không dùng được trên ô tô, chỉ dùng được điện thoại"
+        },
+        {
+          "name": "Pro 1 Năm",
+          "price": 450000,
+          "originalPrice": 590,
+          "description": "Dùng được trên ô tô"
+        },
+        {
+          "name": "Pro 2 Năm",
+          "price": 650000,
+          "originalPrice": 890000,
+          "description": "Dùng được trên ô tô"
+        }
+      ],
+      "id": 77,
+      "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
       "sold": 0,
-      "image": "assets/images/products/default.jpg",
-      "createdAt": "2025-12-28",
-      "id": 77
+      "image": "assets/images/products/default.jpg"
     },
     {
       "name": "Microsoft Office 365",
@@ -334,12 +563,20 @@
       "tags": [],
       "active": true,
       "featured": false,
-      "image": "assets/images/products/1767030136675-365.webp",
+      "packages": [
+        {
+          "name": "Microsoft Office 365",
+          "price": 150000,
+          "originalPrice": 2602166,
+          "description": "Nâng chính chủ"
+        }
+      ],
       "id": 78,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0
+      "sold": 0,
+      "image": "assets/images/products/1767030136675-365.webp"
     },
     {
       "name": "CamScanner",
@@ -354,14 +591,15 @@
         "scan",
         "pdf"
       ],
-      "active": true,
+      "active": false,
       "featured": false,
-      "image": "assets/images/products/1767030346710-camscanner.webp",
+      "packages": [],
       "id": 85,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0
+      "sold": 0,
+      "image": "assets/images/products/1767030346710-camscanner.webp"
     },
     {
       "name": "Figma Edu",
@@ -373,14 +611,15 @@
       "currency": "VND",
       "category": "do-hoa",
       "tags": [],
-      "active": true,
+      "active": false,
       "featured": false,
-      "image": "assets/images/products/1767032777315-figma.webp",
+      "packages": [],
       "id": 88,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0
+      "sold": 0,
+      "image": "assets/images/products/1767032777315-figma.webp"
     },
     {
       "name": "Lovable Pro",
@@ -394,12 +633,20 @@
       "tags": [],
       "active": true,
       "featured": false,
-      "image": "assets/images/products/1767032179148-lovable.webp",
+      "packages": [
+        {
+          "name": "Lovable Pro",
+          "price": 80000,
+          "originalPrice": 1350000,
+          "description": ""
+        }
+      ],
       "id": 89,
       "createdAt": "2025-12-28",
       "rating": 0,
       "reviewCount": 0,
-      "sold": 0
+      "sold": 0,
+      "image": "assets/images/products/1767032179148-lovable.webp"
     }
   ],
   "categories": [

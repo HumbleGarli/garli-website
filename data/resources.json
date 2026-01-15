@@ -1,21 +1,6 @@
 {
   "resources": [
     {
-      "title": "Test",
-      "description": "Test",
-      "type": "guide",
-      "format": "pdf",
-      "url": "https://drive.google.com/drive/folders/10ay9soIm6nWT8pSGohnAdgqbHOTJJnR1?usp=sharing",
-      "tags": [
-        "test"
-      ],
-      "free": false,
-      "id": 4,
-      "downloadCount": 2890,
-      "createdAt": "2025-04-05",
-      "image": "assets/images/resources/git-poster.jpg"
-    },
-    {
       "title": "Quick Magic Tool",
       "description": "Quick Magic Tool \nTất cả công cụ,một nơi duy nhất\nTừ tải video đến đăng bài - AI chuyển đổi giọng nói, AI subtitle, AI thay đổi trang phục, tích hợp affiliate và tự động đăng đa nền tảng với hàng triệu tài khoản.\nTác giả : Trần Tùng. \nFree. \nTải, đăng ký dễ dàng, sử dụng thôi. Đm thằng nào mang đi bán ( Lời tác giả)",
       "type": "phan-mem",
