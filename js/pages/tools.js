@@ -20,23 +20,23 @@ const ToolsPage = {
     openTool(toolId) {
         const gridView = document.getElementById('tools-grid-view');
         const detailView = document.getElementById('tools-detail-view');
-        
+
         // Hide grid, show detail
         gridView.classList.add('hidden');
         detailView.classList.remove('hidden');
-        
+
         // Hide all panels, show selected
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
         const panel = document.getElementById(`tab-${toolId}`);
         if (panel) {
             panel.classList.remove('hidden');
         }
-        
+
         this.currentTab = toolId;
-        
+
         // Update URL hash
         window.location.hash = toolId;
-        
+
         // Scroll to top
         window.scrollTo({ top: 0, behavior: 'smooth' });
     },
@@ -44,14 +44,14 @@ const ToolsPage = {
     backToGrid() {
         const gridView = document.getElementById('tools-grid-view');
         const detailView = document.getElementById('tools-detail-view');
-        
+
         // Show grid, hide detail
         gridView.classList.remove('hidden');
         detailView.classList.add('hidden');
-        
+
         // Clear URL hash
         history.pushState('', document.title, window.location.pathname);
-        
+
         // Stop camera if QR reader was active
         if (typeof QRReader !== 'undefined') {
             QRReader.stopCamera();
@@ -117,8 +117,8 @@ const ToolsPage = {
         let filteredBanks = this.banks;
         if (filter) {
             const q = filter.toLowerCase();
-            filteredBanks = this.banks.filter(bank => 
-                bank.name.toLowerCase().includes(q) || 
+            filteredBanks = this.banks.filter(bank =>
+                bank.name.toLowerCase().includes(q) ||
                 bank.code.toLowerCase().includes(q)
             );
         }
@@ -154,7 +154,7 @@ const ToolsPage = {
         const list = document.getElementById('bank-list');
         const isHidden = list.classList.contains('hidden');
         list.classList.toggle('hidden');
-        
+
         // Focus search input when opening
         if (isHidden) {
             setTimeout(() => {
@@ -201,7 +201,7 @@ const ToolsPage = {
             try {
                 // Extract 2FA key from various formats
                 let key = line.trim();
-                
+
                 // Format: ID | Pass | 2FA
                 if (line.includes('|')) {
                     const parts = line.split('|');
@@ -210,10 +210,10 @@ const ToolsPage = {
 
                 // Remove spaces and convert to uppercase
                 key = key.replace(/\s+/g, '').toUpperCase();
-                
+
                 // Remove invalid Base32 characters (keep only A-Z and 2-7)
                 key = key.replace(/[^A-Z2-7]/g, '');
-                
+
                 // Pad key if needed (Base32 requires length divisible by 8)
                 while (key.length % 8 !== 0) {
                     key += '=';
@@ -267,17 +267,17 @@ const ToolsPage = {
 
     startCountdown() {
         if (this.countdownInterval) clearInterval(this.countdownInterval);
-        
+
         // Store current input for auto-refresh
         this.currentKeys = document.getElementById('input-2fa-keys').value.trim();
 
         const countdownEl = document.getElementById('2fa-countdown');
-        
+
         const update = () => {
             const now = Math.floor(Date.now() / 1000);
             const remaining = 30 - (now % 30);
             countdownEl.textContent = `Còn ${remaining}s`;
-            
+
             // Change color when time is running low
             if (remaining <= 5) {
                 countdownEl.classList.add('text-red-500');
@@ -287,14 +287,65 @@ const ToolsPage = {
                 countdownEl.classList.add('text-gray-500', 'dark:text-gray-400');
             }
 
-            // Auto refresh when new period starts
+            // Auto refresh when new period starts (but don't call generate2FA to avoid infinite loop)
             if (remaining === 30 && this.currentKeys) {
-                this.generate2FA();
+                this.refreshCodes();
             }
         };
 
         update();
         this.countdownInterval = setInterval(update, 1000);
+    },
+
+    // Refresh codes without restarting countdown (prevents infinite loop)
+    refreshCodes() {
+        const input = this.currentKeys;
+        if (!input) return;
+
+        const lines = input.split('\n').filter(l => l.trim());
+        const results = [];
+
+        lines.forEach(line => {
+            try {
+                // Extract 2FA key from various formats
+                let key = line.trim();
+
+                // Format: ID | Pass | 2FA
+                if (line.includes('|')) {
+                    const parts = line.split('|');
+                    key = parts[parts.length - 1].trim();
+                }
+
+                // Remove spaces and convert to uppercase
+                key = key.replace(/\s+/g, '').toUpperCase();
+
+                // Remove invalid Base32 characters (keep only A-Z and 2-7)
+                key = key.replace(/[^A-Z2-7]/g, '');
+
+                // Pad key if needed (Base32 requires length divisible by 8)
+                while (key.length % 8 !== 0) {
+                    key += '=';
+                }
+
+                if (key.length < 16) {
+                    throw new Error('Key too short');
+                }
+
+                // Generate TOTP
+                const totp = new OTPAuth.TOTP({
+                    secret: OTPAuth.Secret.fromBase32(key),
+                    digits: 6,
+                    period: 30
+                });
+
+                const code = totp.generate();
+                results.push({ key: key.substring(0, 8) + '...', code, success: true });
+            } catch (e) {
+                results.push({ key: line.substring(0, 20) + '...', code: 'Lỗi', success: false, error: e.message });
+            }
+        });
+
+        this.display2FAResults(results);
     },
 
     copyCode(code) {
@@ -326,12 +377,12 @@ const ToolsPage = {
 
         // Build VietQR URL
         let url = `https://img.vietqr.io/image/${bank}-${account}-compact.png`;
-        
+
         const params = [];
         if (amount) params.push(`amount=${amount}`);
         if (content) params.push(`addInfo=${encodeURIComponent(content)}`);
         if (name) params.push(`accountName=${encodeURIComponent(name)}`);
-        
+
         if (params.length) {
             url += '?' + params.join('&');
         }
@@ -339,7 +390,7 @@ const ToolsPage = {
         // Display QR
         const preview = document.getElementById('qr-preview');
         preview.innerHTML = `<img src="${url}" alt="VietQR" class="w-full h-full object-contain rounded-xl" id="qr-image">`;
-        
+
         // Update download link
         const downloadBtn = document.getElementById('qr-download-btn');
         downloadBtn.href = url;
@@ -362,7 +413,7 @@ const QRGenerator = {
 
     setType(type) {
         this.currentType = type;
-        
+
         // Update button states
         document.querySelectorAll('.qr-type-btn').forEach(btn => {
             if (btn.dataset.qrtype === type) {
@@ -377,7 +428,7 @@ const QRGenerator = {
         // Show/hide input fields
         document.querySelectorAll('.qrgen-field').forEach(field => field.classList.add('hidden'));
         document.getElementById(`qrgen-${type}`)?.classList.remove('hidden');
-        
+
         this.generate();
     },
 
@@ -447,7 +498,7 @@ const QRGenerator = {
     generate() {
         const data = this.getData();
         const preview = document.getElementById('qrgen-preview');
-        
+
         if (!data) {
             preview.innerHTML = '<div class="w-[300px] h-[300px] flex items-center justify-center text-gray-400">Nhập dữ liệu để tạo QR</div>';
             return;
@@ -461,7 +512,7 @@ const QRGenerator = {
 
         // Clear previous QR
         preview.innerHTML = '';
-        
+
         // Create container with margin and relative positioning for logo overlay
         const container = document.createElement('div');
         container.id = 'qrgen-container';
@@ -471,7 +522,7 @@ const QRGenerator = {
         container.style.borderRadius = '8px';
         container.style.position = 'relative';
         preview.appendChild(container);
-        
+
         // Create new QR
         this.qrInstance = new QRCode(container, {
             text: data,
@@ -590,7 +641,7 @@ const QRGenerator = {
 
         const qrCanvas = container.querySelector('canvas');
         const qrImg = container.querySelector('img:not(.logo-overlay img)');
-        
+
         if (!qrCanvas && !qrImg) {
             alert('Không tìm thấy mã QR');
             return;
@@ -602,17 +653,17 @@ const QRGenerator = {
         const size = parseInt(document.getElementById('qrgen-size')?.value || 300);
         finalCanvas.width = size + margin * 2;
         finalCanvas.height = size + margin * 2;
-        
+
         const ctx = finalCanvas.getContext('2d');
-        
+
         // Fill background
         ctx.fillStyle = document.getElementById('qrgen-bgcolor')?.value || '#FFFFFF';
         ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
-        
+
         // Draw QR code
         const source = qrCanvas || qrImg;
         ctx.drawImage(source, margin, margin, size, size);
-        
+
         // Draw logo if exists
         if (this.logoData) {
             const logoImg = new Image();
@@ -620,11 +671,11 @@ const QRGenerator = {
                 const logoSize = size * 0.2;
                 const x = (finalCanvas.width - logoSize) / 2;
                 const y = (finalCanvas.height - logoSize) / 2;
-                
+
                 ctx.fillStyle = '#FFFFFF';
                 ctx.fillRect(x - 8, y - 8, logoSize + 16, logoSize + 16);
                 ctx.drawImage(logoImg, x, y, logoSize, logoSize);
-                
+
                 this.exportCanvas(finalCanvas, format);
             };
             logoImg.src = this.logoData;
@@ -636,7 +687,7 @@ const QRGenerator = {
     exportCanvas(canvas, format) {
         let dataUrl;
         let filename = `qrcode.${format}`;
-        
+
         if (format === 'png') {
             dataUrl = canvas.toDataURL('image/png');
         } else if (format === 'jpeg') {
@@ -650,7 +701,7 @@ const QRGenerator = {
             const blob = new Blob([svg], { type: 'image/svg+xml' });
             dataUrl = URL.createObjectURL(blob);
         }
-        
+
         // Create download link
         const link = document.createElement('a');
         link.href = dataUrl;
@@ -658,7 +709,7 @@ const QRGenerator = {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
+
         // Clean up blob URL if SVG
         if (format === 'svg') {
             URL.revokeObjectURL(dataUrl);
@@ -696,7 +747,7 @@ const EmailSignature = {
         const data = this.getData();
         const preview = document.getElementById('sig-preview');
         const htmlCode = document.getElementById('sig-html-code');
-        
+
         if (!data.name) {
             preview.innerHTML = '<p class="text-gray-400 text-center">Nhập thông tin để xem trước chữ ký</p>';
             htmlCode.value = '';
@@ -732,14 +783,14 @@ const EmailSignature = {
 
     generateHTML(data) {
         const socialIcons = this.getSocialLinks(data);
-        
+
         // Build contact items
         let contactItems = [];
         if (data.website) contactItems.push(`<span style="white-space: nowrap;">🌐 <a href="${data.website}" style="color: ${data.primaryColor}; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a></span>`);
         if (data.email) contactItems.push(`<span style="white-space: nowrap;">✉️ <a href="mailto:${data.email}" style="color: ${data.primaryColor}; text-decoration: none;">${data.email}</a></span>`);
         if (data.phone) contactItems.push(`<span style="white-space: nowrap;">📞 ${data.phone}</span>`);
         if (data.mobile) contactItems.push(`<span style="white-space: nowrap;">📱 ${data.mobile}</span>`);
-        
+
         return `<table cellpadding="0" cellspacing="0" border="0" style="font-family: ${data.font}; font-size: 14px; color: ${data.textColor}; line-height: 1.5;">
   <tr>
     ${data.logo ? `<td style="vertical-align: top; padding-right: 15px;">
@@ -777,7 +828,7 @@ const EmailSignature = {
         const links = [];
         const iconSize = '22';
         const iconStyle = `width: ${iconSize}px; height: ${iconSize}px; vertical-align: middle; border-radius: 4px;`;
-        
+
         // Using better quality icons from simpleicons.org CDN
         if (data.facebook) {
             links.push(`<a href="${data.facebook}" style="text-decoration: none; display: inline-block; margin-right: 8px;" title="Facebook">
@@ -804,7 +855,7 @@ const EmailSignature = {
               <img src="https://cdn.simpleicons.org/github/181717" alt="GitHub" style="${iconStyle}">
             </a>`);
         }
-        
+
         return links.join('');
     },
 
@@ -830,14 +881,14 @@ const EmailSignature = {
         const selection = window.getSelection();
         selection.removeAllRanges();
         selection.addRange(range);
-        
+
         try {
             document.execCommand('copy');
             alert('Đã copy chữ ký! Paste vào email client của bạn.');
         } catch (e) {
             alert('Không thể copy. Vui lòng chọn thủ công và copy.');
         }
-        
+
         selection.removeAllRanges();
     },
 
@@ -867,7 +918,7 @@ const LuckyWheel = {
     currentRotation: 0,
     winners: [],
     colors: [
-        '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', 
+        '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
         '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
         '#F8B500', '#00CED1', '#FF69B4', '#32CD32', '#FF7F50'
     ],
@@ -917,7 +968,7 @@ const LuckyWheel = {
     draw() {
         const canvas = document.getElementById('wheel-canvas');
         if (!canvas) return;
-        
+
         const ctx = canvas.getContext('2d');
         const names = this.getNames();
         const centerX = canvas.width / 2;
@@ -966,7 +1017,7 @@ const LuckyWheel = {
             ctx.font = 'bold 12px Arial';
             ctx.shadowColor = 'rgba(0,0,0,0.5)';
             ctx.shadowBlur = 2;
-            
+
             // Truncate long names
             let displayName = name.length > 15 ? name.substring(0, 12) + '...' : name;
             ctx.fillText(displayName, radius - 15, 4);
@@ -985,7 +1036,7 @@ const LuckyWheel = {
 
     spin() {
         if (this.isSpinning) return;
-        
+
         const names = this.getNames();
         if (names.length < 2) {
             alert('Cần ít nhất 2 mục để quay!');
@@ -1000,15 +1051,15 @@ const LuckyWheel = {
         // Random winner
         const winnerIndex = Math.floor(Math.random() * names.length);
         const sliceAngle = (2 * Math.PI) / names.length;
-        
+
         // Calculate target rotation (winner at top = -90 degrees = -PI/2)
         // We want the middle of the winning slice to be at the top (where pointer is)
         const targetSliceMiddle = winnerIndex * sliceAngle + sliceAngle / 2;
         const targetAngle = -targetSliceMiddle - Math.PI / 2;
-        
+
         // Always add 5-8 full rotations for consistent spin speed
         const extraSpins = (5 + Math.random() * 3) * 2 * Math.PI;
-        
+
         // Normalize current rotation to 0-2PI range, then add extra spins
         const normalizedCurrent = this.currentRotation % (2 * Math.PI);
         const totalRotation = extraSpins + (targetAngle - normalizedCurrent);
@@ -1021,10 +1072,10 @@ const LuckyWheel = {
         const animate = () => {
             const elapsed = Date.now() - startTime;
             const progress = Math.min(elapsed / duration, 1);
-            
+
             // Easing function (ease out cubic)
             const easeOut = 1 - Math.pow(1 - progress, 3);
-            
+
             this.currentRotation = startRotation + totalRotation * easeOut;
             this.draw();
 
@@ -1095,7 +1146,7 @@ const LuckyWheel = {
                 border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
                 animation: confetti-fall ${duration}s ease-out ${delay}s forwards;
             `;
-            
+
             // Add custom property for drift
             confetti.style.setProperty('--drift', `${drift}px`);
             container.appendChild(confetti);
@@ -1180,17 +1231,17 @@ const BMICalculator = {
 
     setUnit(unit) {
         this.unit = unit;
-        
+
         // Update button states
         const metricBtn = document.getElementById('bmi-unit-metric');
         const imperialBtn = document.getElementById('bmi-unit-imperial');
-        
+
         if (unit === 'metric') {
             metricBtn.classList.add('bg-[#0d544c]', 'text-white');
             metricBtn.classList.remove('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
             imperialBtn.classList.remove('bg-[#0d544c]', 'text-white');
             imperialBtn.classList.add('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
-            
+
             document.getElementById('bmi-height-metric').classList.remove('hidden');
             document.getElementById('bmi-height-imperial').classList.add('hidden');
             document.getElementById('bmi-weight-unit').textContent = 'kg';
@@ -1199,18 +1250,18 @@ const BMICalculator = {
             imperialBtn.classList.remove('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
             metricBtn.classList.remove('bg-[#0d544c]', 'text-white');
             metricBtn.classList.add('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
-            
+
             document.getElementById('bmi-height-metric').classList.add('hidden');
             document.getElementById('bmi-height-imperial').classList.remove('hidden');
             document.getElementById('bmi-weight-unit').textContent = 'lb';
         }
-        
+
         this.calculate();
     },
 
     calculate() {
         let weight, heightM;
-        
+
         if (this.unit === 'metric') {
             weight = parseFloat(document.getElementById('bmi-weight').value);
             const heightCm = parseFloat(document.getElementById('bmi-height-cm').value);
@@ -1225,7 +1276,7 @@ const BMICalculator = {
         }
 
         const resultEl = document.getElementById('bmi-result');
-        
+
         if (!weight || !heightM || weight <= 0 || heightM <= 0) {
             resultEl.innerHTML = '<p class="text-gray-400">Nhập cân nặng và chiều cao để tính BMI</p>';
             this.highlightCategory(null);
@@ -1234,7 +1285,7 @@ const BMICalculator = {
 
         const bmi = weight / (heightM * heightM);
         const category = this.getCategory(bmi);
-        
+
         resultEl.innerHTML = `
             <div class="space-y-4">
                 <div class="text-6xl font-bold ${category.color}">${bmi.toFixed(1)}</div>
@@ -1246,7 +1297,7 @@ const BMICalculator = {
                 ${this.getHealthyWeightRange(heightM)}
             </div>
         `;
-        
+
         this.highlightCategory(category.key);
     },
 
@@ -1289,7 +1340,7 @@ const BMICalculator = {
     getHealthyWeightRange(heightM) {
         const minWeight = 18.5 * heightM * heightM;
         const maxWeight = 24.9 * heightM * heightM;
-        
+
         if (this.unit === 'imperial') {
             const minLb = (minWeight / 0.453592).toFixed(1);
             const maxLb = (maxWeight / 0.453592).toFixed(1);
@@ -1325,20 +1376,20 @@ const SleepCalculator = {
 
     setMode(mode) {
         this.mode = mode;
-        
+
         const bedtimeBtn = document.getElementById('sleep-mode-bedtime');
         const waketimeBtn = document.getElementById('sleep-mode-waketime');
         const bedtimeInput = document.getElementById('sleep-bedtime-input');
         const waketimeInput = document.getElementById('sleep-waketime-input');
         const calcBtn = document.getElementById('sleep-calc-btn');
         const resultTitle = document.getElementById('sleep-result-title');
-        
+
         if (mode === 'bedtime') {
             bedtimeBtn.classList.add('bg-[#0d544c]', 'text-white');
             bedtimeBtn.classList.remove('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
             waketimeBtn.classList.remove('bg-[#0d544c]', 'text-white');
             waketimeBtn.classList.add('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
-            
+
             bedtimeInput.classList.remove('hidden');
             waketimeInput.classList.add('hidden');
             calcBtn.classList.remove('hidden');
@@ -1348,19 +1399,19 @@ const SleepCalculator = {
             waketimeBtn.classList.remove('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
             bedtimeBtn.classList.remove('bg-[#0d544c]', 'text-white');
             bedtimeBtn.classList.add('border', 'border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
-            
+
             bedtimeInput.classList.add('hidden');
             waketimeInput.classList.remove('hidden');
             calcBtn.classList.add('hidden');
             resultTitle.textContent = 'Thời gian thức dậy gợi ý';
         }
-        
+
         this.calculate();
     },
 
     calculate() {
         const resultsEl = document.getElementById('sleep-results');
-        
+
         if (this.mode === 'bedtime') {
             this.calculateBedtime(resultsEl);
         } else {
@@ -1384,7 +1435,7 @@ const SleepCalculator = {
         for (let cycles = 6; cycles >= 3; cycles--) {
             const sleepDuration = cycles * this.CYCLE_MINUTES + this.FALL_ASLEEP_MINUTES;
             const bedTime = new Date(wakeTime.getTime() - sleepDuration * 60 * 1000);
-            
+
             results.push({
                 cycles: cycles,
                 time: bedTime,
@@ -1420,7 +1471,7 @@ const SleepCalculator = {
         for (let cycles = 3; cycles <= 6; cycles++) {
             const sleepDuration = cycles * this.CYCLE_MINUTES;
             const wakeTime = new Date(sleepTime.getTime() + sleepDuration * 60 * 1000);
-            
+
             results.push({
                 cycles: cycles,
                 time: wakeTime,
@@ -1464,24 +1515,24 @@ const ContrastChecker = {
     update() {
         const fgColor = document.getElementById('contrast-fg').value;
         const bgColor = document.getElementById('contrast-bg').value;
-        
+
         // Update text inputs
         document.getElementById('contrast-fg-text').value = fgColor.toUpperCase();
         document.getElementById('contrast-bg-text').value = bgColor.toUpperCase();
-        
+
         // Update preview
         const preview = document.getElementById('contrast-preview');
         const previewNormal = document.getElementById('contrast-preview-normal');
         const previewLarge = document.getElementById('contrast-preview-large');
-        
+
         preview.style.backgroundColor = bgColor;
         previewNormal.style.color = fgColor;
         previewLarge.style.color = fgColor;
-        
+
         // Calculate contrast ratio
         const ratio = this.getContrastRatio(fgColor, bgColor);
         document.getElementById('contrast-ratio').textContent = ratio.toFixed(2) + ':1';
-        
+
         // Update WCAG compliance
         this.updateWCAG(ratio);
     },
@@ -1501,10 +1552,10 @@ const ContrastChecker = {
     swap() {
         const fg = document.getElementById('contrast-fg').value;
         const bg = document.getElementById('contrast-bg').value;
-        
+
         document.getElementById('contrast-fg').value = bg;
         document.getElementById('contrast-bg').value = fg;
-        
+
         this.update();
     },
 
@@ -1522,12 +1573,12 @@ const ContrastChecker = {
     getLuminance(hex) {
         const rgb = this.hexToRgb(hex);
         if (!rgb) return 0;
-        
+
         const [r, g, b] = [rgb.r, rgb.g, rgb.b].map(v => {
             v /= 255;
             return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
         });
-        
+
         return 0.2126 * r + 0.7152 * g + 0.0722 * b;
     },
 
@@ -1535,10 +1586,10 @@ const ContrastChecker = {
     getContrastRatio(fg, bg) {
         const l1 = this.getLuminance(fg);
         const l2 = this.getLuminance(bg);
-        
+
         const lighter = Math.max(l1, l2);
         const darker = Math.min(l1, l2);
-        
+
         return (lighter + 0.05) / (darker + 0.05);
     },
 
@@ -1554,7 +1605,7 @@ const ContrastChecker = {
             const el = document.getElementById(check.id);
             const badge = document.getElementById(check.id + '-badge');
             const pass = ratio >= check.threshold;
-            
+
             if (pass) {
                 el.classList.remove('border-red-400', 'bg-red-50', 'dark:bg-red-900/20');
                 el.classList.add('border-green-400', 'bg-green-50', 'dark:bg-green-900/20');
@@ -1632,7 +1683,7 @@ const PaletteExtractor = {
 
     handleFile(file) {
         if (!file) return;
-        
+
         const reader = new FileReader();
         reader.onload = (e) => {
             this.imageData = e.target.result;
@@ -1651,17 +1702,17 @@ const PaletteExtractor = {
         img.onload = () => {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            
+
             // Scale down for performance
             const maxSize = 150;
             const scale = Math.min(maxSize / img.width, maxSize / img.height, 1);
             canvas.width = Math.floor(img.width * scale);
             canvas.height = Math.floor(img.height * scale);
-            
+
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             const pixels = imageData.data;
-            
+
             // Collect all pixels as RGB arrays
             const pixelArray = [];
             for (let i = 0; i < pixels.length; i += 4) {
@@ -1669,10 +1720,10 @@ const PaletteExtractor = {
                 if (pixels[i + 3] < 128) continue;
                 pixelArray.push([pixels[i], pixels[i + 1], pixels[i + 2]]);
             }
-            
+
             // Use K-Means clustering to find dominant colors
             const colors = this.kMeans(pixelArray, this.colorCount);
-            
+
             // Sort by frequency/importance (first color is dominant)
             // Then sort rest by luminance
             const dominant = colors[0];
@@ -1681,12 +1732,12 @@ const PaletteExtractor = {
                 const lumB = 0.299 * b[0] + 0.587 * b[1] + 0.114 * b[2];
                 return lumA - lumB;
             });
-            
+
             this.currentColors = [dominant, ...rest].map(c => ({
                 hex: this.rgbToHex(c[0], c[1], c[2]),
                 rgb: c
             }));
-            
+
             this.displayColors();
         };
         img.src = this.imageData;
@@ -1702,15 +1753,15 @@ const PaletteExtractor = {
         // Initialize centroids using k-means++ method
         const centroids = this.initCentroids(pixels, k);
         let clusters = [];
-        
+
         for (let iter = 0; iter < maxIterations; iter++) {
             // Assign pixels to nearest centroid
             clusters = Array.from({ length: k }, () => []);
-            
+
             for (const pixel of pixels) {
                 let minDist = Infinity;
                 let closestIdx = 0;
-                
+
                 for (let i = 0; i < centroids.length; i++) {
                     const dist = this.colorDistanceRGB(pixel, centroids[i]);
                     if (dist < minDist) {
@@ -1720,12 +1771,12 @@ const PaletteExtractor = {
                 }
                 clusters[closestIdx].push(pixel);
             }
-            
+
             // Update centroids
             let converged = true;
             for (let i = 0; i < k; i++) {
                 if (clusters[i].length === 0) continue;
-                
+
                 const newCentroid = [0, 0, 0];
                 for (const pixel of clusters[i]) {
                     newCentroid[0] += pixel[0];
@@ -1735,30 +1786,30 @@ const PaletteExtractor = {
                 newCentroid[0] = Math.round(newCentroid[0] / clusters[i].length);
                 newCentroid[1] = Math.round(newCentroid[1] / clusters[i].length);
                 newCentroid[2] = Math.round(newCentroid[2] / clusters[i].length);
-                
+
                 if (this.colorDistanceRGB(centroids[i], newCentroid) > 1) {
                     converged = false;
                 }
                 centroids[i] = newCentroid;
             }
-            
+
             if (converged) break;
         }
-        
+
         // Sort by cluster size (most pixels = dominant)
         const indexed = centroids.map((c, i) => ({ centroid: c, size: clusters[i].length }));
         indexed.sort((a, b) => b.size - a.size);
-        
+
         return indexed.map(x => x.centroid);
     },
 
     // K-means++ initialization
     initCentroids(pixels, k) {
         const centroids = [];
-        
+
         // First centroid: random pixel
         centroids.push([...pixels[Math.floor(Math.random() * pixels.length)]]);
-        
+
         // Remaining centroids: weighted by distance
         while (centroids.length < k) {
             const distances = pixels.map(pixel => {
@@ -1769,10 +1820,10 @@ const PaletteExtractor = {
                 }
                 return minDist * minDist;
             });
-            
+
             const totalDist = distances.reduce((a, b) => a + b, 0);
             let random = Math.random() * totalDist;
-            
+
             for (let i = 0; i < pixels.length; i++) {
                 random -= distances[i];
                 if (random <= 0) {
@@ -1781,7 +1832,7 @@ const PaletteExtractor = {
                 }
             }
         }
-        
+
         return centroids;
     },
 
@@ -1791,7 +1842,7 @@ const PaletteExtractor = {
         const dR = c1[0] - c2[0];
         const dG = c1[1] - c2[1];
         const dB = c1[2] - c2[2];
-        
+
         return Math.sqrt(
             (2 + rMean / 256) * dR * dR +
             4 * dG * dG +
@@ -1825,7 +1876,7 @@ const PaletteExtractor = {
 
         // Display color circles under image
         const circlesEl = document.getElementById('palette-circles');
-        circlesEl.innerHTML = colors.map((c, i) => 
+        circlesEl.innerHTML = colors.map((c, i) =>
             `<div class="w-10 h-10 rounded-full border-2 border-white shadow-lg cursor-pointer transition-transform hover:scale-110" 
                 style="background-color: ${c.hex};" 
                 onclick="PaletteExtractor.selectDominant(${i})"
@@ -1921,7 +1972,7 @@ const DateCalculator = {
 
     setMode(mode) {
         this.currentMode = mode;
-        
+
         // Update mode buttons - pill style
         const modes = ['countdown', 'difference', 'age'];
         modes.forEach(m => {
@@ -1979,7 +2030,7 @@ const DateCalculator = {
         const eventName = document.getElementById('datecalc-event-name').value || 'Sự kiện';
         const eventDateStr = document.getElementById('datecalc-event-date').value;
         const eventTimeStr = document.getElementById('datecalc-event-time').value || '12:00';
-        
+
         if (!eventDateStr) {
             document.getElementById('datecalc-results').classList.add('hidden');
             return;
@@ -2033,7 +2084,7 @@ const DateCalculator = {
     calculateDifference() {
         const startStr = document.getElementById('datecalc-start').value;
         const endStr = document.getElementById('datecalc-end').value;
-        
+
         if (!startStr || !endStr) {
             document.getElementById('datecalc-results').classList.add('hidden');
             return;
@@ -2041,10 +2092,10 @@ const DateCalculator = {
 
         let start = new Date(startStr);
         let end = new Date(endStr);
-        
+
         // Swap if end < start
         if (end < start) [start, end] = [end, start];
-        
+
         // Calculate exact years, months, days
         let years = end.getFullYear() - start.getFullYear();
         let months = end.getMonth() - start.getMonth();
@@ -2064,7 +2115,7 @@ const DateCalculator = {
         const totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
         const totalWeeks = Math.floor(totalDays / 7);
         const totalMonths = years * 12 + months;
-        
+
         // Calculate working days (exclude weekends)
         let workingDays = 0;
         const tempDate = new Date(start);
@@ -2125,7 +2176,7 @@ const DateCalculator = {
     calculateAge() {
         const birthdayStr = document.getElementById('datecalc-birthday').value;
         const birthtimeStr = document.getElementById('datecalc-birthtime')?.value;
-        
+
         if (!birthdayStr) {
             document.getElementById('datecalc-results').classList.add('hidden');
             return;
@@ -2137,9 +2188,9 @@ const DateCalculator = {
         } else {
             birthday = new Date(birthdayStr);
         }
-        
+
         const today = new Date();
-        
+
         // Calculate exact age
         let years = today.getFullYear() - birthday.getFullYear();
         let months = today.getMonth() - birthday.getMonth();
@@ -2245,11 +2296,11 @@ const QRReader = {
     setMode(mode) {
         this.currentMode = mode;
         this.stopCamera();
-        
+
         // Update mode buttons
         const cameraBtn = document.getElementById('qrreader-mode-camera');
         const fileBtn = document.getElementById('qrreader-mode-file');
-        
+
         if (mode === 'camera') {
             cameraBtn.classList.add('border-[#0d544c]', 'bg-[#0d544c]', 'text-white');
             cameraBtn.classList.remove('border-gray-300', 'dark:border-gray-600', 'text-gray-700', 'dark:text-gray-300');
@@ -2529,7 +2580,7 @@ const PercentCalc = {
         const x = parseFloat(document.getElementById('percent-calc1-x').value);
         const y = parseFloat(document.getElementById('percent-calc1-y').value);
         const resultEl = document.getElementById('percent-result1');
-        
+
         if (!isNaN(x) && !isNaN(y)) {
             const result = (x / 100) * y;
             resultEl.textContent = this.formatNumber(result);
@@ -2549,7 +2600,7 @@ const PercentCalc = {
         const x = parseFloat(document.getElementById('percent-calc2-x').value);
         const y = parseFloat(document.getElementById('percent-calc2-y').value);
         const resultEl = document.getElementById('percent-result2');
-        
+
         if (!isNaN(x) && !isNaN(y) && y !== 0) {
             const result = (x / y) * 100;
             resultEl.textContent = this.formatNumber(result) + '%';
@@ -2569,7 +2620,7 @@ const PercentCalc = {
         const x = parseFloat(document.getElementById('percent-calc3-x').value);
         const y = parseFloat(document.getElementById('percent-calc3-y').value);
         const resultEl = document.getElementById('percent-result3');
-        
+
         if (!isNaN(x) && !isNaN(y) && y !== 0) {
             const result = (x * 100) / y;
             resultEl.textContent = this.formatNumber(result);
@@ -2589,12 +2640,12 @@ const PercentCalc = {
         const from = parseFloat(document.getElementById('percent-calc4-from').value);
         const to = parseFloat(document.getElementById('percent-calc4-to').value);
         const resultEl = document.getElementById('percent-result4');
-        
+
         if (!isNaN(from) && !isNaN(to) && from !== 0) {
             const change = ((to - from) / Math.abs(from)) * 100;
             const sign = change >= 0 ? '+' : '';
             resultEl.textContent = sign + this.formatNumber(change) + '%';
-            
+
             // Color based on increase/decrease
             if (change > 0) {
                 resultEl.classList.remove('text-red-500');
@@ -2711,7 +2762,7 @@ const TextDiff = {
     renderResults(diffs, mode) {
         const resultsEl = document.getElementById('diff-results');
         const outputEl = document.getElementById('diff-output');
-        
+
         let added = 0, removed = 0, unchanged = 0;
         let html = '';
 
@@ -2756,7 +2807,7 @@ const TextDiff = {
 
         const diffs = this.diff(oldText, newText, mode);
         const separator = mode === 'line' ? '\n' : '';
-        
+
         // Merge: keep unchanged + added (remove the removed parts)
         const merged = diffs
             .filter(d => d.type !== 'removed')
@@ -2786,7 +2837,7 @@ const TextDiff = {
 // ==========================================
 const FancyText = {
     mode: 'encode',
-    
+
     // Unicode character maps
     styles: {
         'Bold': { name: '𝐁𝐨𝐥𝐝', map: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', to: '𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟕𝟖𝟗' },
@@ -2847,7 +2898,7 @@ const FancyText = {
     encode(text, style) {
         const s = this.styles[style];
         if (!s) return text;
-        
+
         let result = '';
         for (const char of text) {
             const idx = s.map.indexOf(char);
@@ -2864,15 +2915,15 @@ const FancyText = {
 
     decode(text) {
         let result = text;
-        
+
         // Create a comprehensive reverse map
         const reverseMap = new Map();
-        
+
         // Build reverse map from all styles
         for (const style of Object.values(this.styles)) {
             const toChars = [...style.to];
             const mapChars = [...style.map];
-            
+
             for (let i = 0; i < toChars.length; i++) {
                 if (toChars[i] && mapChars[i]) {
                     // Only add if not already mapped (first match wins)
@@ -2882,13 +2933,13 @@ const FancyText = {
                 }
             }
         }
-        
+
         // Replace each fancy character with normal character
         let decoded = '';
         for (const char of text) {
             decoded += reverseMap.get(char) || char;
         }
-        
+
         return decoded;
     },
 
