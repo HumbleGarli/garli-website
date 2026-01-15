@@ -3001,3 +3001,348 @@ document.addEventListener('DOMContentLoaded', () => {
         FancyText.renderEncodeResults('');
     }
 });
+
+// ==========================================
+// EMAIL TOOLS MODULE
+// ==========================================
+
+const EmailTools = {
+    // Temp mail state
+    tempMailToken: null,
+    tempMailId: null,
+    tempMailAddress: null,
+    currentMessageId: null,
+
+    // Mail.tm API base URL
+    MAILTM_API: 'https://api.mail.tm',
+
+    /**
+     * Update line count for input areas
+     * @param {string} toolId - Tool identifier
+     */
+    updateCount(toolId) {
+        const input = document.getElementById(`${toolId}-input`);
+        const countEl = document.getElementById(`${toolId}-count`);
+        if (!input || !countEl) return;
+
+        const lines = input.value.trim().split('\n').filter(l => l.trim());
+        countEl.textContent = `[${lines.length}]`;
+    },
+
+    /**
+     * Copy result from textarea
+     * @param {string} id - Textarea element ID
+     */
+    copyResult(id) {
+        const el = document.getElementById(id);
+        if (!el || !el.value) {
+            this.showToast('Không có dữ liệu để copy!', 'error');
+            return;
+        }
+        navigator.clipboard.writeText(el.value).then(() => {
+            this.showToast('Đã copy!', 'success');
+        });
+    },
+
+    /**
+     * Filter and remove duplicates from input
+     * @param {string} toolId - Tool identifier
+     */
+    filterInput(toolId) {
+        const input = document.getElementById(`${toolId}-input`);
+        const removeDup = document.getElementById(`${toolId}-remove-dup`);
+        if (!input) return;
+
+        let lines = input.value.trim().split('\n').filter(l => l.trim());
+
+        if (removeDup && removeDup.checked) {
+            const emailSet = new Set();
+            lines = lines.filter(line => {
+                const email = line.split('|')[0].trim().toLowerCase();
+                if (emailSet.has(email)) return false;
+                emailSet.add(email);
+                return true;
+            });
+        }
+
+        input.value = lines.join('\n');
+        this.updateCount(toolId);
+        this.showToast(`Đã lọc: ${lines.length} email`, 'success');
+    },
+
+    // ==========================================
+    // TEMP MAIL (Using Mail.tm API - FREE!)
+    // ==========================================
+
+    /**
+     * Create a new temporary email address
+     */
+    async createTempMail() {
+        const addressInput = document.getElementById('tempmail-address');
+        const passwordInput = document.getElementById('tempmail-password');
+
+        try {
+            this.showToast('Đang tạo email...', 'info');
+
+            // Get available domains
+            const domainsRes = await fetch(`${this.MAILTM_API}/domains`);
+            const domainsData = await domainsRes.json();
+            const domain = domainsData['hydra:member'][0]?.domain;
+
+            if (!domain) {
+                throw new Error('Không có domain khả dụng');
+            }
+
+            // Generate random email
+            const randomStr = Math.random().toString(36).substring(2, 10);
+            const email = `${randomStr}@${domain}`;
+            const password = Math.random().toString(36).substring(2, 14);
+
+            // Create account
+            const createRes = await fetch(`${this.MAILTM_API}/accounts`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address: email, password: password })
+            });
+
+            if (!createRes.ok) {
+                const error = await createRes.json();
+                throw new Error(error['hydra:description'] || 'Không thể tạo email');
+            }
+
+            const account = await createRes.json();
+
+            // Login to get token
+            const loginRes = await fetch(`${this.MAILTM_API}/token`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address: email, password: password })
+            });
+
+            if (!loginRes.ok) {
+                throw new Error('Không thể đăng nhập');
+            }
+
+            const loginData = await loginRes.json();
+
+            // Store state
+            this.tempMailToken = loginData.token;
+            this.tempMailId = account.id;
+            this.tempMailAddress = email;
+
+            // Update UI
+            addressInput.value = email;
+            passwordInput.value = password;
+
+            this.showToast('Tạo email thành công!', 'success');
+
+            // Start auto-refresh
+            this.refreshTempInbox();
+
+        } catch (e) {
+            console.error('Create temp mail error:', e);
+            this.showToast('Lỗi: ' + e.message, 'error');
+        }
+    },
+
+    /**
+     * Copy temp email address to clipboard
+     */
+    copyTempEmail() {
+        const address = document.getElementById('tempmail-address').value;
+        if (!address) {
+            this.showToast('Chưa có email!', 'error');
+            return;
+        }
+        navigator.clipboard.writeText(address).then(() => {
+            this.showToast('Đã copy email!', 'success');
+        });
+    },
+
+    /**
+     * Refresh temp mail inbox
+     */
+    async refreshTempInbox() {
+        if (!this.tempMailToken) {
+            this.showToast('Vui lòng tạo email trước!', 'error');
+            return;
+        }
+
+        const inboxContainer = document.getElementById('tempmail-inbox');
+        const countEl = document.getElementById('tempmail-inbox-count');
+
+        try {
+            const res = await fetch(`${this.MAILTM_API}/messages`, {
+                headers: {
+                    'Authorization': `Bearer ${this.tempMailToken}`
+                }
+            });
+
+            if (!res.ok) throw new Error('Không thể lấy tin nhắn');
+
+            const data = await res.json();
+            const messages = data['hydra:member'] || [];
+
+            countEl.textContent = `[${messages.length} tin nhắn]`;
+
+            if (messages.length === 0) {
+                inboxContainer.innerHTML = `
+                    <div class="text-center py-8 text-gray-400">
+                        <div class="text-4xl mb-2 opacity-50">📭</div>
+                        <p>Chưa có tin nhắn nào</p>
+                        <p class="text-xs mt-1">Nhấn Refresh để cập nhật</p>
+                    </div>
+                `;
+                return;
+            }
+
+            inboxContainer.innerHTML = messages.map(m => `
+                <div onclick="EmailTools.openMessage('${m.id}')" 
+                    class="p-3 rounded-xl bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer transition-colors">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="font-medium text-gray-800 dark:text-white text-sm truncate">${this.escapeHtml(m.from?.address || 'Unknown')}</span>
+                        <span class="text-xs text-gray-400">${new Date(m.createdAt).toLocaleTimeString()}</span>
+                    </div>
+                    <div class="text-sm text-gray-600 dark:text-gray-300 truncate">${this.escapeHtml(m.subject || '(No subject)')}</div>
+                    <div class="text-xs text-gray-400 mt-1 truncate">${this.escapeHtml(m.intro || '')}</div>
+                </div>
+            `).join('');
+
+            this.showToast(`${messages.length} tin nhắn`, 'success');
+
+        } catch (e) {
+            console.error('Refresh inbox error:', e);
+            this.showToast('Lỗi: ' + e.message, 'error');
+        }
+    },
+
+    /**
+     * Open a message in modal
+     * @param {string} messageId - Message ID
+     */
+    async openMessage(messageId) {
+        try {
+            const res = await fetch(`${this.MAILTM_API}/messages/${messageId}`, {
+                headers: {
+                    'Authorization': `Bearer ${this.tempMailToken}`
+                }
+            });
+
+            if (!res.ok) throw new Error('Không thể đọc tin nhắn');
+
+            const message = await res.json();
+            this.currentMessageId = messageId;
+
+            // Update modal
+            document.getElementById('tempmail-message-subject').textContent = message.subject || '(No subject)';
+            document.getElementById('tempmail-message-from').textContent = message.from?.address || 'Unknown';
+            document.getElementById('tempmail-message-date').textContent = new Date(message.createdAt).toLocaleString();
+            document.getElementById('tempmail-message-body').innerHTML = message.html ||
+                `<pre class="whitespace-pre-wrap">${this.escapeHtml(message.text || '')}</pre>`;
+
+            // Show modal
+            document.getElementById('tempmail-message-modal').classList.remove('hidden');
+
+        } catch (e) {
+            console.error('Open message error:', e);
+            this.showToast('Lỗi: ' + e.message, 'error');
+        }
+    },
+
+    /**
+     * Close message modal
+     */
+    closeMessageModal() {
+        document.getElementById('tempmail-message-modal').classList.add('hidden');
+    },
+
+    /**
+     * Extract OTP code from current message
+     */
+    extractCode() {
+        const body = document.getElementById('tempmail-message-body').innerText;
+
+        // Common OTP patterns
+        const patterns = [
+            /\b(\d{6})\b/g,           // 6-digit code
+            /\b(\d{4})\b/g,           // 4-digit code
+            /code[:\s]+(\d{4,8})/gi,  // "code: 123456"
+            /mã[:\s]+(\d{4,8})/gi,    // Vietnamese: "mã: 123456"
+            /OTP[:\s]+(\d{4,8})/gi,   // "OTP: 123456"
+            /verification[:\s]+(\d{4,8})/gi
+        ];
+
+        const codes = new Set();
+        for (const pattern of patterns) {
+            const matches = body.matchAll(pattern);
+            for (const match of matches) {
+                codes.add(match[1]);
+            }
+        }
+
+        if (codes.size > 0) {
+            const codeList = Array.from(codes).join(', ');
+            navigator.clipboard.writeText(Array.from(codes)[0]);
+            this.showToast(`Đã tìm thấy và copy: ${codeList}`, 'success');
+        } else {
+            this.showToast('Không tìm thấy mã OTP trong tin nhắn', 'error');
+        }
+    },
+
+    // ==========================================
+    // UTILITIES
+    // ==========================================
+
+    /**
+     * Escape HTML to prevent XSS
+     * @param {string} text - Text to escape
+     * @returns {string} - Escaped text
+     */
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    },
+
+    /**
+     * Show toast notification
+     * @param {string} message - Message to show
+     * @param {string} type - 'success', 'error', 'info'
+     */
+    showToast(message, type = 'info') {
+        // Simple alert for now - can be replaced with a nicer toast library
+        const colors = {
+            success: '#10b981',
+            error: '#ef4444',
+            info: '#3b82f6'
+        };
+
+        // Create toast element
+        const toast = document.createElement('div');
+        toast.className = 'fixed bottom-4 right-4 px-4 py-2 rounded-xl text-white text-sm shadow-lg z-50 animate-fade-in';
+        toast.style.backgroundColor = colors[type] || colors.info;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.3s';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+};
+
+// Close modal on escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        EmailTools.closeMessageModal();
+    }
+});
+
+// Close modal on backdrop click
+document.addEventListener('click', (e) => {
+    if (e.target.id === 'tempmail-message-modal') {
+        EmailTools.closeMessageModal();
+    }
+});
