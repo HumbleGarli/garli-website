@@ -326,31 +326,25 @@
       "slug": "adobe-full-app",
       "description": "Adobe Creative Cloud Full-Apps là gói dịch vụ toàn diện cho sáng tạo, cung cấp hơn 20 ứng dụng chuyên nghiệp như Photoshop, Illustrator, Premiere Pro, và After Effects. Người dùng có thể thiết kế đồ họa, chỉnh sửa video, ảnh, hoặc tạo nội dung 3D với công cụ hàng đầu. Gói này đi kèm 100GB lưu trữ đám mây, giúp đồng bộ và chia sẻ dự án dễ dàng trên nhiều thiết bị. Phù hợp cho nhà thiết kế, nhiếp ảnh gia, và nhà làm phim, Adobe Full-Apps hỗ trợ cập nhật phiên bản mới nhất, đảm bảo hiệu suất cao và bảo mật. Đây là lựa chọn lý tưởng để biến ý tưởng thành hiện thực một cách chuyên nghiệp.",
       "content": "Adobe Creative Cloud Full-Apps là gói dịch vụ toàn diện cho sáng tạo, cung cấp hơn 20 ứng dụng chuyên nghiệp như Photoshop, Illustrator, Premiere Pro, và After Effects. Người dùng có thể thiết kế đồ họa, chỉnh sửa video, ảnh, hoặc tạo nội dung 3D với công cụ hàng đầu. Gói này đi kèm 100GB lưu trữ đám mây, giúp đồng bộ và chia sẻ dự án dễ dàng trên nhiều thiết bị. Phù hợp cho nhà thiết kế, nhiếp ảnh gia, và nhà làm phim, Adobe Full-Apps hỗ trợ cập nhật phiên bản mới nhất, đảm bảo hiệu suất cao và bảo mật. Đây là lựa chọn lý tưởng để biến ý tưởng thành hiện thực một cách chuyên nghiệp.",
-      "price": 250000,
-      "originalPrice": 15000000,
+      "price": 50000,
+      "originalPrice": 10000000,
       "currency": "VND",
-      "category": "lam-viec",
+      "category": "do-hoa",
       "tags": [],
       "active": true,
       "featured": true,
       "packages": [
         {
           "name": "Adobe 1 Năm 1 Thiết bị",
-          "price": 500000,
-          "originalPrice": 15000000,
-          "description": "Cấp sẵn, login ultraview/ teamviewer/anydesk ( Bảo hành full)"
+          "price": 700000,
+          "originalPrice": 10000000,
+          "description": "Chính chủ, cấp sẵn, bảo hành full"
         },
         {
-          "name": "Adobe 1 Năm 2 Thiết bị",
-          "price": 800000,
-          "originalPrice": 15000000,
-          "description": "Cấp sẵn ( Bảo hành full)"
-        },
-        {
-          "name": "Adobe 4 Tháng",
-          "price": 250000,
-          "originalPrice": 0,
-          "description": "Cấp sẵn ( Bảo hành full)"
+          "name": "Adobe 1 Tháng 2 Thiết bị",
+          "price": 50000,
+          "originalPrice": 333000,
+          "description": "Chính chủ, cấp sẵn, bảo hành full"
         }
       ],
       "id": 30,
